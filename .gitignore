@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+*.pt
+*.onnx
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+chroma_db/
+node_modules/
+frontend/dist/
+.pytest_cache/
+*.log

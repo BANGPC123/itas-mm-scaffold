@@ -1,0 +1,6 @@
+tts:
+  engine: "pyttsx3"   # offline, no API cost
+  rate: 175            # words per minute
+  volume: 1.0
+  voice_id: null        # null = system default; set to a specific voice id if needed
+  output_dir: "data/processed/tts_output"

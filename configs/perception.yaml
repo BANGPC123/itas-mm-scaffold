@@ -1,0 +1,30 @@
+sign_detector:
+  # No default weights ship with this repo — train on a labeled dataset first.
+  # See README.md "Training the sign detector".
+  weights_path: null            # e.g. "models/sign_detector/best.pt"
+  confidence_threshold: 0.35
+  iou_threshold: 0.45
+  device: "cpu"                 # "cuda:0" if a GPU is available
+  # Compound-sign grouping: panels whose box centers are within this many
+  # pixels (at model input resolution) are grouped into one logical sign.
+  compound_group_distance_px: 40
+
+sahi:
+  enabled: true
+  slice_height: 512
+  slice_width: 512
+  overlap_height_ratio: 0.2
+  overlap_width_ratio: 0.2
+  postprocess_type: "NMS"
+  postprocess_match_threshold: 0.5
+
+lane_detector:
+  # Classical CV baseline (see README "Current status"). Not a learned model.
+  canny_low_threshold: 50
+  canny_high_threshold: 150
+  hough_rho: 2
+  hough_theta_deg: 1
+  hough_threshold: 90
+  hough_min_line_length: 40
+  hough_max_line_gap: 25
+  roi_top_ratio: 0.6   # fraction of image height where the region of interest starts

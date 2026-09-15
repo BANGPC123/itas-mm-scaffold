@@ -1,0 +1,22 @@
+ollama:
+  base_url: "http://localhost:11434"
+  generation_model: "llama3.1"
+  embedding_model: "nomic-embed-text"
+  request_timeout_s: 30
+
+rag:
+  regulations_dir: "data/regulations"
+  chunk_size_chars: 800
+  chunk_overlap_chars: 120
+  top_k: 4
+  vector_store_dir: "chroma_db"
+  collection_name: "traffic_regulations"
+
+prompt:
+  # The system prompt constrains the LLM to answer ONLY from retrieved
+  # context + current zone — no open-domain generation (per project spec).
+  system_prompt: |
+    Ban la tro ly phap ly giao thong. Chi tra loi dua tren doan van ban quy
+    dinh duoc cung cap va ngu canh khu vuc (zone) hien tai. Neu van ban
+    khong du thong tin, hay noi ro la khong tim thay quy dinh phu hop thay
+    vi tu suy dien. Tra loi ngan gon, phu hop de chuyen thanh giong noi.

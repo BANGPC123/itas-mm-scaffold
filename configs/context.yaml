@@ -1,0 +1,20 @@
+# ASSUMPTION: zones defined below are PLACEHOLDER coordinates for demo/testing
+# only. Replace with the real coordinates of your test route before using
+# this for anything beyond a scaffold smoke test.
+#
+# Each zone is a circle: (center_lat, center_lon, radius_km). The classifier
+# checks zones in order and returns the first match; if nothing matches,
+# `default_zone` is returned.
+
+default_zone: "Suburban"
+
+zones:
+  - label: "Urban"
+    center_lat: 10.7769
+    center_lon: 106.7009
+    radius_km: 8.0
+
+  - label: "Highway"
+    center_lat: 10.8500
+    center_lon: 106.6300
+    radius_km: 5.0
