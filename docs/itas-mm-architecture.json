@@ -1,0 +1,240 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "ITAS-MM System Architecture",
+    "output": "itas-mm-architecture.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "driver-flow",
+        "label": "Driver assistance pipeline",
+        "focus": ["client", "sensors", "api", "orchestrator", "reasoning", "tts"],
+        "note": "Follow input video frames and GPS through orchestration to synthesized voice guidance."
+      },
+      {
+        "id": "perception-context",
+        "label": "Perception and road context",
+        "focus": ["sensors", "orchestrator", "perception", "context"],
+        "note": "Examine visual detection alongside geographic road-zone classification."
+      },
+      {
+        "id": "rag-reasoning",
+        "label": "RAG and local inference",
+        "focus": ["orchestrator", "reasoning", "regulations", "ollama", "tts"],
+        "note": "Inspect regulation retrieval, Ollama LLM grounding, and offline speech synthesis."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "client",
+      "type": "frontend",
+      "label": "Client Dashboard",
+      "sublabel": "Vite + React UI",
+      "pos": [50, 280],
+      "size": [130, 62],
+      "tag": ":5173"
+    },
+    {
+      "id": "sensors",
+      "type": "external",
+      "label": "Vehicle Sensors",
+      "sublabel": "Camera + GPS",
+      "pos": [260, 100],
+      "size": [136, 62],
+      "tag": "Hardware"
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "FastAPI Gateway",
+      "sublabel": "REST & WebSockets",
+      "brand": "fastapi",
+      "pos": [260, 280],
+      "size": [136, 62],
+      "tag": ":8000"
+    },
+    {
+      "id": "perception",
+      "type": "backend",
+      "label": "Perception Stage",
+      "sublabel": "YOLOv11 + SAHI & CV",
+      "brand": "pytorch",
+      "pos": [496, 100],
+      "size": [136, 62],
+      "tag": "src/perception"
+    },
+    {
+      "id": "orchestrator",
+      "type": "backend",
+      "label": "Pipeline Orchestrator",
+      "sublabel": "Stage Coordinator",
+      "pos": [496, 280],
+      "size": [136, 62],
+      "tag": "src/pipeline"
+    },
+    {
+      "id": "context",
+      "type": "backend",
+      "label": "Context Stage",
+      "sublabel": "GPS Zone Classifier",
+      "pos": [496, 460],
+      "size": [136, 62],
+      "tag": "src/context"
+    },
+    {
+      "id": "reasoning",
+      "type": "backend",
+      "label": "Reasoning & RAG",
+      "sublabel": "Regulation Grounding",
+      "pos": [746, 280],
+      "size": [136, 62],
+      "tag": "src/reasoning"
+    },
+    {
+      "id": "tts",
+      "type": "backend",
+      "label": "TTS Interaction",
+      "sublabel": "pyttsx3 Offline Voice",
+      "pos": [746, 460],
+      "size": [136, 62],
+      "tag": "src/interaction"
+    },
+    {
+      "id": "regulations",
+      "type": "database",
+      "label": "Regulation Store",
+      "sublabel": "Chroma Vector DB",
+      "pos": [996, 190],
+      "size": [136, 62],
+      "tag": "Traffic Corpus"
+    },
+    {
+      "id": "ollama",
+      "type": "cloud",
+      "label": "Ollama Runtime",
+      "sublabel": "llama3.1 + embed",
+      "brand": "ollama",
+      "pos": [996, 370],
+      "size": [136, 62],
+      "tag": ":11434"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "ITAS-MM Core Host Runtime",
+      "wraps": ["api", "orchestrator", "perception", "context", "reasoning", "tts"],
+      "pad": 24
+    },
+    {
+      "kind": "security-group",
+      "label": "Local Knowledge & AI Runtime",
+      "wraps": ["regulations", "ollama"],
+      "pad": 20
+    }
+  ],
+  "connections": [
+    {
+      "id": "client-to-api",
+      "from": "client",
+      "to": "api",
+      "label": "HTTP / WS",
+      "variant": "default"
+    },
+    {
+      "id": "sensors-to-api",
+      "from": "sensors",
+      "to": "api",
+      "label": "Frame & GPS",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 28
+    },
+    {
+      "id": "api-to-orchestrator",
+      "from": "api",
+      "to": "orchestrator",
+      "label": "Run Pipeline",
+      "variant": "emphasis"
+    },
+    {
+      "id": "orchestrator-to-perception",
+      "from": "orchestrator",
+      "to": "perception",
+      "label": "Image Frame",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "labelDy": -28
+    },
+    {
+      "id": "orchestrator-to-context",
+      "from": "orchestrator",
+      "to": "context",
+      "label": "Coordinates",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 28
+    },
+    {
+      "id": "orchestrator-to-reasoning",
+      "from": "orchestrator",
+      "to": "reasoning",
+      "label": "Detection & Zone",
+      "variant": "emphasis"
+    },
+    {
+      "id": "reasoning-to-tts",
+      "from": "reasoning",
+      "to": "tts",
+      "label": "Guidance Text",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 28
+    },
+    {
+      "id": "reasoning-to-regulations",
+      "from": "reasoning",
+      "to": "regulations",
+      "label": "Chroma Query"
+    },
+    {
+      "id": "reasoning-to-ollama",
+      "from": "reasoning",
+      "to": "ollama",
+      "label": "Prompt & Embed",
+      "variant": "security"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Multimodal Perception",
+      "items": [
+        "YOLOv11 + SAHI for high-resolution traffic sign detection",
+        "Canny edge + Hough transform lane detection baseline",
+        "GPS coordinate radius lookup for road-zone classification"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Decoupled Orchestration",
+      "items": [
+        "FastAPI exposes REST /pipeline/run and context endpoints",
+        "Independent stages mockable in isolation for testing",
+        "Synchronous frame-by-frame orchestrator coordinator"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Grounded Local AI",
+      "items": [
+        "RAG over traffic regulation corpus in Chroma vector store",
+        "Local Ollama llama3.1 generation and nomic-embed-text embeddings",
+        "pyttsx3 offline speech synthesis with zero cloud latency"
+      ]
+    }
+  ]
+}

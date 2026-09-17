@@ -1,0 +1,226 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "ITAS-MM Pipeline Processing Workflow",
+    "output": "itas-mm-workflow.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "driver-loop",
+        "label": "Driver assistance workflow",
+        "focus": ["sensors", "dispatch", "sign_detect", "query_builder", "rag_retrieval", "llm_reasoning", "tts_synthesizer"],
+        "note": "Trace a single camera frame and GPS reading through perception, RAG grounding, and audio guidance."
+      },
+      {
+        "id": "multimodal-fusion",
+        "label": "Multimodal fusion",
+        "focus": ["dispatch", "sign_detect", "zone_lookup", "query_builder"],
+        "note": "Inspect how visual detections and geographic zone tags merge into a structured query."
+      },
+      {
+        "id": "rag-delivery",
+        "label": "RAG and speech delivery",
+        "focus": ["query_builder", "rag_retrieval", "llm_reasoning", "tts_synthesizer"],
+        "note": "Follow rule retrieval from ChromaDB, Ollama grounding, and offline speech synthesis."
+      }
+    ]
+  },
+  "lanes": [
+    {
+      "id": "ingress",
+      "label": "Sensory Edge & Gateway"
+    },
+    {
+      "id": "cv",
+      "label": "Visual Perception & LLM"
+    },
+    {
+      "id": "reasoning",
+      "label": "Knowledge Grounding & Speech"
+    }
+  ],
+  "phases": [
+    {
+      "id": "intake",
+      "label": "Frame Intake",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "perception_phase",
+      "label": "Perception & Fusion",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "reasoning_phase",
+      "label": "RAG & Speech Guidance",
+      "fromCol": 4,
+      "toCol": 4,
+      "variant": "emphasis"
+    }
+  ],
+  "mainPath": [
+    "sensors",
+    "dispatch",
+    "sign_detect",
+    "query_builder",
+    "rag_retrieval",
+    "llm_reasoning",
+    "tts_synthesizer"
+  ],
+  "nodes": [
+    {
+      "id": "sensors",
+      "lane": "ingress",
+      "col": 0,
+      "type": "external",
+      "label": "Vehicle Sensors",
+      "sublabel": "Camera & GPS",
+      "tag": "Telemetry",
+      "width": 132
+    },
+    {
+      "id": "dispatch",
+      "lane": "ingress",
+      "col": 1,
+      "type": "backend",
+      "label": "Pipeline Router",
+      "sublabel": "FastAPI /run",
+      "brand": "fastapi",
+      "width": 132
+    },
+    {
+      "id": "zone_lookup",
+      "lane": "ingress",
+      "col": 2,
+      "type": "backend",
+      "label": "Zone Classifier",
+      "sublabel": "GPS Radius Lookup",
+      "tag": "Road Context",
+      "width": 132
+    },
+    {
+      "id": "sign_detect",
+      "lane": "cv",
+      "col": 2,
+      "type": "backend",
+      "label": "Sign & Lane CV",
+      "sublabel": "YOLOv11 + SAHI",
+      "brand": "pytorch",
+      "width": 132
+    },
+    {
+      "id": "query_builder",
+      "lane": "cv",
+      "col": 3,
+      "type": "backend",
+      "label": "Query Builder",
+      "sublabel": "Prompt Formulation",
+      "width": 132
+    },
+    {
+      "id": "rag_retrieval",
+      "lane": "reasoning",
+      "col": 3,
+      "type": "database",
+      "label": "Vector Search",
+      "sublabel": "ChromaDB Rules",
+      "tag": "Embeddings",
+      "width": 132
+    },
+    {
+      "id": "llm_reasoning",
+      "lane": "cv",
+      "col": 4,
+      "type": "cloud",
+      "label": "Ollama LLM",
+      "sublabel": "llama3.1 Grounding",
+      "brand": "ollama",
+      "width": 132
+    },
+    {
+      "id": "tts_synthesizer",
+      "lane": "reasoning",
+      "col": 4,
+      "type": "backend",
+      "label": "TTS Engine",
+      "sublabel": "pyttsx3 Synthesis",
+      "tag": "Voice Audio",
+      "width": 132
+    }
+  ],
+  "edges": [
+    {
+      "id": "sensors-to-dispatch",
+      "from": "sensors",
+      "to": "dispatch",
+      "label": "Frame & GPS",
+      "variant": "emphasis"
+    },
+    {
+      "id": "dispatch-to-signdetect",
+      "from": "dispatch",
+      "to": "sign_detect",
+      "label": "Video Frame"
+    },
+    {
+      "id": "dispatch-to-zonelookup",
+      "from": "dispatch",
+      "to": "zone_lookup",
+      "label": "GPS Coords"
+    },
+    {
+      "id": "signdetect-to-query",
+      "from": "sign_detect",
+      "to": "query_builder",
+      "label": "Detections"
+    },
+    {
+      "id": "zonelookup-to-query",
+      "from": "zone_lookup",
+      "to": "query_builder",
+      "label": "Zone Label"
+    },
+    {
+      "id": "query-to-rag",
+      "from": "query_builder",
+      "to": "rag_retrieval",
+      "label": "Search Rules"
+    },
+    {
+      "id": "rag-to-llm",
+      "from": "rag_retrieval",
+      "to": "llm_reasoning",
+      "label": "Grounded Prompt",
+      "variant": "emphasis"
+    },
+    {
+      "id": "llm-to-tts",
+      "from": "llm_reasoning",
+      "to": "tts_synthesizer",
+      "label": "Guidance Text",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Perception & Fusion",
+      "items": [
+        "YOLOv11 sign detection with SAHI slicing and Hough lane baseline",
+        "GPS context classifier matches Urban, Suburban, or Highway zones"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "RAG & Voice Delivery",
+      "items": [
+        "ChromaDB retrieval grounds local Ollama llama3.1 generation",
+        "pyttsx3 synthesizes offline audio guidance for vehicle HUD"
+      ]
+    }
+  ]
+}
