@@ -13,3 +13,4 @@ node_modules/
 frontend/dist/
 .pytest_cache/
 *.log
+.agents/
