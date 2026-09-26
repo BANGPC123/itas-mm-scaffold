@@ -23,12 +23,21 @@ and keep the current scaffold runnable while reducing dead configuration and pre
 - Do not add the real legal corpus in this refactor.
 - Do not widen the frontend scope except where a backend contract change requires it.
 - Existing behavior must remain testable and the current test suite must stay green.
+
+## Source-control guardrail
+
+- `main` is read-only for this work.
+- Do not edit, commit, merge, rebase, force-update, or push any change to `main`.
+- `main` may only be fetched, inspected, and compared as a reference baseline.
+- All code, config, documentation, and test changes must stay on `backend/system-refactor` or another explicitly permitted non-`main` branch.
+- Divergence from `main` is allowed; no synchronization step with `main` is required unless the user explicitly changes this rule.
+
 ## Baseline
 
 Verified before design:
 
-- `backend/system-refactor` is clean at `18fa148`.
-- The branch is one commit ahead and one commit behind `main` because `main` contains the previous merge commit.
+- The pre-design audit baseline was commit `18fa148` on `backend/system-refactor`; subsequent design-document commits do not change that audited code baseline.
+- The branch currently diverges from `main`; this is informational only because `main` is read-only and will not be synchronized in this refactor.
 - Conda environment `WTF` uses Python 3.12.14.
 - `pip check` reports no broken requirements.
 - Current suite: 23 tests passing.
@@ -73,7 +82,7 @@ This is sufficient for the current scaffold. Article/clause/effective-date field
 
 ## Scope of changes
 
-1. Reconcile the feature branch with current `main` before implementation work.
+1. Read/compare against `main` only when baseline context is needed; do not merge, rebase, or otherwise synchronize with `main`.
 2. Remove dead backend configuration that has no runtime consumer.
 3. Remove the unused `pytest-mock` dependency.
 4. Change vector retrieval to preserve `DocumentChunk` metadata.
@@ -120,7 +129,7 @@ Do not add tests for private helpers merely to increase coverage.
 
 ## Success criteria
 
-- Branch is reconciled cleanly with `main` before implementation proceeds.
+- `main` remains untouched; all implementation commits stay on an explicitly permitted non-`main` branch.
 - Existing 23 tests remain green after refactor.
 - New minimum tests prove retrieved legal evidence retains `source_file` and `chunk_index`.
 - Empty-corpus RAG behavior remains fail-safe.
