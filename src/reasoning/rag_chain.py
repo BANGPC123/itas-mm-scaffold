@@ -44,7 +44,7 @@ class RagChain:
                 zone_label=zone_label,
             )
 
-        context_block = "\n\n".join(retrieved_chunks)
+        context_block = "\n\n".join(chunk.text for chunk in retrieved_chunks)
         user_prompt = (
             f"Khu vực hiện tại: {zone_label}\n\n"
             f"Sự kiện được phát hiện: {query_text}\n\n"

@@ -7,6 +7,10 @@ silent key-typos when one stage's output feeds the next stage's input.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from src.reasoning.document_loader import DocumentChunk
 
 
 @dataclass
@@ -44,7 +48,7 @@ class ZoneResult:
 @dataclass
 class ReasoningResult:
     guidance_text: str
-    retrieved_chunks: list[str]
+    retrieved_chunks: list[DocumentChunk]
     zone_label: str
 
 
