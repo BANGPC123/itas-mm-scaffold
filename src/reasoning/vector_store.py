@@ -47,8 +47,8 @@ class VectorStore:
         )
         logger.info("Indexed %d chunks into the vector store.", len(chunks))
 
-    def query(self, query_text: str, top_k: int) -> list[str]:
-        """Return the top_k most relevant chunk texts for query_text.
+    def query(self, query_text: str, top_k: int) -> list[DocumentChunk]:
+        """Return the top_k most relevant chunks with source metadata.
 
         Returns an empty list if the collection is empty rather than
         raising, so callers can handle "no regulation found" gracefully.
@@ -65,4 +65,16 @@ class VectorStore:
             query_embeddings=[query_embedding],
             n_results=min(top_k, self._collection.count()),
         )
-        return results["documents"][0] if results["documents"] else []
+        if not results["documents"]:
+            return []
+
+        documents = results["documents"][0]
+        metadatas = results["metadatas"][0]
+        return [
+            DocumentChunk(
+                text=text,
+                source_file=metadata["source_file"],
+                chunk_index=metadata["chunk_index"],
+            )
+            for text, metadata in zip(documents, metadatas, strict=True)
+        ]
