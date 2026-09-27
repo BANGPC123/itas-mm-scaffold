@@ -54,7 +54,9 @@ This is a **scaffold**, not a trained system. Concretely:
 - **RAG / Reasoning**: fully wired against a local Ollama instance
   (embeddings + generation), but `data/regulations/` ships with only a
   **small illustrative sample** of traffic-rule text, not a real corpus.
-  You must supply the actual regulation documents.
+  Retrieved evidence retains its `source_file` and `chunk_index` internally;
+  article/clause-level legal citations are not implemented yet. You must
+  supply the actual regulation documents.
 - **TTS**: uses `pyttsx3` (offline, no API cost), works out of the box.
 
 ## Installation
@@ -62,10 +64,18 @@ This is a **scaffold**, not a trained system. Concretely:
 ```bash
 git clone <this-repo>
 cd itas-mm
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-cp .env.example .env
+conda create -n WTF python=3.12 -y
+conda activate WTF
+python -m pip install -r requirements.txt
+```
+
+Reference Windows GPU setup for this project uses PyTorch `2.14.0+cu130`
+with CUDA 13.0. After installing the project requirements, install the CUDA
+build and restore the project's NumPy constraint:
+
+```bash
+python -m pip install --force-reinstall torch==2.14.0+cu130 torchvision==0.29.0+cu130 --index-url https://download.pytorch.org/whl/cu130
+python -m pip install "numpy>=1.26,<2.0"
 ```
 
 ### Ollama (for the Reasoning stage)
@@ -79,11 +89,14 @@ ollama serve                  # if not already running
 
 ## Environment
 
-- Python 3.10+
-- GPU recommended for YOLOv11 training/inference (CPU works for the demo
-  pipeline with the stub detector)
-- Ollama running locally on `http://localhost:11434` (configurable in
-  `configs/reasoning.yaml`)
+- Reference development environment: Conda `WTF`, Python 3.12.
+- Reference GPU runtime: NVIDIA RTX 4070 Laptop GPU, PyTorch `2.14.0+cu130`,
+  CUDA 13.0. `configs/perception.yaml` targets sign inference at `cuda:0`.
+- Ollama must provide `llama3.1` for generation and `nomic-embed-text` for
+  embeddings. Model names and base URL come from `configs/reasoning.yaml`.
+- Backend host/port come from the Uvicorn launch command. `LOG_LEVEL` is the
+  only optional process environment variable currently read by the app.
+- The application does not load a `.env`/dotenv file.
 
 ## Project structure
 
@@ -138,9 +151,11 @@ reporting against a held-out test split (see Limitations).
 
 ## Inference
 
-`src/pipeline/orchestrator.py` exposes `Pipeline.run(image, gps_coords)`
-which runs all four stages and returns a structured result, including the
-raw guidance text and (optionally) synthesized audio bytes.
+`src/pipeline/orchestrator.py` exposes
+`Pipeline.run(image, latitude, longitude, synthesize_audio=True)`. It runs
+all four stages and returns a `PipelineResult` containing perception,
+context, grounded reasoning evidence, and an optional synthesized-audio
+file path in `audio_path`.
 
 ## Results
 

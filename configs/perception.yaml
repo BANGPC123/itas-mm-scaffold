@@ -4,7 +4,7 @@ sign_detector:
   weights_path: null            # e.g. "models/sign_detector/best.pt"
   confidence_threshold: 0.35
   iou_threshold: 0.45
-  device: "cpu"                 # "cuda:0" if a GPU is available
+  device: "cuda:0"              # verified reference runtime: RTX 4070 Laptop GPU
   # Compound-sign grouping: panels whose box centers are within this many
   # pixels (at model input resolution) are grouped into one logical sign.
   compound_group_distance_px: 40

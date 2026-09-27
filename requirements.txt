@@ -22,4 +22,3 @@ python-multipart>=0.0.9
 
 # Testing
 pytest>=8.0
-pytest-mock>=3.12
