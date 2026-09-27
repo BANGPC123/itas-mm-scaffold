@@ -6,7 +6,7 @@
 
 **Architecture:** Keep the existing four-stage `Perception -> Context -> Reasoning -> Interaction` pipeline. Reuse the existing `DocumentChunk` as the retrieval evidence type, return it from `VectorStore.query()`, carry it through `RagChain` into `ReasoningResult`, and leave the FastAPI response contract unchanged for now.
 
-**Tech Stack:** Python 3.12, dataclasses, ChromaDB, Ollama client, FastAPI, pytest, unittest.mock.
+**Tech Stack:** Python 3.12, PyTorch 2.14.0+cu130, CUDA 13.0 on RTX 4070 Laptop GPU, Ultralytics, dataclasses, ChromaDB, Ollama (`llama3.1`, `nomic-embed-text`), FastAPI, pytest, unittest.mock.
 
 **Spec:** `docs/superpowers/specs/2026-09-26-backend-system-refactor-design.md`
 
@@ -15,18 +15,21 @@
 - `main` is read-only: no edit, commit, merge, rebase, force-update, or push to `main`.
 - All writes and commits stay on `backend/system-refactor` or another explicitly permitted non-`main` branch.
 - Keep Ponytail full / YAGNI: no new factories, providers, adapters, or interface hierarchies.
-- Do not implement lane-event thresholds, learned lane detection, YOLO training, real legal corpus ingestion, GPS/OSM fusion, streaming, or CUDA changes.
+- Do not implement lane-event thresholds, learned lane detection, YOLO training, real legal corpus ingestion, GPS/OSM fusion, or streaming.
+- Conda env `WTF` must remain CUDA-capable; `torch.cuda.is_available()` must be `True` on the RTX 4070 Laptop GPU.
+- `configs/perception.yaml` must target sign-detection inference at `cuda:0`.
+- Ollama models `llama3.1` and `nomic-embed-text` are required local runtime dependencies and may be installed/verified as part of environment preparation.
 - Keep `Pipeline.run(..., synthesize_audio=...)` unchanged.
 - Existing FastAPI response behavior remains compatible in this refactor.
-- Baseline before implementation: 23 tests passing in Conda env `WTF`.
+- Baseline before implementation: 23 tests passing in Conda env `WTF`, PyTorch `2.14.0+cu130`, and verified Ultralytics inference on `cuda:0`.
 
 ## Review Focus
 
 1. Empty Chroma collection must return `[]` without calling the embedding model.
-2. Retrieved text must preserve the matching `source_file` and `chunk_index` metadata.
-3. Multiple retrieved results must keep Chroma result order and metadata pairing.
-4. Empty RAG retrieval must return the existing fail-safe guidance and must not call generation.
-5. Populated RAG retrieval must ground the prompt on chunk text while returning the exact evidence objects unchanged.
+2. Retrieved results must preserve `source_file`/`chunk_index`, original order, and text-to-metadata pairing.
+3. Empty RAG retrieval must return the existing fail-safe guidance and must not call generation.
+4. Populated RAG retrieval must ground the prompt on chunk text while returning the exact evidence objects unchanged.
+5. Runtime preflight must prove `WTF` can execute Ultralytics on `cuda:0` and that Ollama has both configured models installed.
 
 ---
 ### Task 1: Preserve retrieval metadata in `VectorStore`
@@ -121,30 +124,36 @@ git add src/utils/types.py src/reasoning/rag_chain.py tests/unit/test_rag_chain.
 git commit -m "refactor: retain legal evidence in reasoning"
 ```
 
-### Task 3: Remove dead configuration and align documentation
+### Task 3: Enforce CUDA runtime, remove dead configuration, and align documentation
 
 **Files:**
 - Modify: `requirements.txt`
+- Modify: `configs/perception.yaml`
 - Modify: `configs/interaction.yaml`
 - Delete: `.env.example`
 - Modify: `README.md`
 
 **Interfaces:**
-- Consumes: runtime configuration already read from YAML plus `LOG_LEVEL` read directly from the process environment.
-- Produces: no runtime API change; removes configuration surfaces with no consumer and documents the actual setup path.
+- Consumes: runtime configuration from YAML, CUDA-capable Conda env `WTF`, locally installed Ollama models, plus `LOG_LEVEL` read directly from the process environment.
+- Produces: `sign_detector.device: "cuda:0"`; no runtime API change; removes configuration surfaces with no consumer and documents the actual setup path.
 
 - [ ] **Step 1: Remove the unused dependency and dead config keys**
 
 Delete `pytest-mock` from `requirements.txt`. Delete `tts.engine` from `configs/interaction.yaml`; keep `rate`, `volume`, `voice_id`, and `output_dir` unchanged. Delete `.env.example` because the application does not load dotenv files and the listed Ollama/backend variables are not consumed.
 
-- [ ] **Step 2: Update README installation/environment instructions**
+- [ ] **Step 2: Make CUDA the sign-detector runtime target**
 
-Remove `cp .env.example .env`. State that Ollama model/base URL values come from `configs/reasoning.yaml`, Uvicorn host/port come from the launch command, and `LOG_LEVEL` is an optional process environment variable. Correct the `Pipeline.run` documentation to the actual `(image, latitude, longitude, synthesize_audio=True)` shape.
-- [ ] **Step 3: Align the README with the provenance refactor without widening scope**
+Change `configs/perception.yaml` so `sign_detector.device` is exactly `"cuda:0"`. Do not add auto-fallback logic in this refactor; the approved `WTF` environment is expected to provide the RTX 4070 CUDA runtime.
+
+- [ ] **Step 3: Update README installation/environment instructions**
+
+Remove `cp .env.example .env`. Document that this development setup uses Conda env `WTF`, PyTorch `2.14.0+cu130`, and an NVIDIA CUDA GPU; Ollama model/base URL values come from `configs/reasoning.yaml`; Uvicorn host/port come from the launch command; and `LOG_LEVEL` is an optional process environment variable. State that `llama3.1` and `nomic-embed-text` must be installed in Ollama. Correct the `Pipeline.run` documentation to the actual `(image, latitude, longitude, synthesize_audio=True)` shape.
+
+- [ ] **Step 4: Align the README with the provenance refactor without widening scope**
 
 Document that retrieved regulation evidence now retains `source_file` and `chunk_index` internally. Keep the current limitations explicit: illustrative corpus, classical lane baseline, no trained sign weights, and no dataset-level evaluation. Do not claim article/clause-level citations or real-time streaming.
 
-- [ ] **Step 4: Verify dead configuration is gone**
+- [ ] **Step 5: Verify dead configuration is gone**
 
 Run:
 ```powershell
@@ -152,7 +161,18 @@ git grep -n "pytest-mock\|OLLAMA_BASE_URL\|OLLAMA_GENERATION_MODEL\|OLLAMA_EMBED
 ```
 Expected: no matches from active project configuration or requirements.
 
-- [ ] **Step 5: Verify dependencies and the complete test suite**
+- [ ] **Step 6: Verify CUDA and Ollama runtime prerequisites**
+
+Run:
+```powershell
+conda run -n WTF python -c "import torch; assert torch.cuda.is_available(); print(torch.__version__); print(torch.version.cuda); print(torch.cuda.get_device_name(0))"
+ollama list
+```
+Expected: CUDA is available on `NVIDIA GeForce RTX 4070 Laptop GPU`; PyTorch reports the CUDA build; `ollama list` includes both `llama3.1` and `nomic-embed-text`.
+
+Then run an Ultralytics smoke inference outside the repository using `YOLO('yolo11n.yaml')`, a blank NumPy image, and `device=0`; assert `model.predictor.device` and the predictor backend are both `cuda:0`.
+
+- [ ] **Step 7: Verify dependencies and the complete test suite**
 
 Run:
 ```powershell
@@ -161,7 +181,7 @@ conda run -n WTF python -m pytest -q
 ```
 Expected: `No broken requirements found.` and all tests PASS.
 
-- [ ] **Step 6: Verify source-control and whitespace guardrails**
+- [ ] **Step 8: Verify source-control and whitespace guardrails**
 
 Run:
 ```powershell
@@ -171,17 +191,19 @@ git status --short
 ```
 Expected: branch is `backend/system-refactor`; `git diff --check` is silent; only Task 3 files are modified before commit.
 
-- [ ] **Step 7: Commit Task 3**
+- [ ] **Step 9: Commit Task 3**
 
 ```bash
-git add requirements.txt configs/interaction.yaml README.md
+git add requirements.txt configs/perception.yaml configs/interaction.yaml README.md
 git rm .env.example
-git commit -m "chore: remove dead project configuration"
+git commit -m "chore: align runtime configuration"
 ```
 
 ## Final Acceptance
 
 - Run `conda run -n WTF python -m pytest -q` once more after all task commits.
+- Run the CUDA/Ultralytics smoke verification again and require `cuda:0`.
+- Run `ollama list` and require `llama3.1` plus `nomic-embed-text`.
 - Run `git diff --check` and require no output.
 - Run `git status --short` and require a clean worktree.
 - Run `git log --oneline -5` and verify all implementation commits are on `backend/system-refactor`.

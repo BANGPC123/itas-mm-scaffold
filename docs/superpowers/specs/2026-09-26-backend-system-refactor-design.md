@@ -23,6 +23,8 @@ and keep the current scaffold runnable while reducing dead configuration and pre
 - Do not add the real legal corpus in this refactor.
 - Do not widen the frontend scope except where a backend contract change requires it.
 - Existing behavior must remain testable and the current test suite must stay green.
+- The `WTF` environment must remain CUDA-capable; sign-detection inference is expected to target `cuda:0` on the RTX 4070 Laptop GPU.
+- The configured Ollama models `llama3.1` and `nomic-embed-text` are allowed and expected to be installed locally.
 
 ## Source-control guardrail
 
@@ -41,8 +43,9 @@ Verified before design:
 - Conda environment `WTF` uses Python 3.12.14.
 - `pip check` reports no broken requirements.
 - Current suite: 23 tests passing.
-- PyTorch is CPU-only (`2.14.0+cpu`); CUDA work is outside this refactor.
-- Ollama currently has `gemma4:e2b`, while project config names `llama3.1` and `nomic-embed-text`.
+- Conda env `WTF` now uses PyTorch `2.14.0+cu130`; CUDA 13.0 is available on the NVIDIA GeForce RTX 4070 Laptop GPU.
+- An Ultralytics YOLO smoke inference was verified with `predictor_device=cuda:0` and the inference backend on `cuda:0`.
+- Ollama has the configured `llama3.1` generation model and `nomic-embed-text` embedding model installed; `gemma4:e2b` is also present.
 - Chroma collection `traffic_regulations` exists but is empty.
 - `data/regulations` contains only the illustrative sample corpus.
 
@@ -83,15 +86,17 @@ This is sufficient for the current scaffold. Article/clause/effective-date field
 ## Scope of changes
 
 1. Read/compare against `main` only when baseline context is needed; do not merge, rebase, or otherwise synchronize with `main`.
-2. Remove dead backend configuration that has no runtime consumer.
-3. Remove the unused `pytest-mock` dependency.
-4. Change vector retrieval to preserve `DocumentChunk` metadata.
-5. Change `ReasoningResult` to retain retrieved evidence rather than only raw strings.
-6. Keep `synthesize_audio` because it supports benchmark/test isolation and later latency evaluation.
-7. Keep the current `__init__.py` files and generated architecture artifacts in this refactor to avoid unrelated churn.
-8. Keep the current classical lane baseline and its internal line representation.
-9. Avoid exposing Hough-specific details as a long-term research contract when touching related response code.
-10. Update README/config comments only where required to reflect actual runtime behavior.
+2. Keep Conda env `WTF` CUDA-capable and set `sign_detector.device` to `cuda:0`; verify Ultralytics inference actually executes on the GPU.
+3. Keep the configured Ollama models `llama3.1` and `nomic-embed-text` installed locally.
+4. Remove dead backend configuration that has no runtime consumer.
+5. Remove the unused `pytest-mock` dependency.
+6. Change vector retrieval to preserve `DocumentChunk` metadata.
+7. Change `ReasoningResult` to retain retrieved evidence rather than only raw strings.
+8. Keep `synthesize_audio` because it supports benchmark/test isolation and later latency evaluation.
+9. Keep the current `__init__.py` files and generated architecture artifacts in this refactor to avoid unrelated churn.
+10. Keep the current classical lane baseline and its internal line representation.
+11. Avoid exposing Hough-specific details as a long-term research contract when touching related response code.
+12. Update README/config comments only where required to reflect actual runtime behavior.
 
 ## Explicit non-goals
 
@@ -102,7 +107,7 @@ This is sufficient for the current scaffold. Article/clause/effective-date field
 - Real Vietnamese legal-corpus ingestion.
 - Automatic audio playback in the UI.
 - Continuous camera/video streaming.
-- CUDA/PyTorch installation changes.
+- Further CUDA/PyTorch version changes beyond the verified `WTF` CUDA baseline.
 - New deployment/container/CI work.
 
 These belong to later research slices and should not be invented during system cleanup.
@@ -131,6 +136,8 @@ Do not add tests for private helpers merely to increase coverage.
 
 - `main` remains untouched; all implementation commits stay on an explicitly permitted non-`main` branch.
 - Existing 23 tests remain green after refactor.
+- `WTF` reports CUDA available, `configs/perception.yaml` targets `cuda:0`, and an Ultralytics smoke inference executes on `cuda:0`.
+- `ollama list` contains both `llama3.1` and `nomic-embed-text`.
 - New minimum tests prove retrieved legal evidence retains `source_file` and `chunk_index`.
 - Empty-corpus RAG behavior remains fail-safe.
 - Dead backend config/dependency identified in the audit is removed.
