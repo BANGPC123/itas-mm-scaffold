@@ -45,6 +45,27 @@ canonical JSON.
 - UI citation viewer or production legal-advice claims.
 - Lane-model, sign-model, GPS/OSM, or streaming work.
 
+## Audited reference implementation
+
+Legal Corpus v1 uses `lqb464/LuatRAG` as a pinned implementation reference at
+commit `ae2b1c796503e2a58493771bc341b66fb488e053` (main, 2026-09-18). The
+reference is not vendored wholesale. Its curated `data/legal-corpus.json` is
+not an acceptable ITAS-MM corpus because its current selection does not include
+`36/2024/QH15`, `168/2024/NĐ-CP`, or QCVN 41.
+
+Reuse only proven patterns that fit this design: curated source identities with
+expected document numbers, official VBPL acquisition, source-content hashes,
+pinned upstream provenance, atomic artifact replacement, and fail-closed
+citation validation. Do not copy LuatRAG's lexical-only retrieval architecture
+or its fixed target/max-size chunking as the ITAS retrieval design. ITAS keeps
+its existing Chroma + `nomic-embed-text` retrieval path until benchmark evidence
+justifies a hybrid or lexical alternative.
+
+LuatRAG code is MIT-licensed. Its bootstrap corpus attributes `tmquan/vbpl-vn`
+under CC BY 4.0; ITAS v1 avoids copying that corpus and instead acquires the
+approved traffic-law sources from official endpoints. If dataset-derived
+content is introduced later, its attribution requirements must be preserved.
+
 ## Corpus layout and provenance
 
 ```text
@@ -52,11 +73,11 @@ data/regulations/
 ├── raw/
 │   ├── law-36-2024-qh15/source.*
 │   ├── decree-168-2024-nd-cp/source.*
-│   └── qcvn-41-2019-bgtvt/source.*
+│   └── qcvn-41-2024-bgtvt/source.*
 ├── normalized/
 │   ├── law-36-2024-qh15.json
 │   ├── decree-168-2024-nd-cp.json
-│   └── qcvn-41-2019-bgtvt.json
+│   └── qcvn-41-2024-bgtvt.json
 └── manifest.json
 ```
 
@@ -64,10 +85,18 @@ Raw source files are immutable audit artifacts. `manifest.json` records only
 reproducibility metadata needed by the pipeline: `document_id`, source URL,
 raw file path, retrieval timestamp, normalized file path, and SHA-256.
 
-The initial corpus targets the three approved sources: Luật 36/2024/QH15,
-Nghị định 168/2024/NĐ-CP, and QCVN 41:2019/BGTVT. Source acquisition must use
-official or otherwise explicitly approved authoritative locations; the repo
-must not silently replace a missing source with an illustrative sample.
+The initial corpus targets three current sources: Law 36/2024/QH15, Decree
+168/2024/NĐ-CP, and QCVN 41:2024/BGTVT. QCVN 41:2019/BGTVT is not used for
+current guidance because the 2024 revision supersedes it.
+
+`config/legal-corpus.json` is the curated acquisition manifest: each entry pins
+`document_id`, expected official document number/title, source kind, and
+authoritative source locator. Law/decree acquisition follows LuatRAG's verified
+VBPL pattern: retrieve the official record, verify the returned document number
+against the curated expectation, retain the raw response/source artifact, and
+record a content SHA-256. QCVN acquisition uses the authoritative 2024 source
+artifact rather than pretending it is a VBPL article hierarchy. Missing or
+mismatched sources fail closed; no illustrative sample substitutes.
 
 ## Canonical legal model
 
@@ -94,13 +123,19 @@ store the full canonical object graph.
 
 ## Normalization and validation
 
-Normalization flow:
+Acquisition and normalization flow:
 
 ```text
-official PDF/HTML -> extract text -> deterministic structure parser
-                  -> unresolved blocks -> optional LLM assist
-                  -> schema validation -> reviewable canonical JSON
+curated source config -> official source fetch -> immutable raw artifact + SHA-256
+                      -> extract text -> deterministic structure parser
+                      -> unresolved blocks -> optional LLM assist
+                      -> schema validation -> reviewable canonical JSON
 ```
+
+Source fetching uses bounded retries and writes raw/normalized candidates
+atomically so a partial download or failed normalization cannot replace the
+last reviewed artifact. Expected document identity is verified before any
+normalized output is accepted.
 
 Deterministic parsing handles explicit legal markers such as `Điều`, numbered
 clauses, lettered points, and QCVN section identifiers. LLM assistance is only
@@ -147,9 +182,11 @@ chosen after inspecting the actual canonical documents.
 
 ## Vector index lifecycle
 
-`VectorStore` continues to use Chroma and `nomic-embed-text`. Metadata expands
-to include `document_id`, `source_file`, `chunk_index`, `locator_type`, and
-`locator`. IDs must be deterministic, for example:
+`VectorStore` continues to use Chroma and `nomic-embed-text`. LuatRAG's
+SQLite FTS5/BM25 path is an audited reference, not a v1 dependency; hybrid
+retrieval is deferred until the ITAS benchmark demonstrates a need. Metadata
+expands to include `document_id`, `source_file`, `chunk_index`, `locator_type`,
+and `locator`. IDs must be deterministic, for example:
 
 ```text
 document_id::locator_type::locator::chunk_index
@@ -218,14 +255,18 @@ scripts/
 └── evaluate_legal_retrieval.py
 ```
 
+Legal Corpus v1 additionally owns `scripts/fetch_regulations.py` for the three
+curated official sources and `config/legal-corpus.json` for their pinned
+acquisition identities. The fetcher is not a general Vietnamese-law crawler.
+
 Do not add repository/service/provider/adapter layers. `legal_models.py` owns
 canonical structure. `legal_normalizer.py` handles source-text normalization.
 `document_loader.py` loads validated canonical JSON and projects retrieval
 chunks. `vector_store.py` owns derived-index storage/retrieval only.
 
-Developer workflow stays small: normalize sources, review canonical JSON, then
-build the validated index. A separate validation CLI is unnecessary unless an
-independent use case appears.
+Developer workflow stays small: fetch curated official sources, normalize them,
+review canonical JSON, then build the validated index. A separate validation CLI
+is unnecessary unless an independent use case appears.
 
 ## Migration from the current corpus
 
@@ -265,8 +306,11 @@ not invoke generation.
 
 ## Success criteria
 
-- Three approved source documents exist as immutable raw artifacts with manifest
-  provenance and validated canonical JSON.
+- Three current source documents (36/2024/QH15, 168/2024/NĐ-CP, and QCVN
+  41:2024/BGTVT) exist as immutable raw artifacts with manifest provenance and
+  validated canonical JSON.
+- Source acquisition verifies expected document identity and SHA-256 before
+  normalized artifacts can be accepted.
 - Canonical models represent both article/clause/point and QCVN section forms.
 - Retrieval chunks preserve deterministic document and legal locator identity.
 - Rebuilding the same canonical corpus with the same schema/model yields the
