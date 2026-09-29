@@ -158,7 +158,7 @@ def _candidate(
         "source_kind": source_kind,
         "source_url": source_url,
         "raw_file": raw_file,
-        "raw_sha256": hashlib.sha256(raw_bytes).hexdigest(),
+        "sha256": hashlib.sha256(raw_bytes).hexdigest(),
         "text_sha256": hashlib.sha256(text.encode("utf-8")).hexdigest(),
         "retrieved_at": retrieved_at,
         "chunk_count": len(chunks),

@@ -194,13 +194,14 @@ def test_corpus_publication_contains_unique_source_and_chunk_ids(tmp_path: Path)
             "source_kind",
             "source_url",
             "raw_file",
-            "raw_sha256",
+            "sha256",
             "text_sha256",
             "retrieved_at",
             "chunk_count",
         } <= source.keys()
         for source in corpus["sources"]
     )
+    assert all("raw_sha256" not in source for source in corpus["sources"])
 
 
 def test_cli_help_exits_without_network() -> None:
