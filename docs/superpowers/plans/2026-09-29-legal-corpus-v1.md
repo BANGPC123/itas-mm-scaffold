@@ -2,402 +2,345 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Replace the illustrative traffic-law sample with a reproducible, current Vietnamese legal corpus whose canonical JSON, provenance, retrieval metadata, citations, and retrieval quality are testable end to end.
+**Goal:** Selectively port LuatRAG's proven corpus-building logic into ITAS-MM, under ITAS-native names, and produce a deterministic three-source traffic-regulation corpus for the existing Chroma + `nomic-embed-text` RAG stack.
 
-**Architecture:** Acquire three curated official sources into immutable raw artifacts, normalize them into validated Pydantic canonical JSON, project legal leaf nodes to `DocumentChunk`, and rebuild the existing Chroma index deterministically. Keep `nomic-embed-text` + Chroma, retain retrieved evidence through `RagChain`, and evaluate retrieval separately with Recall@k/MRR.
+**Architecture:** Port only source acquisition, Vietnamese text normalization, heading-aware chunking, stable checksums, and atomic corpus publication from pinned LuatRAG commit `ae2b1c796503e2a58493771bc341b66fb488e053`. Publish one reviewable `data/regulations/corpus.json`, project its chunks directly to the existing `DocumentChunk`, and preserve the already-implemented safe Chroma rebuild and fail-closed citation aliases.
 
-**Tech Stack:** Python 3.12, Pydantic 2.x, requests, pypdf 6.x, ChromaDB, Ollama `nomic-embed-text` + `llama3.1`, pytest, unittest.mock.
+**Tech Stack:** Python 3.12, `requests`, `pypdf>=6.19,<7`, ChromaDB, Ollama `nomic-embed-text`, pytest. LuatRAG is source material only; it is not a runtime dependency.
 
 **Spec:** `docs/superpowers/specs/2026-09-28-legal-corpus-v1-design.md`
 
+**Starting point:** `backend/legal-corpus-v1` at/after `1bc3477`. Earlier work already added `DocumentChunk` provenance, safe Chroma rebuild/fingerprint infrastructure, and citation-alias validation; this plan migrates those pieces to the new corpus artifact instead of reimplementing them.
+
 ## Global Constraints
 
-- `main` is read-only: never edit, commit, merge, rebase, force-update, or push it.
-- All implementation stays on `backend/legal-corpus-v1` or another explicitly permitted non-`main` branch.
-- Reference `lqb464/LuatRAG` only at pinned commit `ae2b1c796503e2a58493771bc341b66fb488e053`; do not vendor it wholesale.
-- Do not copy LuatRAG's bootstrap corpus; acquire ITAS traffic-law sources from official endpoints.
-- Corpus v1 sources are `36/2024/QH15`, `168/2024/NĐ-CP`, and `QCVN 41:2024/BGTVT`.
-- QCVN 41:2019/BGTVT is not used for current guidance.
-- Keep existing Chroma + `nomic-embed-text`; no BM25/FTS5/reranker unless later benchmark evidence justifies it.
-- No legal ontology, knowledge graph, crawler daemon, UI citation viewer, or public API widening.
-- Normalized JSON is reviewable source of truth; Chroma is derived and rebuildable.
-- Runtime empty retrieval keeps the existing Vietnamese fail-safe and must not invoke generation.
+- `main` is strictly read-only: never edit, commit, merge, rebase, reset, force-update, or push it.
+- All writes stay on `backend/legal-corpus-v1` or another explicitly approved non-`main` branch.
+- Preserve the existing uncommitted real raw artifacts under `data/regulations/raw/`; do not silently discard or overwrite them during migration.
+- Selective port source is only `lqb464/LuatRAG@ae2b1c796503e2a58493771bc341b66fb488e053`.
+- Do not add `vendor/luatrag/`, `luatrag_adapter.py`, `src/rag/`, submodules, or a parallel LuatRAG runtime namespace.
+- Use ITAS naming consistently: `config/regulations.json`, `scripts/fetch_regulations.py`, `data/regulations/corpus.json`, and existing `src/reasoning/*` modules.
+- Do not copy LuatRAG's bootstrap corpus, Gemini layer, SQLite/FTS5/BM25 retrieval, frontend, or upload flow.
+- Keep Chroma + Ollama `nomic-embed-text`; do not add a reranker or lexical retrieval in v1.
+- Do not OCR QCVN sign-image pages and do not use model knowledge to repair legal text.
+- Preserve the current runtime empty-retrieval fail-safe and citation-alias rejection behavior.
 
 ## Review Focus
 
-1. Source identity mismatch: fetched VBPL payload number must equal the curated expected number; otherwise acquisition fails without overwriting the prior manifest.
-2. QCVN PDF without a usable text layer: normalization must fail explicitly rather than silently produce an empty/garbled canonical document.
-3. Duplicate or empty legal nodes: schema validation rejects duplicate article/clause/point/section locators and empty leaves before indexing.
-4. Stale derived index: a successful rebuild must remove chunks that are absent from the new canonical corpus, while a pre-build validation failure must leave the old collection usable.
-5. Citation escape: any source alias emitted by the LLM must refer only to evidence in the current retrieval set; unknown aliases are rejected.
+1. Port drift: characterization tests must pin the LuatRAG normalization/chunking behaviors we intentionally reuse before adaptation, so later refactors do not silently change corpus semantics.
+2. Source disagreement: an official representation that fails configured identity/content checks must stop or switch only to an explicitly configured official source; never auto-correct legal wording.
+3. QCVN image-only pages: pages without a font/text resource are skipped deterministically, while text-bearing pages remain included; no OCR fallback is allowed.
+4. Publication safety: a failed fetch/extraction/chunk build must not overwrite different raw bytes or replace the last valid `corpus.json`.
+5. Retrieval continuity: corpus migration must preserve deterministic `DocumentChunk` provenance, safe Chroma rebuild behavior, empty-retrieval identity, and fail-closed `[S<n>]` aliases.
 
 ## File Structure
 
-- `config/legal-corpus.json` — curated source identities and official acquisition locators.
-- `src/reasoning/legal_models.py` — canonical Pydantic schema and structural validation.
-- `src/reasoning/legal_normalizer.py` — extraction/normalization into canonical models.
-- `src/reasoning/document_loader.py` — canonical JSON loading and `DocumentChunk` projection.
-- `src/reasoning/vector_store.py` — deterministic derived-index rebuild and metadata round-trip.
-- `src/reasoning/rag_chain.py` — evidence labels and citation-alias validation.
-- `scripts/fetch_regulations.py` — official source acquisition and raw manifest creation.
-- `scripts/normalize_regulations.py` — raw → reviewed canonical JSON workflow.
-- `scripts/build_vector_index.py` — validate/project/fingerprint/rebuild.
-- `scripts/evaluate_legal_retrieval.py` — Recall@1/@3/@4, MRR, failure reporting.
-- `data/regulations/raw/`, `data/regulations/normalized/`, `data/regulations/manifest.json` — committed corpus artifacts.
-- `data/evaluation/legal_retrieval.json` — curated retrieval benchmark cases.
+- Rename: `config/legal-corpus.json` → `config/regulations.json` — curated source identities.
+- Modify: `src/reasoning/legal_normalizer.py` — selectively port text normalization/extraction only; remove deep legal hierarchy parsing.
+- Modify: `src/reasoning/document_loader.py` — selectively port heading-aware chunking and load/project `corpus.json`.
+- Modify: `scripts/fetch_regulations.py` — bounded official acquisition + raw immutability + corpus assembly/publication.
+- Modify: `scripts/build_vector_index.py` — load `corpus.json`, fingerprint, rebuild Chroma.
+- Preserve: `src/reasoning/vector_store.py`, `src/reasoning/rag_chain.py` — only adapt if corpus projection requires it.
+- Delete when migration tests prove unused: `src/reasoning/legal_models.py`, `scripts/normalize_regulations.py`, obsolete canonical-model/parser tests.
+- Create: `THIRD_PARTY_NOTICES.md` — LuatRAG MIT attribution for substantially ported code.
+- Create/populate: `data/regulations/corpus.json`, `data/evaluation/legal_retrieval.json`.
+- Modify: `configs/reasoning.yaml`, `README.md`.
 
 ---
-### Task 1: Canonical legal schema and validation
+### Task 1: Selectively port normalization and chunking primitives
 
 **Files:**
-- Create: `src/reasoning/legal_models.py`
-- Create: `tests/unit/test_legal_models.py`
+- Modify: `src/reasoning/legal_normalizer.py`
+- Modify: `src/reasoning/document_loader.py`
+- Replace: `tests/unit/test_legal_normalizer.py`
+- Replace: `tests/unit/test_document_loader.py`
+- Create: `THIRD_PARTY_NOTICES.md`
 
 **Interfaces:**
-- Produces: `SCHEMA_VERSION = "1"`.
-- Produces: `LegalSource`, `LegalPoint`, `LegalClause`, `LegalArticle`, `LegalSection`, `LegalDocument` Pydantic models.
-- `LegalDocument` fields: `schema_version`, `document_id`, `title`, `document_type`, `source`, `articles`, `sections`.
-- `LegalSource` fields: `source_url`, `raw_file`, `sha256`, `retrieved_at`.
-
-- [ ] **Step 1: Write failing schema tests**
-
-Add tests named `test_valid_law_hierarchy`, `test_valid_qcvn_section_hierarchy`, `test_duplicate_articles_rejected`, `test_duplicate_clauses_and_points_rejected`, `test_duplicate_sections_rejected`, `test_empty_leaf_rejected`, and `test_missing_source_provenance_rejected`. Assert exact Pydantic validation failures rather than private validator calls.
-
-- [ ] **Step 2: Verify RED**
-
-Run: `conda run -n WTF python -m pytest tests/unit/test_legal_models.py -v`
-Expected: FAIL because `src.reasoning.legal_models` does not exist.
-
-- [ ] **Step 3: Implement minimal models and validators**
-
-Use `BaseModel`, `Field`, and model validators only. A legal leaf must contain non-whitespace text; parent nodes may omit `text` only when they have children. Enforce uniqueness within each parent scope, not globally across unrelated documents.
-
-- [ ] **Step 4: Verify GREEN**
-
-Run: `conda run -n WTF python -m pytest tests/unit/test_legal_models.py -v`
-Expected: all Task 1 tests PASS.
-
-- [ ] **Step 5: Run regression suite**
-
-Run: `conda run -n WTF python -m pytest -q`
-Expected: current suite plus schema tests PASS.
-
-- [ ] **Step 6: Commit Task 1**
-
-```powershell
-git add src/reasoning/legal_models.py tests/unit/test_legal_models.py
-git commit -m "feat: add canonical legal schema"
-```
-
-### Task 2: Curated official-source acquisition
-
-**Files:**
-- Create: `config/legal-corpus.json`
-- Create: `scripts/fetch_regulations.py`
-- Create: `tests/unit/test_fetch_regulations.py`
-
-**Interfaces:**
-- Produces: `fetch_regulations(config_path: str, raw_dir: str, manifest_path: str) -> dict`.
-- Produces immutable raw artifacts plus `data/regulations/manifest.json` entries containing `document_id`, source URL, raw file, retrieval timestamp, normalized file, and SHA-256.
-
-- [ ] **Step 1: Write failing acquisition tests**
-
-Test `test_vbpl_number_mismatch_fails_closed`, `test_same_raw_bytes_produce_same_sha256_and_paths`, `test_existing_raw_file_with_different_bytes_is_not_overwritten`, `test_failed_fetch_does_not_replace_existing_manifest`, and `test_qcvn_download_uses_curated_official_attachment`. Mock network responses; do not hit the internet in unit tests.
-
-- [ ] **Step 2: Verify RED**
-
-Run: `conda run -n WTF python -m pytest tests/unit/test_fetch_regulations.py -v`
-Expected: FAIL because the fetcher/config do not exist.
-
-- [ ] **Step 3: Add the curated three-source config**
-
-Pin these identities:
-- `law-36-2024-qh15`: VBPL item `170620`, expected `36/2024/QH15`, source page `https://vbpl.vn/TW/Pages/vbpq-toanvan.aspx?ItemID=170620`.
-- `decree-168-2024-nd-cp`: VBPL item `173920`, expected `168/2024/NĐ-CP`, source page `https://vbpl.vn/TW/Pages/vbpq-toanvan.aspx?ItemID=173920`.
-- `qcvn-41-2024-bgtvt`: government page `https://vanban.chinhphu.vn/?classid=1&docid=211908&pageid=27160`, attachment `https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/11/51-bgtvt-kem.pdf`, expected `QCVN 41:2024/BGTVT`.
-
-- [ ] **Step 4: Implement acquisition**
-
-For VBPL entries call `https://vbpl-bientap-gateway.moj.gov.vn/api/qtdc/public/doc/{item_id}`, verify `docNum`, and store the complete JSON payload as `source.json`. For QCVN store the exact attachment bytes as `source.pdf`. Compute SHA-256 from raw bytes. An existing raw file is immutable: identical bytes are a no-op, different bytes fail closed instead of overwriting it. Replace the manifest only after all configured sources have been acquired and verified; use a temp file + `os.replace`.
-
-- [ ] **Step 5: Verify GREEN and regression safety**
-
-Run: `conda run -n WTF python -m pytest tests/unit/test_fetch_regulations.py -v`
-Then: `conda run -n WTF python -m pytest -q`
-Expected: acquisition tests and full suite PASS.
-
-- [ ] **Step 6: Commit Task 2**
-
-```powershell
-git add config/legal-corpus.json scripts/fetch_regulations.py tests/unit/test_fetch_regulations.py
-git commit -m "feat: add official legal source acquisition"
-```
-
-### Task 3: Raw extraction and hybrid canonical normalization
-
-**Files:**
-- Modify: `requirements.txt`
-- Create: `src/reasoning/legal_normalizer.py`
-- Create: `scripts/normalize_regulations.py`
-- Create: `tests/unit/test_legal_normalizer.py`
-
-**Interfaces:**
+- Produces: `normalize_vietnamese(value: str) -> str`.
+- Produces: `html_to_text(value: str) -> str`.
 - Produces: `extract_vbpl_text(payload: dict) -> str`.
-- Produces: `extract_pdf_text(path: str | Path) -> str` using pypdf.
-- Produces: `normalize_document(raw_text: str, *, document_id: str, title: str, document_type: str, source: LegalSource, assist: Callable[[str], dict] | None = None) -> tuple[LegalDocument, list[str]]`.
-- Deterministic parser handles law/decree `Điều → Khoản → Điểm` and QCVN hierarchical section identifiers; `assist` is invoked only for unresolved blocks.
+- Produces: `extract_official_article_text(page_html: str) -> str`, limited to `itemprop="articleBody"`.
+- Produces: `extract_pdf_text(path: str | Path) -> str`, skipping only pages without `/Font` resources.
+- Produces: `stable_checksum(value: str) -> str`, adapted from LuatRAG's pinned FNV-1a UTF-16 `stable_id`.
+- Produces: `split_long_paragraph(paragraph: str, max_size: int) -> list[str]`.
+- Produces: `chunk_regulation_text(document_id: str, text: str, *, target_size: int = 950, max_size: int = 1400) -> list[dict[str, object]]`.
 
-- [ ] **Step 1: Write failing normalization tests**
+- [ ] **Step 1: Write characterization tests before replacing the current parser**
 
-Add `test_vbpl_html_normalizes_unicode_and_structure`, `test_law_parser_preserves_article_clause_point`, `test_qcvn_parser_builds_nested_sections`, `test_unresolved_block_is_reported_without_assist`, `test_assist_is_called_only_for_unresolved_block`, `test_invalid_assist_payload_is_rejected`, and `test_pdf_without_usable_text_fails_explicitly`.
+Add tests named `test_normalize_vietnamese_matches_pinned_luatrag_behavior`, `test_html_to_text_preserves_block_boundaries_and_removes_hidden_markup`, `test_stable_checksum_matches_pinned_luatrag_behavior`, and `test_chunking_is_stable_for_same_text`. Pin at least `stable_checksum("abc") == "7aigaz"`, NFC normalization, script/style removal, deterministic chunk IDs/checksums, and heading-aware locators.
+
+- [ ] **Step 2: Write ITAS-specific extraction tests**
+
+Add `test_vbpl_extracts_data_document_content`, `test_official_html_extracts_only_article_body`, `test_pdf_skips_fontless_image_pages`, and `test_pdf_without_usable_text_fails_closed`. Use fake PDF pages/resources; unit tests must not hit the network or parse the real 403-page QCVN.
+
+- [ ] **Step 3: Verify RED against the current deep-parser implementation**
+
+Run: `conda run --no-capture-output -n WTF python -m pytest tests/unit/test_legal_normalizer.py tests/unit/test_document_loader.py -v -p no:cacheprovider --basetemp=$env:TEMP\itas-mm-selective-port-t1-red`
+Expected: FAIL because the ITAS-named ported primitives/corpus chunk behavior are not implemented yet.
+
+- [ ] **Step 4: Port only the approved LuatRAG algorithms**
+
+Port/adapt `normalize_vietnamese`, HTML cleanup, `split_long_paragraph`, heading detection, stable checksum logic, and chunk construction from pinned LuatRAG into the ITAS modules. `chunk_regulation_text` emits records with `id`, `ordinal`, `document_id`, `locator_type`, `locator`, `heading`, `text`, and `checksum`; use `heading` locators when present and deterministic `Đoạn <n>` fallback otherwise. Set `locator_type="heading"` when a structural heading is active and `locator_type="chunk"` otherwise. Compute `checksum = stable_checksum(f"{document_id}:{locator}:{body}")`; chunk IDs are exactly `<document_id>:<ordinal>:<checksum>`.
+
+- [ ] **Step 5: Replace the deep parser with extraction-only normalization**
+
+Remove article/clause/point/QCVN hierarchy parsing from `legal_normalizer.py`. `extract_official_article_text` must capture only the configured government article body, and `extract_pdf_text` must skip pages whose `/Resources` contain no `/Font`; it must not OCR or infer image content.
+
+- [ ] **Step 6: Add attribution and verify GREEN**
+
+Copy LuatRAG's pinned MIT license notice into `THIRD_PARTY_NOTICES.md` with repository and commit attribution. Run the targeted tests, then `conda run --no-capture-output -n WTF python -m pytest -q -p no:cacheprovider --basetemp=$env:TEMP\itas-mm-selective-port-t1-full` and `git diff --check`.
+Expected: targeted and full suite PASS; whitespace check clean.
+
+- [ ] **Step 7: Commit Task 1**
+
+```powershell
+git add src/reasoning/legal_normalizer.py src/reasoning/document_loader.py tests/unit/test_legal_normalizer.py tests/unit/test_document_loader.py THIRD_PARTY_NOTICES.md
+git commit -m "refactor: port regulation corpus primitives"
+```
+
+### Task 2: Unify official acquisition and corpus publication
+
+**Files:**
+- Rename: `config/legal-corpus.json` → `config/regulations.json`
+- Modify: `scripts/fetch_regulations.py`
+- Replace: `tests/unit/test_fetch_regulations.py`
+
+**Interfaces:**
+- Produces: `fetch_with_retries(url: str, *, attempts: int = 4) -> requests.Response`.
+- Produces: `fetch_regulations(config_path: str | Path, raw_dir: str | Path, corpus_path: str | Path) -> dict`.
+- Consumes Task 1 extraction functions and `chunk_regulation_text(...)`.
+- Publishes one artifact shaped as `{"manifest": ..., "sources": [...], "chunks": [...]}`.
+- CLI produces: `main(argv: list[str] | None = None) -> None` with `--config`, `--raw-dir`, and `--corpus`; direct script execution bootstraps the repo root before importing `src.*`, and `--help` exits before any network call.
+
+- [ ] **Step 1: Rewrite acquisition tests around the unified corpus contract**
+
+Cover `test_retry_policy_retries_408_429_and_5xx_then_succeeds`, `test_source_identity_mismatch_fails_closed`, `test_same_raw_bytes_are_a_noop`, `test_different_raw_bytes_are_not_overwritten`, `test_failed_source_does_not_replace_existing_corpus`, `test_duplicate_document_ids_are_rejected`, `test_corpus_publication_contains_unique_source_and_chunk_ids`, and `test_cli_help_exits_without_network`. Mock all HTTP calls.
 
 - [ ] **Step 2: Verify RED**
 
-Run: `conda run -n WTF python -m pytest tests/unit/test_legal_normalizer.py -v`
-Expected: FAIL because normalizer functions do not exist.
+Run: `conda run --no-capture-output -n WTF python -m pytest tests/unit/test_fetch_regulations.py -v -p no:cacheprovider --basetemp=$env:TEMP\itas-mm-selective-port-t2-red`
+Expected: FAIL because the current fetcher publishes a standalone manifest and has no LuatRAG-style retry/corpus assembly.
 
-- [ ] **Step 3: Add PDF extraction dependency and minimal normalizer**
+- [ ] **Step 3: Rename and pin the curated source config**
 
-Add `pypdf>=6.19,<7` to `requirements.txt`. Normalize Unicode to NFC, strip HTML/scripts/styles for VBPL content, and use `PdfReader` for QCVN text-layer extraction. Do not add OCR; fail with a clear error when extracted text is empty/implausibly short.
+Use `config/regulations.json` with exactly these source kinds/identities:
+- `law-36-2024-qh15`: `source_kind="vbpl_json"`, VBPL item `170620`, expected `36/2024/QH15`.
+- `decree-168-2024-nd-cp`: `source_kind="official_html"`, expected `168/2024/NĐ-CP`, URL `https://xaydungchinhsach.chinhphu.vn/toan-van-nghi-dinh-168-2024-nd-cp-quy-dinh-xu-phat-vi-pham-hanh-chinh-ve-trat-tu-atgt-duong-bo-119241231164556785.htm`.
+- `qcvn-41-2024-bgtvt`: `source_kind="official_pdf"`, expected `QCVN 41:2024/BGTVT`, page `https://vanban.chinhphu.vn/?classid=1&docid=211908&pageid=27160`, attachment `https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/11/51-bgtvt-kem.pdf`.
 
-- [ ] **Step 4: Implement structure parsing and optional block assistance**
+- [ ] **Step 4: Port bounded acquisition/publication behavior**
 
-Parse explicit headings deterministically. Return unresolved blocks rather than guessing. If `assist` is supplied, call it one unresolved block at a time and validate its candidate node with the Task 1 models before merging; a schema-valid candidate is still written only to reviewable normalized JSON.
+Adapt LuatRAG's four-attempt retry policy (`408`, `429`, and `>=500`, exponential `0.75 * 2**attempt` seconds capped at `10`) using the existing `requests` dependency. Verify VBPL `data.docNum` exactly; verify the official HTML page contains the configured document number and extract only `articleBody`; verify QCVN extracted text contains `QCVN 41:2024/BGTVT`.
 
-- [ ] **Step 5: Implement normalization CLI**
+- [ ] **Step 5: Assemble deterministic source/chunk records before publication**
 
-`scripts/normalize_regulations.py` reads both `config/legal-corpus.json` and `manifest.json`, verifies each raw SHA-256 before extraction, writes one normalized JSON file per configured document via temp file + `os.replace`, and exits non-zero if unresolved blocks remain without `--assist-unresolved`. With the flag, adapt existing `OllamaClient.generate()` to return candidate JSON; do not send an entire source document to the LLM.
+Each source record contains `document_id`, `document_number`, `title`, `source_kind`, `source_url`, `raw_file`, raw `sha256`, normalized `text_sha256`, `retrieved_at`, and `chunk_count`. Manifest contains `schema_version="1"`, pinned LuatRAG repository/commit, generation timestamp, source count, and chunk count. Refuse empty text, duplicate source IDs, duplicate chunk IDs, or per-document normalized text above `600_000` chars; refuse total normalized text above `8_000_000` chars.
+
+- [ ] **Step 6: Preserve raw immutability and publish corpus atomically**
+
+Stage/validate all candidates before replacing `corpus.json`; publish via temp sibling + `os.replace`. Existing raw bytes are a no-op only when byte-identical and fail closed otherwise. A failed source may leave newly acquired immutable raw audit bytes, but it must not replace the previous valid corpus artifact.
+
+- [ ] **Step 7: Verify and commit Task 2**
+
+Run the focused acquisition suite, full pytest, `py_compile scripts/fetch_regulations.py`, and `git diff --check`.
+
+```powershell
+git add config/regulations.json scripts/fetch_regulations.py tests/unit/test_fetch_regulations.py
+git rm config/legal-corpus.json
+git commit -m "feat: build unified regulation corpus"
+```
+
+### Task 3: Replace canonical-model loading with the corpus artifact contract
+
+**Files:**
+- Modify: `src/reasoning/document_loader.py`
+- Modify: `tests/unit/test_document_loader.py`
+- Modify: `tests/unit/test_corpus_fingerprint.py`
+- Delete: `src/reasoning/legal_models.py`
+- Delete: `tests/unit/test_legal_models.py`
+- Delete: `scripts/normalize_regulations.py`
+- Modify: `tests/unit/test_script_entrypoints.py`
+
+**Interfaces:**
+- Preserves: existing `DocumentChunk(text, source_file, chunk_index, document_id, locator_type, locator)`.
+- Produces: `load_regulation_corpus(corpus_path: str | Path) -> dict`.
+- Produces: `build_corpus_chunks(corpus_path: str | Path) -> list[DocumentChunk]`.
+- Replaces fingerprint signature with `compute_corpus_fingerprint(corpus: dict, schema_version: str, embedding_model: str) -> str`.
+
+- [ ] **Step 1: Write failing corpus-contract tests**
+
+Cover `test_load_corpus_rejects_empty_sources_or_chunks`, `test_load_corpus_rejects_duplicate_source_ids`, `test_load_corpus_rejects_duplicate_chunk_ids`, `test_load_corpus_rejects_chunk_for_unknown_source`, `test_corpus_chunks_round_trip_provenance`, and `test_corpus_chunk_order_is_deterministic`.
+
+- [ ] **Step 2: Rewrite fingerprint tests for semantic corpus JSON**
+
+Assert that changing only `manifest.generated_at`, `source.retrieved_at`, or `source.raw_file` leaves the fingerprint unchanged; changing source SHA/text hash, chunk text/locator, schema version, or embedding model changes it.
+
+- [ ] **Step 3: Verify RED**
+
+Run: `conda run --no-capture-output -n WTF python -m pytest tests/unit/test_document_loader.py tests/unit/test_corpus_fingerprint.py -v -p no:cacheprovider --basetemp=$env:TEMP\itas-mm-selective-port-t3-red`
+Expected: FAIL because the current loader requires per-document `LegalDocument` JSON.
+
+- [ ] **Step 4: Implement strict plain-JSON corpus validation and projection**
+
+Validate required manifest/source/chunk fields, non-empty identities/text, source/chunk uniqueness, and chunk-to-source referential integrity before returning the artifact. Project chunks in artifact order; resolve `source_file` through the matching source, set `chunk_index=ordinal`, and preserve `document_id`, `locator_type`, and `locator` exactly.
+
+- [ ] **Step 5: Retire abandoned canonical-model surfaces**
+
+Remove `legal_models.py`, `normalize_regulations.py`, and their obsolete tests/imports after the new corpus tests are green. Update `test_script_entrypoints.py` to execute `scripts/fetch_regulations.py --help` and `scripts/build_vector_index.py --help` under `python -I -X utf8` from repo root; both must return 0 without network/Ollama work. Do not add compatibility shims.
 
 - [ ] **Step 6: Verify and commit Task 3**
 
-Run: `conda run -n WTF python -m pytest tests/unit/test_legal_normalizer.py tests/unit/test_legal_models.py -v`
-Then: `conda run -n WTF python -m pip check` and `conda run -n WTF python -m pytest -q`.
-Expected: all PASS.
+Run targeted tests, then the full suite, `python -m py_compile src/reasoning/document_loader.py`, and `git diff --check`.
 
 ```powershell
-git add requirements.txt src/reasoning/legal_normalizer.py scripts/normalize_regulations.py tests/unit/test_legal_normalizer.py
-git commit -m "feat: normalize legal sources to canonical json"
+git add src/reasoning/document_loader.py tests/unit/test_document_loader.py tests/unit/test_corpus_fingerprint.py tests/unit/test_script_entrypoints.py
+git rm src/reasoning/legal_models.py tests/unit/test_legal_models.py scripts/normalize_regulations.py
+git commit -m "refactor: load unified regulation corpus"
 ```
 
-### Task 4: Canonical loading and legal-node projection
+### Task 4: Rewire index building and runtime configuration
 
 **Files:**
-- Modify: `src/reasoning/document_loader.py`
-- Replace: `tests/unit/test_document_loader.py`
-
-**Interfaces:**
-- Extends `DocumentChunk` with `document_id: str`, `locator_type: str`, `locator: str`.
-- Produces: `load_canonical_documents(normalized_dir: str) -> list[LegalDocument]`.
-- Produces: `build_legal_chunks(document: LegalDocument, max_chunk_chars: int | None = None) -> list[DocumentChunk]`.
-- Produces: `build_corpus_chunks(normalized_dir: str, max_chunk_chars: int | None = None) -> list[DocumentChunk]`.
-
-- [ ] **Step 1: Replace fixed-window tests with failing legal projection tests**
-
-Test `test_point_becomes_chunk_with_exact_locator`, `test_clause_without_points_becomes_chunk`, `test_article_without_clauses_becomes_chunk`, `test_qcvn_leaf_section_becomes_chunk`, `test_projection_order_is_deterministic`, `test_long_leaf_split_preserves_locator_when_limit_is_explicit`, and `test_invalid_canonical_json_fails_before_projection`.
-
-- [ ] **Step 2: Verify RED**
-
-Run: `conda run -n WTF python -m pytest tests/unit/test_document_loader.py -v`
-Expected: FAIL because current loader expects Markdown/text and old `DocumentChunk` shape.
-
-- [ ] **Step 3: Implement canonical loader/projection**
-
-Remove `chunk_text()` as the production corpus API. Use structure-first leaves only. Construct human-readable locators such as `Điều 6 Khoản 1 Điểm a` and QCVN section locators from canonical IDs. `chunk_index` is deterministic within each legal locator. When `max_chunk_chars` is explicitly provided, split only the oversized leaf and preserve the exact locator on every subchunk; the production default stays `None` until Task 7 inspects the real corpus. Do not add arbitrary fixed overlap.
-
-- [ ] **Step 4: Verify GREEN and regression safety**
-
-Run: `conda run -n WTF python -m pytest tests/unit/test_document_loader.py -v`
-Then: `conda run -n WTF python -m pytest -q`
-Expected: all PASS after updating existing tests/callers to the new `DocumentChunk` fields.
-
-- [ ] **Step 5: Commit Task 4**
-
-```powershell
-git add src/reasoning/document_loader.py tests/unit/test_document_loader.py
-git commit -m "refactor: project canonical legal evidence"
-```
-
-### Task 5: Deterministic fingerprint and Chroma rebuild
-
-**Files:**
-- Modify: `src/reasoning/document_loader.py`
-- Modify: `src/reasoning/vector_store.py`
 - Modify: `scripts/build_vector_index.py`
-- Modify: `tests/unit/test_vector_store.py`
-- Create: `tests/unit/test_corpus_fingerprint.py`
-- Create: `tests/unit/test_build_vector_index.py`
+- Modify: `tests/unit/test_build_vector_index.py`
+- Modify: `configs/reasoning.yaml`
+- Modify: `README.md`
+- Verify unchanged: `src/reasoning/vector_store.py`, `src/reasoning/rag_chain.py`
+- Verify: `tests/unit/test_vector_store.py`, `tests/unit/test_rag_chain.py`
 
 **Interfaces:**
-- Produces: `compute_corpus_fingerprint(documents: list[LegalDocument], schema_version: str, embedding_model: str) -> str`.
-- Produces: `VectorStore.rebuild(chunks: list[DocumentChunk], *, fingerprint: str, schema_version: str, embedding_model: str) -> None`.
+- `rag.corpus_file` is exactly `data/regulations/corpus.json`.
+- `build_index() -> None` loads that artifact with `load_regulation_corpus`, projects `DocumentChunk` values, computes the semantic fingerprint, and calls existing `VectorStore.rebuild(...)`.
+- Existing `VectorStore.rebuild(chunks, *, fingerprint, schema_version, embedding_model)` contract remains unchanged.
 
-- [ ] **Step 1: Write failing fingerprint/rebuild tests**
+- [ ] **Step 1: Rewrite build-script tests around `corpus_file`**
 
-Test `test_fingerprint_stable_for_same_semantic_documents`, `test_fingerprint_changes_with_schema_or_embedding_model`, `test_fingerprint_ignores_retrieved_at_and_local_raw_path`, `test_rebuild_uses_deterministic_chunk_ids`, `test_query_round_trips_full_legal_metadata`, `test_embed_failure_keeps_existing_collection`, `test_successful_rebuild_removes_stale_chunks`, and `test_invalid_corpus_does_not_call_rebuild`.
+Cover `test_build_index_loads_configured_corpus_file`, `test_invalid_corpus_does_not_call_rebuild`, `test_empty_corpus_does_not_call_rebuild`, and `test_build_index_passes_fingerprint_schema_and_embedding_model_to_rebuild`.
 
 - [ ] **Step 2: Verify RED**
 
-Run: `conda run -n WTF python -m pytest tests/unit/test_corpus_fingerprint.py tests/unit/test_vector_store.py tests/unit/test_build_vector_index.py -v`
-Expected: FAIL on missing fingerprint/rebuild behavior and new metadata fields.
+Run: `conda run --no-capture-output -n WTF python -m pytest tests/unit/test_build_vector_index.py -v -p no:cacheprovider --basetemp=$env:TEMP\itas-mm-selective-port-t4-red`
+Expected: FAIL because the current script still expects canonical normalized documents/config.
 
-- [ ] **Step 3: Implement canonical fingerprint**
+- [ ] **Step 3: Rewire build/config without changing retrieval architecture**
 
-Serialize semantic model dumps with sorted keys and compact separators. Exclude retrieval timestamps and local raw-file paths, include source identity/content hash, then hash `schema_version + embedding_model + canonical_documents` with SHA-256.
+Set `rag.corpus_file: "data/regulations/corpus.json"`; remove `regulations_dir`, `chunk_size_chars`, and `chunk_overlap_chars`. Load/validate the artifact before constructing the rebuild candidate. Keep `top_k`, Chroma path/collection, `nomic-embed-text`, and safe full-rebuild semantics unchanged.
 
-- [ ] **Step 4: Implement safe full rebuild**
+- [ ] **Step 4: Update developer workflow documentation**
 
-Embed every candidate chunk before deleting the current collection. Chunk IDs are `document_id::locator_type::locator::chunk_index`. Only after all embeddings succeed, replace the collection and upsert all candidate records with `document_id`, `source_file`, `chunk_index`, `locator_type`, and `locator`; store fingerprint/schema/model in collection metadata.
+README production workflow becomes exactly `python scripts/fetch_regulations.py` → `python scripts/build_vector_index.py`. Document the three-source scope, no-OCR limitation, immutable raw provenance, Selective Port attribution, and that Chroma is derived/rebuildable.
 
-- [ ] **Step 5: Update build script**
+- [ ] **Step 5: Run retrieval-regression gates**
 
-`scripts/build_vector_index.py` loads/validates all canonical documents before constructing/calling `VectorStore.rebuild`, refuses an empty corpus, computes fingerprint, checks Ollama embedding readiness, then rebuilds and prints document count, chunk count, fingerprint, schema version, and embedding model. `test_invalid_corpus_does_not_call_rebuild` monkeypatches canonical loading to fail and asserts rebuild is never called.
+Run `tests/unit/test_build_vector_index.py`, `tests/unit/test_vector_store.py`, `tests/unit/test_rag_chain.py`, then full pytest and `git diff --check`. The exact existing empty-retrieval list identity and unknown `[S<n>]` rejection must remain green.
 
-- [ ] **Step 6: Verify and commit Task 5**
-
-Run targeted tests, then `conda run -n WTF python -m pytest -q` and `git diff --check`. All must pass/clean before commit.
+- [ ] **Step 6: Commit Task 4**
 
 ```powershell
-git add src/reasoning/document_loader.py src/reasoning/vector_store.py scripts/build_vector_index.py tests/unit/test_vector_store.py tests/unit/test_corpus_fingerprint.py tests/unit/test_build_vector_index.py
-git commit -m "feat: rebuild versioned legal index"
+git add scripts/build_vector_index.py tests/unit/test_build_vector_index.py configs/reasoning.yaml README.md
+git commit -m "refactor: index unified regulation corpus"
 ```
 
-### Task 6: Grounding labels and fail-closed citation aliases
-
-**Files:**
-- Modify: `src/reasoning/rag_chain.py`
-- Modify: `tests/unit/test_rag_chain.py`
-
-**Interfaces:**
-- Produces: `format_evidence_label(chunk: DocumentChunk, alias: str) -> str`.
-- Produces: `validate_citation_aliases(text: str, allowed_aliases: set[str]) -> None`.
-- `RagChain.answer()` keeps the same public signature and `ReasoningResult` contract.
-
-- [ ] **Step 1: Write failing grounding tests**
-
-Add `test_prompt_labels_each_chunk_with_deterministic_source_locator`, `test_reasoning_retains_exact_retrieved_evidence`, `test_unknown_generated_source_alias_is_rejected`, `test_known_generated_source_alias_is_allowed`, and keep the existing empty-retrieval/no-generation test.
-
-- [ ] **Step 2: Verify RED**
-
-Run: `conda run -n WTF python -m pytest tests/unit/test_rag_chain.py -v`
-Expected: source-label and citation-alias tests FAIL.
-
-- [ ] **Step 3: Implement minimal grounding changes**
-
-Render each retrieved chunk as `[S<n>] <document_id> — <locator>\n<text>` and tell the LLM those aliases are data labels, not authority it may invent. Scan generated text only for bracketed aliases matching `\[S\d+\]`; if any referenced alias is outside the current retrieval set, raise `ValueError("Generated guidance cited evidence outside retrieval set")`. The application still treats `retrieved_chunks` as citation authority; generated prose is not parsed into new legal metadata.
-
-- [ ] **Step 4: Verify GREEN and regression safety**
-
-Run: `conda run -n WTF python -m pytest tests/unit/test_rag_chain.py -v`
-Then: `conda run -n WTF python -m pytest -q`
-Expected: all PASS.
-
-- [ ] **Step 5: Commit Task 6**
-
-```powershell
-git add src/reasoning/rag_chain.py tests/unit/test_rag_chain.py
-git commit -m "feat: ground guidance in legal source aliases"
-```
-
-### Task 7: Acquire, normalize, and migrate the real three-document corpus
+### Task 5: Materialize and verify the real three-source corpus
 
 **Files:**
 - Create/populate: `data/regulations/raw/**`
-- Create/populate: `data/regulations/normalized/*.json`
-- Create: `data/regulations/manifest.json`
+- Create: `data/regulations/corpus.json`
+- Delete after successful migration: `data/regulations/manifest.json`
 - Delete: `data/regulations/sample_traffic_rules.md`
-- Modify: `configs/reasoning.yaml`
-- Modify: `README.md`
+- Delete after successful replacement: superseded untracked VBPL raw artifact for Decree 168 if it is not referenced by the new corpus.
+- Modify tests only if a live-source integration bug requires a TDD regression.
 
 **Interfaces:**
-- `rag.normalized_dir` replaces the old arbitrary Markdown corpus path for index building.
-- Remove global `chunk_size_chars` and `chunk_overlap_chars`; structure is the primary chunk boundary.
+- Consumes Task 2 `fetch_regulations(...)` and Task 4 index build.
+- Active raw paths are resolved from `corpus.json`; orphan/superseded Task-7 artifacts are not part of runtime provenance.
 
-- [ ] **Step 1: Acquire the three official raw sources**
+- [ ] **Step 1: Verify the pre-pivot raw artifacts before touching migration leftovers**
 
-Run: `conda run -n WTF python scripts/fetch_regulations.py`.
-Expected: three verified raw artifacts and a manifest; no sample fallback. Confirm manifest SHA-256 values match the bytes on disk and the VBPL document numbers are exactly the curated expectations.
+Recompute SHA-256 for the existing untracked raw files and compare them with the old untracked `data/regulations/manifest.json`. Do not remove that manifest or the old Decree VBPL artifact until the new corpus has been successfully fetched and validated.
 
-- [ ] **Step 2: Normalize to canonical JSON**
+- [ ] **Step 2: Run the unified fetch/build against official sources**
 
-Run deterministic normalization first. If unresolved blocks remain, rerun only those blocks with `--assist-unresolved`; review every assisted node against the corresponding raw source before accepting it. Do not auto-correct legal wording from model knowledge.
+Run: `conda run --no-capture-output -n WTF python -X utf8 scripts/fetch_regulations.py`.
+Expected: three active source records, non-empty chunk list, immutable raw artifacts, and atomically published `data/regulations/corpus.json`. No Ollama call occurs in this step.
 
-- [ ] **Step 3: Inspect corpus structure before any size ceiling**
+- [ ] **Step 3: Inspect the real artifact before indexing**
 
-Report per-document article/section counts, leaf count, minimum/median/p95/maximum leaf text length, and unresolved-block count. If actual leaves fit the embedding path, do not add a size splitter. If a safety ceiling is demonstrably needed, add it to `build_legal_chunks(..., max_chunk_chars=...)`, test that subchunks preserve the exact legal locator, and document the measured reason.
+Verify exactly three active `document_id` values; all source/raw SHA-256 values match disk; all chunk IDs are unique; every chunk points to an active source; source/chunk counts in the manifest match the arrays. Record per-source normalized character count, chunk count, min/median/p95/max chunk length, and confirm QCVN image-only pages were not OCR'd.
 
-- [ ] **Step 4: Remove illustrative corpus semantics and align config/docs**
+If a live source exposes an unmodeled format/endpoint defect, stop, add the smallest mocked regression test to the owning Task 1/2 test file, watch RED, apply the minimal production fix, and rerun Steps 2–3. Never patch `corpus.json` by hand.
 
-Delete `sample_traffic_rules.md`; set `rag.normalized_dir: "data/regulations/normalized"`; remove `chunk_size_chars` and `chunk_overlap_chars`. Update README with the three-step workflow `fetch_regulations.py → normalize_regulations.py → build_vector_index.py`, current three-source scope, provenance limitations, and no-OCR limitation.
+- [ ] **Step 4: Retire migration leftovers only after Step 3 passes**
 
-- [ ] **Step 5: Build the real derived index**
+Remove the old standalone `data/regulations/manifest.json`, the illustrative `sample_traffic_rules.md`, and the superseded Decree VBPL `source.json` if the new corpus references `source.html` instead. Keep the active Law/QCVN raw bytes when their hashes match the new source records.
 
-Run: `conda run -n WTF python scripts/build_vector_index.py`.
-Expected: non-empty deterministic Chroma collection with fingerprint/schema/model metadata and zero sample chunks.
+- [ ] **Step 5: Build the real Chroma index twice**
 
-- [ ] **Step 6: Run full verification and commit corpus migration**
+Run `conda run --no-capture-output -n WTF python -X utf8 scripts/build_vector_index.py` twice without changing corpus/config. Confirm the second build reports the same `corpus_fingerprint`, `schema_version`, and `embedding_model`; query collection metadata and verify there are zero sample-corpus chunks.
 
-Run `conda run -n WTF python -m pip check`, `conda run -n WTF python -m pytest -q`, and `git diff --check`. Inspect `git status --short` to ensure only intended corpus/config/docs files are included.
+- [ ] **Step 6: Full verification and commit Task 5**
+
+Run `conda run --no-capture-output -n WTF python -m pip check`, full pytest, `git diff --check`, and inspect `git status --short`. Only active corpus/raw artifacts plus the intended sample deletion may be staged.
 
 ```powershell
-git add data/regulations configs/reasoning.yaml README.md
-git commit -m "data: add current traffic-law corpus"
+git add -A data/regulations
+git commit -m "data: add current traffic regulation corpus"
 ```
 
-### Task 8: Retrieval benchmark and final documentation
+### Task 6: Add the real retrieval benchmark and final snapshot
 
 **Files:**
 - Create: `data/evaluation/legal_retrieval.json`
 - Create: `scripts/evaluate_legal_retrieval.py`
 - Create: `tests/unit/test_retrieval_evaluation.py`
+- Modify if needed: `src/reasoning/vector_store.py`
+- Modify if needed: `tests/unit/test_vector_store.py`
 - Modify: `README.md`
 
 **Interfaces:**
 - Produces: `score_case(expected: set[tuple[str, str]], retrieved: list[DocumentChunk], ks: tuple[int, ...]) -> dict`.
 - Produces: `summarize_scores(case_scores: list[dict], ks: tuple[int, ...]) -> dict`.
-- CLI reports case count, Recall@1/@3/@4, MRR, fingerprint, embedding model, evaluated top-k, and failed cases with retrieved locators.
+- If collection metadata is not already accessible without private-member reach-through, add `VectorStore.get_index_metadata() -> dict[str, object]` for fingerprint/schema/model reporting.
 
 - [ ] **Step 1: Write failing metric tests**
 
-Test exact-hit at rank 1, hit at rank 3, complete miss, multiple acceptable locators, and MRR arithmetic. Metrics compare `(document_id, locator)` pairs, never generated answer text.
+Cover exact hit at rank 1, hit at rank 3, complete miss, multiple acceptable locators, and MRR arithmetic. Metrics compare only `(document_id, locator)` pairs from retrieved evidence.
 
-- [ ] **Step 2: Verify RED**
+- [ ] **Step 2: Verify RED and implement metric helpers/CLI**
 
-Run: `conda run -n WTF python -m pytest tests/unit/test_retrieval_evaluation.py -v`
-Expected: FAIL because evaluation helpers do not exist.
+Run the focused metric test and watch it fail before implementation. The CLI loads 24 cases, queries `VectorStore`, reports case count, Recall@1/@3/@4, MRR, corpus fingerprint, schema version, embedding model, evaluated top-k, and every failed case with retrieved locators. Do not call the generation model.
 
-- [ ] **Step 3: Implement metric helpers and CLI**
+- [ ] **Step 3: Curate exactly 24 cases from `corpus.json`**
 
-Keep evaluation independent from the LLM: load cases, query `VectorStore`, score retrieved evidence, print aggregate metrics and every failed case. Define per-case Recall@k as 1 when any acceptable expected `(document_id, locator)` appears in the first k results and 0 otherwise; MRR is the reciprocal rank of the first acceptable target, or 0 on a miss. Do not add an arbitrary pass/fail threshold in pytest.
+Create three verified Vietnamese queries each for speed, signals, prohibitory signs, lanes, stopping/parking, overtaking, penalties, and QCVN sign meaning/text definitions. Every expected target must be an exact `{document_id, locator}` present in the committed corpus artifact; do not invent a locator from memory.
 
-- [ ] **Step 4: Curate 24 benchmark cases from the actual canonical corpus**
+- [ ] **Step 4: Run and record the real benchmark**
 
-Create three cases each for speed, signals, prohibitory signs, lanes, stopping/parking, overtaking, penalties, and QCVN sign meaning. Each case stores `id`, Vietnamese `query`, and one or more exact expected `{document_id, locator}` targets verified against normalized JSON.
+Run: `conda run --no-capture-output -n WTF python -X utf8 scripts/evaluate_legal_retrieval.py`.
+Record the observed Recall@1/@3/@4, MRR, fingerprint/model, and notable failed cases in README as a reproducible snapshot, not a legal-quality guarantee and not a pytest threshold.
 
-- [ ] **Step 5: Verify metric tests and run the benchmark**
+- [ ] **Step 5: Full suite and commit Task 6**
 
-Run: `conda run -n WTF python -m pytest tests/unit/test_retrieval_evaluation.py -v`.
-Then: `conda run -n WTF python scripts/evaluate_legal_retrieval.py`.
-Expected: tests PASS and the script prints Recall@1/@3/@4, MRR, fingerprint/model metadata, and inspectable failed cases. Record results in README as an observed benchmark snapshot, not a legal-quality guarantee.
-
-- [ ] **Step 6: Full suite and commit Task 8**
-
-Run: `conda run -n WTF python -m pip check`, `conda run -n WTF python -m pytest -q`, and `git diff --check`.
+Run focused metric tests, any new vector-store metadata test, full pytest, `pip check`, `py_compile`, and `git diff --check`.
 
 ```powershell
 git add data/evaluation/legal_retrieval.json scripts/evaluate_legal_retrieval.py tests/unit/test_retrieval_evaluation.py README.md
-git commit -m "test: add legal retrieval benchmark"
+git add src/reasoning/vector_store.py tests/unit/test_vector_store.py  # only if metadata accessor was required
+git commit -m "test: benchmark regulation retrieval"
 ```
 
 ## Final Acceptance
 
-- Confirm `git branch --show-current` is `backend/legal-corpus-v1` and `git status --short` is empty.
-- Run the complete test suite in Conda `WTF`; all tests must pass.
-- Recompute SHA-256 for the three committed raw artifacts and compare them to the committed manifest; all three official source identities and hashes must match.
-- Load every normalized JSON with `LegalDocument.model_validate`; unresolved block count must be zero for committed corpus artifacts.
-- Rebuild Chroma twice from unchanged canonical data and confirm identical fingerprint and deterministic chunk IDs.
-- Confirm collection metadata names `schema_version`, `embedding_model`, and `corpus_fingerprint` match the build output.
-- Run the 24-case retrieval benchmark and preserve the observed scores/failures in README without inventing a threshold.
-- Confirm `data/regulations/sample_traffic_rules.md` is absent and no sample text is present in the active Chroma collection.
-- Run `git diff --check`; require no output.
-- Inspect `main` only by ref and confirm it remains untouched.
-- Run the real Ponytail plugin reviewer read-only against `backend/legal-corpus-v1` vs its base; do not substitute a hallucinating local model if the cloud reviewer is unavailable.
+- Confirm branch is `backend/legal-corpus-v1`; `main` still resolves to `02e3dd02b1de49c3b4f1372c4ddbb443ffe1eb38` and was only inspected.
+- Confirm `git status --short` is empty except inaccessible stale pytest temp directories, which must be removed/ignored before calling the branch complete.
+- Run the complete Conda `WTF` test suite; all tests must pass.
+- Run `python -m pip check`, relevant `py_compile`, and `git diff --check`; all must be clean.
+- Recompute SHA-256 for every active raw artifact and compare it to `corpus.json`; all three source identities/hashes must match.
+- Validate `corpus.json`: exactly three active sources, non-empty chunks, unique source/chunk IDs, referential integrity, and manifest counts equal array counts.
+- Confirm runtime/project code contains no `config/legal-corpus.json`, `normalize_regulations.py`, `legal_models` dependency, `src.rag`, `luatrag_adapter`, or `vendor/luatrag` reference except historical design/plan discussion.
+- Confirm `THIRD_PARTY_NOTICES.md` identifies `lqb464/LuatRAG`, pinned commit `ae2b1c796503e2a58493771bc341b66fb488e053`, and preserves the MIT notice.
+- Build Chroma twice from unchanged corpus/config and confirm identical fingerprint and deterministic corpus chunk IDs; collection metadata must report matching `schema_version`, `embedding_model`, and `corpus_fingerprint`.
+- Confirm `data/regulations/sample_traffic_rules.md` and the old standalone `manifest.json` are absent from the active corpus workflow.
+- Run the 24-case retrieval benchmark and preserve the observed metrics/failures in README without inventing a threshold.
+- Run the real Ponytail plugin reviewer read-only over `backend/legal-corpus-v1` versus its base; resolve any Critical/Important findings before completion.
