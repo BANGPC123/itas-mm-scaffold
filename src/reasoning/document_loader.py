@@ -1,6 +1,7 @@
 """Load validated canonical legal documents and project retrieval evidence."""
 from __future__ import annotations
 
+import hashlib
 import json
 from dataclasses import dataclass
 from pathlib import Path
@@ -16,6 +17,36 @@ class DocumentChunk:
     document_id: str = ""
     locator_type: str = ""
     locator: str = ""
+
+
+def compute_corpus_fingerprint(
+    documents: list[LegalDocument], schema_version: str, embedding_model: str
+) -> str:
+    """Return a stable hash for the semantic canonical corpus and index inputs."""
+    semantic_documents = []
+    for document in documents:
+        semantic_document = document.model_dump(mode="json")
+        semantic_document["source"].pop("raw_file")
+        semantic_document["source"].pop("retrieved_at")
+        semantic_documents.append(semantic_document)
+
+    canonical_documents = sorted(
+        semantic_documents,
+        key=lambda document: json.dumps(
+            document, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+        ),
+    )
+    canonical_data = json.dumps(
+        {
+            "schema_version": schema_version,
+            "embedding_model": embedding_model,
+            "documents": canonical_documents,
+        },
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+    )
+    return hashlib.sha256(canonical_data.encode("utf-8")).hexdigest()
 
 
 def load_canonical_documents(normalized_dir: str) -> list[LegalDocument]:

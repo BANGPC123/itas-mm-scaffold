@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
+import pytest
+
 from src.reasoning.document_loader import DocumentChunk
 from src.reasoning.vector_store import VectorStore
 
@@ -9,6 +11,8 @@ from src.reasoning.vector_store import VectorStore
 def _store_with(collection: MagicMock, ollama_client: MagicMock) -> VectorStore:
     store = VectorStore.__new__(VectorStore)
     store._collection = collection
+    store._client = MagicMock()
+    store._collection_name = "traffic_regulations"
     store.ollama_client = ollama_client
     return store
 
@@ -23,12 +27,18 @@ def test_query_empty_collection_returns_empty_without_embedding():
     ollama_client.embed.assert_not_called()
 
 
-def test_query_returns_document_chunks_with_metadata():
+def test_query_round_trips_full_legal_metadata():
     collection = MagicMock()
     collection.count.return_value = 1
     collection.query.return_value = {
         "documents": [["Urban speed rule"]],
-        "metadatas": [[{"source_file": "law.md", "chunk_index": 4}]],
+        "metadatas": [[{
+            "document_id": "law-36-2024-qh15",
+            "source_file": "law.json",
+            "chunk_index": 4,
+            "locator_type": "point",
+            "locator": "Article 6 Clause 1 Point a",
+        }]],
     }
     ollama_client = MagicMock()
     ollama_client.embed.return_value = [0.1, 0.2]
@@ -37,7 +47,14 @@ def test_query_returns_document_chunks_with_metadata():
     result = store.query("speed limit", top_k=3)
 
     assert result == [
-        DocumentChunk(text="Urban speed rule", source_file="law.md", chunk_index=4)
+        DocumentChunk(
+            text="Urban speed rule",
+            source_file="law.json",
+            chunk_index=4,
+            document_id="law-36-2024-qh15",
+            locator_type="point",
+            locator="Article 6 Clause 1 Point a",
+        )
     ]
 
 
@@ -61,3 +78,104 @@ def test_query_preserves_result_order_and_metadata_pairing():
         DocumentChunk(text="First rule", source_file="first.md", chunk_index=1),
         DocumentChunk(text="Second rule", source_file="second.md", chunk_index=7),
     ]
+
+
+def test_rebuild_uses_deterministic_chunk_ids():
+    previous = MagicMock()
+    candidate = MagicMock()
+    ollama_client = MagicMock()
+    ollama_client.embed.return_value = [0.1, 0.2]
+    store = _store_with(previous, ollama_client)
+    store._client.get_or_create_collection.return_value = candidate
+    chunks = [
+        DocumentChunk(
+            text="Rule text",
+            source_file="raw/law/source.json",
+            chunk_index=2,
+            document_id="law-36-2024-qh15",
+            locator_type="point",
+            locator="Article 6 Clause 1 Point a",
+        )
+    ]
+
+    store.rebuild(
+        chunks,
+        fingerprint="fingerprint",
+        schema_version="1",
+        embedding_model="nomic-embed-text",
+    )
+
+    store._client.delete_collection.assert_called_once_with(name="traffic_regulations")
+    store._client.get_or_create_collection.assert_called_once_with(
+        name="traffic_regulations",
+        metadata={
+            "corpus_fingerprint": "fingerprint",
+            "schema_version": "1",
+            "embedding_model": "nomic-embed-text",
+        },
+    )
+    candidate.upsert.assert_called_once_with(
+        ids=["law-36-2024-qh15::point::Article 6 Clause 1 Point a::2"],
+        embeddings=[[0.1, 0.2]],
+        documents=["Rule text"],
+        metadatas=[{
+            "document_id": "law-36-2024-qh15",
+            "source_file": "raw/law/source.json",
+            "chunk_index": 2,
+            "locator_type": "point",
+            "locator": "Article 6 Clause 1 Point a",
+        }],
+    )
+
+
+def test_embed_failure_keeps_existing_collection():
+    previous = MagicMock()
+    store = _store_with(previous, MagicMock())
+    store.ollama_client.embed.side_effect = RuntimeError("embedding unavailable")
+    chunk = DocumentChunk(
+        text="Rule text",
+        source_file="raw/law/source.json",
+        chunk_index=0,
+        document_id="law-36-2024-qh15",
+        locator_type="article",
+        locator="Article 1",
+    )
+
+    with pytest.raises(RuntimeError, match="embedding unavailable"):
+        store.rebuild(
+            [chunk],
+            fingerprint="fingerprint",
+            schema_version="1",
+            embedding_model="nomic-embed-text",
+        )
+
+    store._client.delete_collection.assert_not_called()
+    assert store._collection is previous
+
+
+def test_successful_rebuild_removes_stale_chunks():
+    previous = MagicMock()
+    replacement = MagicMock()
+    ollama_client = MagicMock()
+    ollama_client.embed.return_value = [0.1]
+    store = _store_with(previous, ollama_client)
+    store._client.get_or_create_collection.return_value = replacement
+    chunk = DocumentChunk(
+        text="Current rule",
+        source_file="raw/law/source.json",
+        chunk_index=0,
+        document_id="law-36-2024-qh15",
+        locator_type="article",
+        locator="Article 1",
+    )
+
+    store.rebuild(
+        [chunk],
+        fingerprint="fingerprint",
+        schema_version="1",
+        embedding_model="nomic-embed-text",
+    )
+
+    store._client.delete_collection.assert_called_once_with(name="traffic_regulations")
+    assert store._collection is replacement
+    assert replacement.upsert.call_args.kwargs["documents"] == ["Current rule"]
