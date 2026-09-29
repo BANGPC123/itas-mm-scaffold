@@ -48,6 +48,13 @@ class VectorStore:
 
     @staticmethod
     def _chunk_id(chunk: DocumentChunk) -> str:
+        if not all(
+            value.strip()
+            for value in (chunk.document_id, chunk.locator_type, chunk.locator)
+        ):
+            raise ValueError(
+                "Chunk legal identity requires document_id, locator_type, and locator"
+            )
         return (
             f"{chunk.document_id}::{chunk.locator_type}::{chunk.locator}::"
             f"{chunk.chunk_index}"
@@ -75,8 +82,8 @@ class VectorStore:
         if not chunks:
             raise ValueError("Cannot rebuild a vector store from an empty corpus")
 
-        embeddings = [self.ollama_client.embed(chunk.text) for chunk in chunks]
         ids = [self._chunk_id(chunk) for chunk in chunks]
+        embeddings = [self.ollama_client.embed(chunk.text) for chunk in chunks]
         documents = [chunk.text for chunk in chunks]
         metadatas = [self._metadata(chunk) for chunk in chunks]
         metadata = {

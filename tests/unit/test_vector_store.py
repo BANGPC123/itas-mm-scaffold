@@ -80,6 +80,18 @@ def test_query_preserves_result_order_and_metadata_pairing():
     ]
 
 
+def test_index_chunks_rejects_incomplete_legal_metadata_before_embedding_or_upsert():
+    collection = MagicMock()
+    store = _store_with(collection, MagicMock())
+    legacy_chunk = DocumentChunk("Legacy rule", "legacy.md", 0)
+
+    with pytest.raises(ValueError, match="legal identity"):
+        store.index_chunks([legacy_chunk])
+
+    store.ollama_client.embed.assert_not_called()
+    collection.upsert.assert_not_called()
+
+
 def test_rebuild_uses_deterministic_chunk_ids():
     previous = MagicMock()
     candidate = MagicMock()
