@@ -32,10 +32,12 @@ def _fetch_vbpl(entry: dict) -> tuple[bytes, str]:
     except (TypeError, UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise ValueError(f"VBPL item {item_id} did not return JSON") from exc
     expected = _required(entry, "expected_document_number")
-    if payload.get("docNum") != expected:
+    data = payload.get("data") if isinstance(payload, dict) else None
+    document_number = data.get("docNum") if isinstance(data, dict) else None
+    if document_number != expected:
         raise ValueError(
             f"VBPL document number mismatch for {item_id}: "
-            f"expected {expected!r}, got {payload.get('docNum')!r}"
+            f"expected {expected!r}, got {document_number!r}"
         )
     return raw_bytes, "json"
 

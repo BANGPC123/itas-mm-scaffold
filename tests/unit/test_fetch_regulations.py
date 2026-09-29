@@ -9,14 +9,14 @@ from scripts.fetch_regulations import fetch_regulations
 
 
 class FakeResponse:
-    def __init__(self, payload: dict | None = None, content: bytes | None = None):
+    def __init__(self, payload: object | None = None, content: bytes | None = None):
         self.content = content if content is not None else json.dumps(payload).encode()
         self._payload = payload
 
     def raise_for_status(self) -> None:
         pass
 
-    def json(self) -> dict:
+    def json(self) -> object:
         return self._payload if self._payload is not None else json.loads(self.content)
 
 
@@ -35,6 +35,22 @@ def vbpl_document(document_id: str = "law") -> dict:
     }
 
 
+def test_vbpl_real_envelope_is_verified_and_stored_unchanged(tmp_path: Path):
+    config = write_config(tmp_path / "config.json", [vbpl_document()])
+    payload = {"data": {"docNum": "36/2024/QH15", "id": "170620"}}
+    raw_bytes = json.dumps(payload).encode()
+
+    with patch(
+        "scripts.fetch_regulations.requests.get",
+        return_value=FakeResponse(content=raw_bytes),
+    ):
+        fetch_regulations(
+            str(config), str(tmp_path / "raw"), str(tmp_path / "manifest.json")
+        )
+
+    assert (tmp_path / "raw" / "law" / "source.json").read_bytes() == raw_bytes
+
+
 def test_vbpl_number_mismatch_fails_closed(tmp_path: Path):
     config = write_config(tmp_path / "config.json", [vbpl_document()])
     manifest = tmp_path / "manifest.json"
@@ -42,7 +58,7 @@ def test_vbpl_number_mismatch_fails_closed(tmp_path: Path):
 
     with patch(
         "scripts.fetch_regulations.requests.get",
-        return_value=FakeResponse({"docNum": "wrong"}),
+        return_value=FakeResponse({"data": {"docNum": "wrong"}}),
     ):
         with pytest.raises(ValueError, match="document number mismatch"):
             fetch_regulations(str(config), str(tmp_path / "raw"), str(manifest))
@@ -53,7 +69,7 @@ def test_vbpl_number_mismatch_fails_closed(tmp_path: Path):
 
 def test_same_raw_bytes_produce_same_sha256_and_paths(tmp_path: Path):
     config = write_config(tmp_path / "config.json", [vbpl_document()])
-    payload = b'{"docNum":"36/2024/QH15","id":170620}'
+    payload = b'{"data":{"docNum":"36/2024/QH15","id":"170620"}}'
 
     with patch(
         "scripts.fetch_regulations.requests.get",
@@ -79,7 +95,7 @@ def test_existing_raw_file_with_different_bytes_is_not_overwritten(tmp_path: Pat
 
     with patch(
         "scripts.fetch_regulations.requests.get",
-        return_value=FakeResponse({"docNum": "36/2024/QH15"}),
+        return_value=FakeResponse({"data": {"docNum": "36/2024/QH15"}}),
     ):
         with pytest.raises(ValueError, match="immutable raw artifact differs"):
             fetch_regulations(str(config), str(tmp_path / "raw"), str(tmp_path / "manifest.json"))
@@ -101,15 +117,32 @@ def test_failed_fetch_does_not_replace_existing_manifest(tmp_path: Path):
     assert manifest.read_text(encoding="utf-8") == '{"version": "previous"}'
 
 
+@pytest.mark.parametrize("payload", [{}, {"data": None}, {"data": []}, {"data": {}}])
+def test_vbpl_missing_or_invalid_envelope_data_fails_closed(
+    tmp_path: Path, payload: object
+):
+    config = write_config(tmp_path / "config.json", [vbpl_document()])
+
+    with patch(
+        "scripts.fetch_regulations.requests.get", return_value=FakeResponse(payload)
+    ):
+        with pytest.raises(ValueError, match="document number mismatch"):
+            fetch_regulations(
+                str(config), str(tmp_path / "raw"), str(tmp_path / "manifest.json")
+            )
+
+    assert not (tmp_path / "raw").exists()
+
+
 def test_qcvn_download_uses_curated_official_attachment(tmp_path: Path):
     config_path = Path("config/legal-corpus.json")
     config = json.loads(config_path.read_text(encoding="utf-8"))
     responses = {
         "https://vbpl-bientap-gateway.moj.gov.vn/api/qtdc/public/doc/170620": FakeResponse(
-            {"docNum": "36/2024/QH15"}
+            {"data": {"docNum": "36/2024/QH15"}}
         ),
         "https://vbpl-bientap-gateway.moj.gov.vn/api/qtdc/public/doc/173920": FakeResponse(
-            {"docNum": "168/2024/NĐ-CP"}
+            {"data": {"docNum": config["documents"][1]["expected_document_number"]}}
         ),
         "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/11/51-bgtvt-kem.pdf": FakeResponse(
             content=b"official qcvn pdf"
