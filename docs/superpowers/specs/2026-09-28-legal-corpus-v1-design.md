@@ -1,160 +1,175 @@
 # ITAS-MM Legal Corpus v1 Design
 
-Date: 2026-09-28
+Date: 2026-09-29
 Branch: `backend/legal-corpus-v1`
 Base branch: `backend/system-refactor` at `1e9d7f9`
 
 ## Intent
 
-Replace the illustrative fixed-size Markdown corpus with a reproducible,
-structure-aware Vietnamese traffic-law corpus that preserves legal provenance
-through normalization, retrieval, and evaluation.
+Replace the illustrative traffic-law sample with a reproducible Vietnamese
+traffic-regulation corpus by selectively porting the proven corpus-building
+logic from `lqb464/LuatRAG` into ITAS-MM.
 
-The canonical legal data must be independent of Chroma. Chroma remains a
-derived retrieval index that can be rebuilt deterministically from validated
-canonical JSON.
+The implementation must look and behave like native ITAS-MM code: one naming
+system, one module layout, one retrieval stack. LuatRAG is a pinned source of
+algorithms and implementation patterns, not a runtime dependency, submodule,
+or nested application.
 
 ## Source-control guardrail
 
-- `main` remains read-only.
-- Do not edit, commit, merge, rebase, force-update, or push `main`.
-- `main` may only be fetched, inspected, and compared as reference context.
-- All Legal Corpus v1 changes stay on `backend/legal-corpus-v1` or another
-  explicitly permitted non-`main` branch.
-- This branch starts from the completed `backend/system-refactor` baseline.
+- `main` is strictly read-only.
+- Never edit, commit, merge, rebase, reset, force-update, or push `main`.
+- All writes remain on `backend/legal-corpus-v1` or another explicitly approved
+  non-`main` branch.
+- Existing uncommitted raw corpus artifacts from Task 7 must not be silently
+  discarded while the pivot is implemented.
+
+## Pinned upstream and licensing
+
+The selective port is based only on LuatRAG commit
+`ae2b1c796503e2a58493771bc341b66fb488e053`.
+
+The implementation patterns to port are concentrated in:
+
+- `scripts/fetch_legal_corpus.py`: curated official-source acquisition,
+  identity verification, HTML cleanup, content hashing, bounded retries,
+  atomic publication, and corpus assembly.
+- `src/rag/core.py`: Vietnamese normalization, structural heading detection,
+  long-paragraph splitting, deterministic chunk construction, and stable
+  checksums.
+
+Do not copy LuatRAG's frontend, FastAPI backend, Gemini integration, SQLite
+storage, FTS5/BM25 retrieval, bootstrap corpus, or its application-specific
+runtime configuration.
+
+LuatRAG is MIT-licensed. Any substantial copied/modified source must retain the
+required upstream copyright/license notice in the repository's attribution
+material. ITAS does not copy LuatRAG's bundled legal corpus.
+
+## Architectural choice: selective port
+
+The port is source-level adaptation, not an adapter around an external repo:
+
+```text
+LuatRAG pinned source
+        |
+        | selectively port proven algorithms
+        v
+ITAS-MM regulation acquisition + normalization + chunking
+        |
+        v
+ITAS DocumentChunk
+        |
+        v
+Chroma + nomic-embed-text + RagChain
+```
+
+## ITAS naming contract
+
+Upstream names must not survive as parallel concepts inside ITAS. The port uses
+ITAS-native names consistently:
+
+| Upstream LuatRAG | ITAS-MM target |
+| --- | --- |
+| `scripts/fetch_legal_corpus.py` | `scripts/fetch_regulations.py` |
+| `html_to_text()` | `src/reasoning/legal_normalizer.py` |
+| `normalize_vietnamese()` | `src/reasoning/legal_normalizer.py` |
+| `chunk_segments()` | `src/reasoning/document_loader.py` |
+| upstream chunk IDs/checksums | ITAS deterministic chunk identity |
+| upstream corpus artifact | `data/regulations/corpus.json` |
+| upstream curated config | `config/regulations.json` |
+
+Do not add `luatrag_adapter.py`, `vendor/luatrag/`, `src/rag/core.py`, or an
+upstream-shaped runtime package. The goal is one vocabulary in the repository.
+
+The existing `config/legal-corpus.json` is renamed to `config/regulations.json`
+during migration so config, script, and data-folder terminology all use
+`regulations` consistently.
 
 ## Scope
 
 ### In scope
 
-- Immutable raw copies of the approved official legal sources.
-- Canonical normalized JSON as the legal source of truth inside the repo.
-- Schema validation for legal structure and provenance metadata.
-- Hybrid normalization: deterministic parsing first, optional LLM assistance
-  only for unresolved blocks, followed by schema validation and human review.
-- Structure-aware projection from canonical legal nodes to `DocumentChunk`.
-- Deterministic Chroma rebuilds with corpus fingerprinting.
-- Retrieval evidence with deterministic locator metadata.
-- Retrieval evaluation using Recall@k, MRR, and failed-case inspection.
+- Port and adapt LuatRAG's official-source fetch/normalize/chunk algorithms.
+- Curate the three ITAS traffic-regulation sources.
+- Preserve source identity, hashes, timestamps, and official URLs.
+- Produce a deterministic ITAS corpus artifact with source records and chunks.
+- Convert corpus chunks directly into existing `DocumentChunk` values.
+- Keep Chroma + `nomic-embed-text` as the retrieval layer.
+- Keep deterministic citation aliases and retrieval benchmark infrastructure.
 
 ### Explicit non-goals
 
-- Automatic law-update crawler or automatic publication of normalized output.
-- Legal ontology, knowledge graph, reranker, BM25 hybrid search, or LLM judge.
-- Dedicated penalty calculator or new public legal-search API.
-- UI citation viewer or production legal-advice claims.
-- Lane-model, sign-model, GPS/OSM, or streaming work.
+- Vendoring or running LuatRAG as a second application.
+- Reimplementing a complete Vietnamese legal parser or legal ontology.
+- OCR for sign-image pages in QCVN v1.
+- LuatRAG's FTS5/BM25, Gemini layer, frontend, SQLite store, or upload flow.
+- Generic automatic law crawling or auto-update services.
 
-## Audited reference implementation
+## Corpus artifacts and source flow
 
-Legal Corpus v1 uses `lqb464/LuatRAG` as a pinned implementation reference at
-commit `ae2b1c796503e2a58493771bc341b66fb488e053` (main, 2026-09-18). The
-reference is not vendored wholesale. Its curated `data/legal-corpus.json` is
-not an acceptable ITAS-MM corpus because its current selection does not include
-`36/2024/QH15`, `168/2024/NĐ-CP`, or QCVN 41.
-
-Reuse only proven patterns that fit this design: curated source identities with
-expected document numbers, official VBPL acquisition, source-content hashes,
-pinned upstream provenance, atomic artifact replacement, and fail-closed
-citation validation. Do not copy LuatRAG's lexical-only retrieval architecture
-or its fixed target/max-size chunking as the ITAS retrieval design. ITAS keeps
-its existing Chroma + `nomic-embed-text` retrieval path until benchmark evidence
-justifies a hybrid or lexical alternative.
-
-LuatRAG code is MIT-licensed. Its bootstrap corpus attributes `tmquan/vbpl-vn`
-under CC BY 4.0; ITAS v1 avoids copying that corpus and instead acquires the
-approved traffic-law sources from official endpoints. If dataset-derived
-content is introduced later, its attribution requirements must be preserved.
-
-## Corpus layout and provenance
+The production flow is intentionally shorter than the previous design:
 
 ```text
-data/regulations/
-├── raw/
-│   ├── law-36-2024-qh15/source.*
-│   ├── decree-168-2024-nd-cp/source.*
-│   └── qcvn-41-2024-bgtvt/source.*
-├── normalized/
-│   ├── law-36-2024-qh15.json
-│   ├── decree-168-2024-nd-cp.json
-│   └── qcvn-41-2024-bgtvt.json
-└── manifest.json
+config/regulations.json
+        |
+        v
+scripts/fetch_regulations.py
+        |
+        +--> data/regulations/raw/<document_id>/source.*
+        |
+        +--> normalize text + structure-aware chunking
+        |
+        v
+data/regulations/corpus.json
+        |
+        v
+scripts/build_vector_index.py
+        |
+        v
+Chroma
 ```
 
-Raw source files are immutable audit artifacts. `manifest.json` records only
-reproducibility metadata needed by the pipeline: `document_id`, source URL,
-raw file path, retrieval timestamp, normalized file path, and SHA-256.
+`data/regulations/corpus.json` is the reviewable corpus source for retrieval. It
+contains a top-level manifest, source records, and deterministic chunk records.
+Each source records at least `document_id`, title/number, authoritative URL,
+raw artifact path, SHA-256, source kind, and retrieval timestamp. Each chunk
+records at least deterministic ID, ordinal, `document_id`, locator, heading,
+text, and checksum.
 
-The initial corpus targets three current sources: Law 36/2024/QH15, Decree
-168/2024/NĐ-CP, and QCVN 41:2024/BGTVT. QCVN 41:2019/BGTVT is not used for
-current guidance because the 2024 revision supersedes it.
+Raw files remain immutable audit artifacts. A different response at the same
+curated identity must not overwrite existing raw bytes silently.
 
-`config/legal-corpus.json` is the curated acquisition manifest: each entry pins
-`document_id`, expected official document number/title, source kind, and
-authoritative source locator. Law/decree acquisition follows LuatRAG's verified
-VBPL pattern: retrieve the official record, verify the returned document number
-against the curated expectation, retain the raw response/source artifact, and
-record a content SHA-256. QCVN acquisition uses the authoritative 2024 source
-artifact rather than pretending it is a VBPL article hierarchy. Missing or
-mismatched sources fail closed; no illustrative sample substitutes.
+The separate production step `scripts/normalize_regulations.py` is removed.
+Normalization is a pure implementation boundary reused by the fetch/build flow,
+not a second CLI or second corpus format. The old per-document canonical
+article/clause/point JSON is no longer required for v1 retrieval.
 
-## Canonical legal model
+## Source-specific adaptation
 
-`src/reasoning/legal_models.py` owns the canonical schema. Use plain Pydantic
-models already available in the project; do not add a new schema dependency or
-an inheritance hierarchy.
+`config/regulations.json` curates exactly the ITAS traffic-law sources and their
+expected identities. The fetcher supports only the source kinds required by
+this corpus; it is not a generic crawler.
 
-The minimal v1 model contains:
+For official HTML/JSON legal text, port LuatRAG's bounded-retry, exact-identity,
+HTML-to-text, Unicode normalization, size-limit, hashing, and atomic-publication
+behavior. ITAS may select a different official endpoint for a curated document
+when the configured endpoint cannot produce structurally valid text; the source
+URL and hash must make that choice explicit.
 
-- `LegalDocument`: identity, title, type, source metadata, `articles`, `sections`.
-- `LegalArticle`: number, optional title/text, child clauses.
-- `LegalClause`: number, optional text, child points.
-- `LegalPoint`: label and text.
-- `LegalSection`: hierarchical identifier, optional title/text, child sections.
+For QCVN PDF, use the official text layer only. Pages with no font/text resource
+may be skipped deterministically rather than spending extraction time on pure
+sign artwork. V1 does not OCR sign images or infer their meaning from pixels.
 
-Law and decree documents primarily use `articles -> clauses -> points`. QCVN
-may use generic hierarchical `sections`; it must not be forced into an
-article/clause shape that the source does not have.
+## Chunking and retrieval projection
 
-Canonical JSON is the source of truth. The retrieval model is a projection,
-not the canonical record. Therefore Chroma metadata must always be sufficient
-to trace a hit back to the canonical document and locator, but Chroma does not
-store the full canonical object graph.
+Port LuatRAG's proven normalization and structure-aware chunking behavior, then
+adapt it to ITAS evidence metadata. Legal headings (`Chương`, `Mục`, `Điều`,
+`Khoản`, and equivalents present in the source) are preferred boundaries.
+Long paragraphs may be split by sentence/space boundaries with a bounded maximum
+size, but no fixed overlapping 800/120-character window is restored.
 
-## Normalization and validation
-
-Acquisition and normalization flow:
-
-```text
-curated source config -> official source fetch -> immutable raw artifact + SHA-256
-                      -> extract text -> deterministic structure parser
-                      -> unresolved blocks -> optional LLM assist
-                      -> schema validation -> reviewable canonical JSON
-```
-
-Source fetching uses bounded retries and writes raw/normalized candidates
-atomically so a partial download or failed normalization cannot replace the
-last reviewed artifact. Expected document identity is verified before any
-normalized output is accepted.
-
-Deterministic parsing handles explicit legal markers such as `Điều`, numbered
-clauses, lettered points, and QCVN section identifiers. LLM assistance is only
-for blocks the deterministic parser cannot resolve; it must not rewrite the
-entire document or bypass validation.
-
-A structurally valid LLM response is not proof that the legal content is
-correct. Normalized JSON remains a reviewable, committable artifact and is not
-auto-published into the index.
-
-Validation must fail on missing source metadata, empty required identities,
-empty leaf nodes, duplicate article numbers, duplicate clause numbers within an
-article, duplicate point labels within a clause, duplicate section locators,
-or raw-file hash mismatches. Validation checks structure and provenance, not
-substantive legal correctness.
-
-## Retrieval projection
-
-Keep `DocumentChunk` as the retrieval evidence type and extend it minimally:
+`DocumentChunk` remains the ITAS retrieval type:
 
 ```python
 DocumentChunk(
@@ -167,82 +182,54 @@ DocumentChunk(
 )
 ```
 
-Projection rules are structure-first:
-
-- A legal point becomes one retrieval unit.
-- A clause with no points becomes one retrieval unit.
-- An article with no clauses becomes one retrieval unit.
-- A leaf QCVN section becomes one retrieval unit.
-- A legal unit that exceeds the practical embedding ceiling may be split into
-  subchunks, but every subchunk retains the same legal locator metadata.
-
-The existing global `800`-character window with `120` overlap is no longer the
-primary corpus strategy. Any size ceiling is a safety limit only and should be
-chosen after inspecting the actual canonical documents.
+The corpus artifact is converted directly to this type. No LuatRAG chunk class
+or adapter type survives in runtime code. Chunk IDs remain deterministic and
+must be stable for unchanged source text and configuration.
 
 ## Vector index lifecycle
 
-`VectorStore` continues to use Chroma and `nomic-embed-text`. LuatRAG's
-SQLite FTS5/BM25 path is an audited reference, not a v1 dependency; hybrid
-retrieval is deferred until the ITAS benchmark demonstrates a need. Metadata
-expands to include `document_id`, `source_file`, `chunk_index`, `locator_type`,
-and `locator`. IDs must be deterministic, for example:
+ITAS keeps Chroma and `nomic-embed-text`; LuatRAG retrieval is not ported.
+`scripts/build_vector_index.py` loads `data/regulations/corpus.json`, validates
+its source/chunk identities, computes the corpus fingerprint, and performs the
+existing safe full rebuild.
 
-```text
-document_id::locator_type::locator::chunk_index
-```
+Fingerprint input includes semantic corpus content, schema/artifact version,
+and embedding model. Retrieval timestamps and local absolute paths are excluded.
+Collection metadata keeps `corpus_fingerprint`, `schema_version`, and
+`embedding_model`.
 
-V1 uses full deterministic rebuilds rather than incremental reconciliation.
-The build flow is:
-
-```text
-load all canonical JSON -> validate all -> project all chunks
--> verify embedding readiness -> compute fingerprint
--> replace/recreate collection -> embed/upsert all chunks
-```
-
-Validation and candidate-corpus preparation happen before replacing the current
-collection so a malformed corpus does not destroy the last usable index.
-
-The corpus fingerprint is SHA-256 over canonicalized semantic JSON plus schema
-version and embedding model name. Canonical serialization sorts keys and omits
-non-semantic local details such as absolute paths and retrieval timestamps.
-The fingerprint and schema/model identity are stored with the derived index.
+All candidate embeddings must succeed before the current usable collection is
+replaced. A malformed or empty corpus must fail before rebuild.
 
 ## Grounding and citations
 
-`RagChain` still retrieves top-k `DocumentChunk` values and keeps the current
-empty-retrieval fail-safe. Prompt context should include deterministic source
-labels derived from chunk metadata, for example:
+Keep the existing ITAS source-alias contract in `rag_chain.py`:
 
 ```text
-[1] Nghị định 168/2024/NĐ-CP — Điều 6 Khoản 1 Điểm a
+[S1] <document_id> — <locator>
 <retrieved text>
 ```
 
-The application formats citations from retrieval metadata. The LLM must not be
-trusted to invent or reconstruct legal citations from its generated prose.
-`ReasoningResult` continues to retain the exact retrieved evidence internally;
-no public API widening is required in this slice.
+The application derives citations from retrieved metadata. Generated aliases
+outside the current retrieval set fail closed. No citation parser from LuatRAG
+is required if the current ITAS implementation already enforces this invariant.
 
 ## Retrieval evaluation
 
-Add `data/evaluation/legal_retrieval.json` with roughly 20–30 curated queries
-covering speed, signals, prohibitory signs, lanes, stopping/parking, overtaking,
-penalties, and QCVN sign meaning. Each case identifies the expected canonical
-legal locator(s).
+Keep the existing benchmark design: curated Vietnamese traffic-law queries,
+expected `(document_id, locator)` targets, Recall@1/@3/@4, MRR, and failed-case
+inspection. Evaluation uses ITAS Chroma retrieval only; it does not compare or
+blend LuatRAG lexical ranking in v1.
 
-`scripts/evaluate_legal_retrieval.py` reports Recall@1, Recall@3, Recall@4,
-MRR, failed cases, corpus fingerprint, embedding model, and evaluated top-k.
-V1 records scores but does not introduce an arbitrary pytest pass threshold.
+## Module boundaries after pivot
 
-## Module boundaries
-
-Keep the feature inside the existing reasoning package:
+The intended production surface is:
 
 ```text
+config/
+└── regulations.json
+
 src/reasoning/
-├── legal_models.py
 ├── legal_normalizer.py
 ├── document_loader.py
 ├── vector_store.py
@@ -250,74 +237,92 @@ src/reasoning/
 └── ollama_client.py
 
 scripts/
-├── normalize_regulations.py
+├── fetch_regulations.py
 ├── build_vector_index.py
 └── evaluate_legal_retrieval.py
+
+data/regulations/
+├── raw/
+└── corpus.json
 ```
 
-Legal Corpus v1 additionally owns `scripts/fetch_regulations.py` for the three
-curated official sources and `config/legal-corpus.json` for their pinned
-acquisition identities. The fetcher is not a general Vietnamese-law crawler.
+`legal_models.py` and `scripts/normalize_regulations.py` are removed if no
+remaining runtime/test contract requires them after the selective port. Do not
+retain obsolete files merely for compatibility with the abandoned design.
 
-Do not add repository/service/provider/adapter layers. `legal_models.py` owns
-canonical structure. `legal_normalizer.py` handles source-text normalization.
-`document_loader.py` loads validated canonical JSON and projects retrieval
-chunks. `vector_store.py` owns derived-index storage/retrieval only.
+No `src/rag/`, LuatRAG package namespace, vendor tree, or duplicate corpus
+configuration is introduced.
 
-Developer workflow stays small: fetch curated official sources, normalize them,
-review canonical JSON, then build the validated index. A separate validation CLI
-is unnecessary unless an independent use case appears.
+## Migration strategy
 
-## Migration from the current corpus
+Existing completed work that remains useful is preserved: `DocumentChunk`
+provenance fields, deterministic/safe Chroma rebuild, corpus fingerprinting,
+source aliases, citation validation, and retrieval-evaluation scaffolding.
 
-The illustrative `sample_traffic_rules.md` is removed from the indexed corpus.
-`build_corpus_chunks()` changes from loading arbitrary Markdown/text and fixed
-windows to loading canonical JSON and projecting legal leaf nodes. The old
-`chunk_text()` function is not retained as the production corpus API; a small
-private long-leaf splitter may remain only as a safety mechanism.
+The custom deep legal-structure parser and its canonical-model dependency are
+retired where the selective port replaces them. Tests are rewritten around the
+new corpus contract instead of keeping obsolete implementation tests green by
+adding compatibility shims.
 
-`configs/reasoning.yaml` should stop presenting `chunk_size_chars` and
-`chunk_overlap_chars` as global corpus semantics. A maximum chunk-size ceiling
-may be added only after inspection of the three real normalized documents.
-
-The public FastAPI response remains unchanged. Existing pipeline behavior and
-the explicit no-regulation-found result remain compatible.
+The illustrative `sample_traffic_rules.md` is removed from active corpus use.
+`configs/reasoning.yaml` points index building at `data/regulations/corpus.json`
+and no longer advertises the old arbitrary fixed-window chunk settings.
 
 ## Testing strategy
 
-- Schema tests: valid law/decree hierarchy, valid QCVN sections, duplicates,
-  empty leaves, missing provenance, and hash mismatch failures.
-- Projection tests: point, clause, article, QCVN leaf, and long-leaf metadata
-  preservation.
-- VectorStore tests: deterministic metadata round-trip and text/metadata pairing.
-- RagChain tests: source-labeled grounding while retaining exact evidence.
-- Retrieval benchmark: separate executable evaluation, not a unit-test score gate.
+Tests must validate behavior, not upstream file names:
+
+- Acquisition: exact curated identity, bounded retries, immutable raw bytes,
+  deterministic hashes, and atomic corpus publication.
+- Normalization: HTML cleanup, Vietnamese Unicode normalization, source-specific
+  extraction, and fail-closed handling of unusable source text.
+- Chunking: deterministic heading-aware boundaries, long-paragraph splitting,
+  stable locator/checksum/IDs, and no duplicate IDs.
+- Corpus artifact: deterministic structure, unique source/chunk identities, and
+  provenance round-trip into `DocumentChunk`.
+- Vector index: stable fingerprint, safe rebuild, stale-chunk removal, metadata
+  round-trip, and preservation of the prior collection on pre-rebuild failure.
+- RagChain: exact retrieved evidence identity and fail-closed citation aliases.
+- Benchmark: metric arithmetic plus real 24-case retrieval report.
+
+Where upstream LuatRAG behavior is ported, add characterization/regression tests
+before adapting it so later refactors can distinguish intentional ITAS changes
+from accidental drift.
 
 ## Failure behavior
 
-Normalization/indexing fails fast on missing raw source, raw SHA-256 mismatch,
-invalid canonical JSON, schema violations, duplicate legal locators, empty
-canonical corpus, unavailable Ollama, or missing embedding model. No sample or
-open-domain fallback is allowed.
+Fail closed on source identity mismatch, source fetch exhaustion, raw-byte
+mutation, unusable official text, invalid/empty corpus artifact, duplicate IDs,
+embedding unavailability, or malformed index input.
 
-Runtime querying keeps the current fail-safe behavior: an empty retrieval set
-returns `Không tìm thấy quy định phù hợp trong cơ sở dữ liệu hiện có.` and does
-not invoke generation.
+Do not repair legal text using model knowledge. If two official representations
+disagree, select and record the configured authoritative artifact or stop for
+review; do not silently guess a label or provision.
+
+Runtime empty retrieval keeps the existing Vietnamese no-regulation-found
+response and does not invoke generation.
 
 ## Success criteria
 
-- Three current source documents (36/2024/QH15, 168/2024/NĐ-CP, and QCVN
-  41:2024/BGTVT) exist as immutable raw artifacts with manifest provenance and
-  validated canonical JSON.
-- Source acquisition verifies expected document identity and SHA-256 before
-  normalized artifacts can be accepted.
-- Canonical models represent both article/clause/point and QCVN section forms.
-- Retrieval chunks preserve deterministic document and legal locator identity.
-- Rebuilding the same canonical corpus with the same schema/model yields the
-  same corpus fingerprint and deterministic chunk IDs.
-- Chroma contains no stale chunks from an older corpus after a successful build.
-- RagChain context exposes deterministic source labels without LLM-generated
-  citation authority.
-- The curated benchmark produces Recall@1/@3/@4, MRR, and inspectable failures.
-- Existing regression tests remain green and no speculative architecture is added.
-- `main` remains untouched throughout the work.
+- LuatRAG is used as a pinned implementation source, not merely as conceptual
+  inspiration, and the selectively ported logic is identifiable in code review.
+- ITAS exposes only ITAS-native file/module/function naming; no parallel LuatRAG
+  runtime namespace remains.
+- `config/regulations.json`, `scripts/fetch_regulations.py`,
+  `data/regulations/corpus.json`, and the reasoning modules form one coherent
+  vocabulary.
+- The three curated traffic-regulation sources produce immutable raw artifacts,
+  provenance metadata, and a deterministic non-empty corpus artifact.
+- The production path has no separate `normalize_regulations.py` CLI and no
+  dependency on the abandoned deep canonical article/clause/point model unless
+  a concrete remaining use case is discovered and reviewed.
+- Chroma remains the only v1 retrieval store and continues to use
+  `nomic-embed-text`.
+- Rebuilding unchanged corpus content yields the same semantic fingerprint and
+  deterministic chunk identities.
+- Retrieval evidence preserves `document_id` and locator metadata through
+  `RagChain`, and unknown generated citation aliases are rejected.
+- The 24-case benchmark reports Recall@1/@3/@4, MRR, and inspectable failures.
+- Existing non-obsolete regression tests remain green; obsolete parser tests are
+  removed/replaced rather than supported with dead compatibility layers.
+- `main` remains untouched throughout implementation.
