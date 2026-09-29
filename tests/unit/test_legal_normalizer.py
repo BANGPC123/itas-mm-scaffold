@@ -89,6 +89,60 @@ def test_configured_document_missing_from_manifest_fails_before_normalized_write
     assert not (tmp_path / "normalized").exists()
 
 
+def test_duplicate_configured_document_id_fails_before_normalized_writes(tmp_path: Path):
+    config = {
+        "documents": [
+            {
+                "document_id": "law-1",
+                "source_kind": "vbpl",
+                "expected_document_number": "Law 1",
+            },
+            {
+                "document_id": "law-1",
+                "source_kind": "vbpl",
+                "expected_document_number": "Law 1 duplicate",
+            },
+        ]
+    }
+    manifest = {"documents": []}
+    config_path = tmp_path / "config.json"
+    manifest_path = tmp_path / "manifest.json"
+    config_path.write_text(json.dumps(config), encoding="utf-8")
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="duplicate configured document_id: law-1"):
+        normalize_regulations(config_path, manifest_path)
+
+    assert not (tmp_path / "normalized").exists()
+
+
+def test_duplicate_manifest_document_id_fails_before_normalized_writes(tmp_path: Path):
+    config = {
+        "documents": [
+            {
+                "document_id": "law-1",
+                "source_kind": "vbpl",
+                "expected_document_number": "Law 1",
+            }
+        ]
+    }
+    manifest = {
+        "documents": [
+            {"document_id": "law-1"},
+            {"document_id": "law-1"},
+        ]
+    }
+    config_path = tmp_path / "config.json"
+    manifest_path = tmp_path / "manifest.json"
+    config_path.write_text(json.dumps(config), encoding="utf-8")
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="duplicate manifest document_id: law-1"):
+        normalize_regulations(config_path, manifest_path)
+
+    assert not (tmp_path / "normalized").exists()
+
+
 def test_law_parser_preserves_article_clause_point():
     document, unresolved = normalize_document(
         "Điều 1. Quy tắc\n1. Người lái xe phải tuân thủ.\na) Dừng khi đèn đỏ.",
@@ -108,6 +162,20 @@ def test_law_parser_preserves_article_clause_point():
     assert unresolved == []
 
 
+def test_law_structural_heading_is_unresolved_not_merged_into_point():
+    document, unresolved = normalize_document(
+        "Điều 1. Quy tắc\n1. Người lái xe phải tuân thủ.\na) Dừng khi đèn đỏ.\n"
+        "CHƯƠNG II\nQuy định riêng\nĐiều 2. Quy tắc khác",
+        document_id="law-1",
+        title="Luật mẫu",
+        document_type="law",
+        source=source(),
+    )
+
+    assert document.articles[0].clauses[0].points[0].text == "Dừng khi đèn đỏ."
+    assert unresolved == ["CHƯƠNG II\nQuy định riêng"]
+
+
 def test_qcvn_parser_builds_nested_sections():
     document, unresolved = normalize_document(
         "1. QUY ĐỊNH CHUNG\n1.1. Phạm vi điều chỉnh\n1.2. Đối tượng áp dụng",
@@ -123,6 +191,20 @@ def test_qcvn_parser_builds_nested_sections():
         "1.2",
     ]
     assert unresolved == []
+
+
+def test_qcvn_structural_heading_is_unresolved_not_merged_into_article():
+    document, unresolved = normalize_document(
+        "1. QUY ĐỊNH CHUNG\n1.1. Phạm vi điều chỉnh\nMỤC 2\nQuy định riêng\n"
+        "2. QUY ĐỊNH KHÁC",
+        document_id="qcvn-1",
+        title="QCVN mẫu",
+        document_type="qcvn",
+        source=source(),
+    )
+
+    assert document.sections[0].articles[0].text == "Phạm vi điều chỉnh"
+    assert unresolved == ["MỤC 2\nQuy định riêng"]
 
 
 def test_unresolved_block_is_reported_without_assist():

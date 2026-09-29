@@ -95,6 +95,9 @@ _CLAUSE = re.compile(r"^(?:Khoản\s+)?(\d+)\.\s*(.+)$", re.IGNORECASE)
 _POINT = re.compile(r"^(?:Điểm\s+)?([a-zđ])\)\s*(.+)$", re.IGNORECASE)
 _SECTION = re.compile(r"^(\d+)\.\s*(.+)$")
 _SUBSECTION = re.compile(r"^(\d+(?:\.\d+)+)\.\s*(.+)$")
+_STRUCTURAL_HEADING = re.compile(
+    r"^(?:PHẦN|CHƯƠNG|MỤC|TIỂU\s+MỤC)\b", re.IGNORECASE
+)
 
 
 def _append(node: dict | None, text: str) -> bool:
@@ -136,6 +139,9 @@ def _parse_law(lines: list[str]) -> tuple[list[dict], list[str]]:
                 continue
             point = {"point_id": match.group(1), "text": match.group(2)}
             clause["points"].append(point)
+        elif _STRUCTURAL_HEADING.match(line):
+            unknown.append(line)
+            article = clause = point = None
         elif not _append(point or clause or article, line):
             unknown.append(line)
     _finish_unresolved(unresolved, unknown)
@@ -159,6 +165,9 @@ def _parse_qcvn(lines: list[str]) -> tuple[list[dict], list[str]]:
             section = {"section_id": match.group(1), "text": match.group(2), "articles": []}
             sections.append(section)
             article = None
+        elif _STRUCTURAL_HEADING.match(line):
+            unknown.append(line)
+            section = article = None
         elif not _append(article or section, line):
             unknown.append(line)
     _finish_unresolved(unresolved, unknown)

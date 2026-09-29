@@ -37,6 +37,15 @@ def _document_type(entry: dict) -> str:
     return "decree" if str(entry.get("document_id", "")).startswith("decree-") else "law"
 
 
+def _validate_unique_document_ids(entries: list[dict], source: str) -> None:
+    document_ids: set[str] = set()
+    for entry in entries:
+        document_id = entry["document_id"]
+        if document_id in document_ids:
+            raise ValueError(f"duplicate {source} document_id: {document_id}")
+        document_ids.add(document_id)
+
+
 def normalize_regulations(
     config_path: str | Path,
     manifest_path: str | Path,
@@ -47,8 +56,11 @@ def normalize_regulations(
     config = json.loads(Path(config_path).read_text(encoding="utf-8"))
     manifest_file = Path(manifest_path)
     manifest = json.loads(manifest_file.read_text(encoding="utf-8"))
-    configured = {entry["document_id"]: entry for entry in config.get("documents", [])}
+    configured_entries = config.get("documents", [])
     records = manifest.get("documents", [])
+    _validate_unique_document_ids(configured_entries, "configured")
+    _validate_unique_document_ids(records, "manifest")
+    configured = {entry["document_id"]: entry for entry in configured_entries}
     manifest_ids = {record["document_id"] for record in records}
     missing_ids = configured.keys() - manifest_ids
     if missing_ids:
