@@ -5,6 +5,8 @@ import hashlib
 import json
 from dataclasses import dataclass
 from pathlib import Path
+import re
+import unicodedata
 
 from src.reasoning.legal_models import LegalArticle, LegalDocument
 
@@ -17,6 +19,126 @@ class DocumentChunk:
     document_id: str = ""
     locator_type: str = ""
     locator: str = ""
+
+
+_HEADING = re.compile(
+    r"^(chương\s+[ivxlcdm\d]+|mục\s+\d+|điều\s+\d+[a-z]?|khoản\s+\d+|phần\s+(?:thứ\s+)?[^\W_]+)\s*[.:]?",
+    re.IGNORECASE,
+)
+
+
+def _normalize_text(value: str) -> str:
+    value = unicodedata.normalize("NFC", value).replace("\0", "")
+    value = re.sub(r"\r\n?", "\n", value)
+    value = re.sub(r"[\t\f\v]+", " ", value)
+    value = re.sub(r" {2,}", " ", value)
+    return re.sub(r"\n{3,}", "\n\n", value).strip()
+
+
+def stable_checksum(value: str) -> str:
+    """Return LuatRAG's pinned FNV-1a checksum over UTF-16 code units."""
+    encoded = value.encode("utf-16-le", errors="surrogatepass")
+    hashed = 2166136261
+    for index in range(0, len(encoded), 2):
+        hashed = (
+            (hashed ^ int.from_bytes(encoded[index : index + 2], "little")) * 16777619
+        ) & 0xFFFFFFFF
+    alphabet = "0123456789abcdefghijklmnopqrstuvwxyz"
+    result = ""
+    while hashed:
+        hashed, remainder = divmod(hashed, 36)
+        result = alphabet[remainder] + result
+    return result or "0"
+
+
+def split_long_paragraph(paragraph: str, max_size: int) -> list[str]:
+    """Split at sentence boundaries before falling back to a hard boundary."""
+    if len(paragraph) <= max_size:
+        return [paragraph]
+    pieces: list[str] = []
+    buffer = ""
+    for sentence in re.split(r"(?<=[.!?;])\s+", paragraph):
+        if len(sentence) > max_size:
+            if buffer:
+                pieces.append(buffer.strip())
+                buffer = ""
+            remaining = sentence.strip()
+            while len(remaining) > max_size:
+                boundary = remaining.rfind(" ", 0, max_size + 1)
+                if boundary < max_size * 0.65:
+                    boundary = max_size
+                pieces.append(remaining[:boundary].strip())
+                remaining = remaining[boundary:].lstrip()
+            if remaining:
+                pieces.append(remaining)
+        else:
+            if buffer and len(buffer) + len(sentence) + 1 > max_size:
+                pieces.append(buffer.strip())
+                buffer = ""
+            buffer += (" " if buffer else "") + sentence
+    if buffer.strip():
+        pieces.append(buffer.strip())
+    return pieces
+
+
+def chunk_regulation_text(
+    document_id: str, text: str, *, target_size: int = 950, max_size: int = 1400
+) -> list[dict[str, object]]:
+    """Build deterministic heading-aware retrieval records from regulation text."""
+    text = re.sub(
+        r"(?<=[.;!?])\s+(?=(?:chương\s+[ivxlcdm\d]+|mục\s+\d+|điều\s+\d+[a-z]?)\s*[.:]?)",
+        "\n\n",
+        _normalize_text(text),
+        flags=re.IGNORECASE,
+    )
+    paragraphs = [
+        part.strip()
+        for part in re.split(
+            r"\n{2,}|(?=^(?:Chương|Mục|Điều|Khoản)\s+)", text, flags=re.IGNORECASE | re.MULTILINE
+        )
+        if part.strip()
+    ]
+    chunks: list[dict[str, object]] = []
+    buffer = ""
+    heading = ""
+
+    def flush() -> None:
+        nonlocal buffer
+        body = _normalize_text(buffer)
+        buffer = ""
+        if len(body) <= 20:
+            return
+        ordinal = len(chunks)
+        locator = heading or f"Đoạn {ordinal + 1}"
+        checksum = stable_checksum(f"{document_id}:{locator}:{body}")
+        chunks.append(
+            {
+                "id": f"{document_id}:{ordinal}:{checksum}",
+                "ordinal": ordinal,
+                "document_id": document_id,
+                "locator_type": "heading" if heading else "chunk",
+                "locator": locator[:240],
+                "heading": heading or None,
+                "text": body,
+                "checksum": checksum,
+            }
+        )
+
+    for paragraph in paragraphs:
+        marker = _HEADING.match(paragraph)
+        if marker:
+            if buffer:
+                flush()
+            title = re.split(r"(?<=[.!?])\s+|\n", paragraph[marker.end() :].strip(), maxsplit=1)[0][:150].strip()
+            heading = (marker.group().strip() + (f" {title}" if title else ""))[:180]
+        for piece in split_long_paragraph(paragraph, max_size):
+            if buffer and len(buffer) + len(piece) + 2 > max_size:
+                flush()
+            buffer += ("\n\n" if buffer else "") + piece
+            if len(buffer) >= target_size:
+                flush()
+    flush()
+    return chunks
 
 
 def compute_corpus_fingerprint(
