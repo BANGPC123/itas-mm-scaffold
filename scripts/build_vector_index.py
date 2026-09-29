@@ -5,6 +5,12 @@ Usage:
 """
 from __future__ import annotations
 
+import argparse
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 from src.reasoning.document_loader import (
     build_legal_chunks,
     compute_corpus_fingerprint,
@@ -60,6 +66,7 @@ def build_index() -> None:
 
 
 def main() -> None:
+    argparse.ArgumentParser().parse_args()
     build_index()
 
 

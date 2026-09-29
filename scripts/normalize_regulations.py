@@ -6,7 +6,10 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import sys
 import tempfile
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.reasoning.legal_models import LegalSource
 from src.reasoning.legal_normalizer import (
