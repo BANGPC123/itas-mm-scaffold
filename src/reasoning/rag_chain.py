@@ -51,7 +51,7 @@ class RagChain:
                 guidance_text=(
                     "Không tìm thấy quy định phù hợp trong cơ sở dữ liệu hiện có."
                 ),
-                retrieved_chunks=[],
+                retrieved_chunks=retrieved_chunks,
                 zone_label=zone_label,
             )
 

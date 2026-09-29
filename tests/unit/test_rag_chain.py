@@ -36,14 +36,15 @@ def _chain_with(
 
 
 def test_answer_returns_fail_safe_without_generation_when_no_chunks_found():
-    chain, vector_store, ollama_client = _chain_with([])
+    chunks: list[DocumentChunk] = []
+    chain, vector_store, ollama_client = _chain_with(chunks)
 
     result = chain.answer("No sign detected", "Urban")
 
     assert result.guidance_text == (
         "Không tìm thấy quy định phù hợp trong cơ sở dữ liệu hiện có."
     )
-    assert result.retrieved_chunks == []
+    assert result.retrieved_chunks is chunks
     assert result.zone_label == "Urban"
     vector_store.query.assert_called_once_with("No sign detected", 3)
     ollama_client.generate.assert_not_called()
