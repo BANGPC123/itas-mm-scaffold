@@ -48,13 +48,23 @@ def normalize_regulations(
     manifest_file = Path(manifest_path)
     manifest = json.loads(manifest_file.read_text(encoding="utf-8"))
     configured = {entry["document_id"]: entry for entry in config.get("documents", [])}
+    records = manifest.get("documents", [])
+    manifest_ids = {record["document_id"] for record in records}
+    missing_ids = configured.keys() - manifest_ids
+    if missing_ids:
+        raise ValueError(
+            f"configured document missing from manifest: {', '.join(sorted(missing_ids))}"
+        )
+    unexpected_ids = manifest_ids - configured.keys()
+    if unexpected_ids:
+        raise ValueError(
+            f"manifest document is not configured: {', '.join(sorted(unexpected_ids))}"
+        )
     staged: list[tuple[Path, dict]] = []
 
-    for record in manifest.get("documents", []):
+    for record in records:
         document_id = record["document_id"]
         entry = configured.get(document_id)
-        if entry is None:
-            raise ValueError(f"manifest document is not configured: {document_id}")
         raw_file = record["raw_file"]
         raw_path = manifest_file.parent / raw_file
         raw_bytes = raw_path.read_bytes()

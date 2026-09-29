@@ -69,6 +69,8 @@ def extract_vbpl_text(payload: dict) -> str:
     )
     if body is None and isinstance(payload.get("data"), dict):
         return extract_vbpl_text(payload["data"])
+    if body is None and isinstance(payload.get("documentContent"), dict):
+        return extract_vbpl_text(payload["documentContent"])
     if not isinstance(body, str):
         raise ValueError("VBPL payload does not contain HTML text")
     parser = _TextExtractor()

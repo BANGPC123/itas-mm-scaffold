@@ -1,7 +1,11 @@
 from datetime import datetime, timezone
+import hashlib
+import json
+from pathlib import Path
 
 import pytest
 
+from scripts.normalize_regulations import normalize_regulations
 from src.reasoning.legal_models import LegalSource
 from src.reasoning.legal_normalizer import (
     extract_pdf_text,
@@ -28,6 +32,61 @@ def test_vbpl_html_normalizes_unicode_and_structure():
     )
 
     assert text == "Điều 1. Quy định\n1. Nội dung"
+
+
+def test_vbpl_nested_document_content_normalizes_unicode_and_structure():
+    text = extract_vbpl_text(
+        {
+            "data": {
+                "documentContent": {
+                    "content": "<p>Điều 1. <b>Quy định</b></p>"
+                }
+            }
+        }
+    )
+
+    assert text == "Điều 1. Quy định"
+
+
+def test_configured_document_missing_from_manifest_fails_before_normalized_writes(tmp_path: Path):
+    raw = b'{"content":"<p>\\u0110i\\u1ec1u 1. Quy t\\u1eafc</p>"}'
+    (tmp_path / "raw").mkdir()
+    (tmp_path / "raw" / "source.json").write_bytes(raw)
+    config = {
+        "documents": [
+            {
+                "document_id": "law-1",
+                "source_kind": "vbpl",
+                "expected_document_number": "Law 1",
+            },
+            {
+                "document_id": "law-2",
+                "source_kind": "vbpl",
+                "expected_document_number": "Law 2",
+            },
+        ]
+    }
+    manifest = {
+        "documents": [
+            {
+                "document_id": "law-1",
+                "raw_file": "raw/source.json",
+                "normalized_file": "normalized/law-1.json",
+                "sha256": hashlib.sha256(raw).hexdigest(),
+                "source_url": "https://example.gov.vn/law-1",
+                "retrieved_at": "2026-09-29T00:00:00Z",
+            }
+        ]
+    }
+    config_path = tmp_path / "config.json"
+    manifest_path = tmp_path / "manifest.json"
+    config_path.write_text(json.dumps(config), encoding="utf-8")
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="configured document missing from manifest: law-2"):
+        normalize_regulations(config_path, manifest_path)
+
+    assert not (tmp_path / "normalized").exists()
 
 
 def test_law_parser_preserves_article_clause_point():
