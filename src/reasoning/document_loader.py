@@ -1,14 +1,11 @@
-"""Loads and chunks the traffic-regulation corpus for retrieval.
-
-Chunking uses a simple fixed-size sliding window with overlap. This is a
-reasonable default for short regulation paragraphs; if the real corpus
-turns out to have long, deeply nested clauses, revisit with a
-structure-aware splitter (e.g. by section/article number) instead.
-"""
+"""Load validated canonical legal documents and project retrieval evidence."""
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from pathlib import Path
+
+from src.reasoning.legal_models import LegalArticle, LegalDocument
 
 
 @dataclass
@@ -16,61 +13,141 @@ class DocumentChunk:
     text: str
     source_file: str
     chunk_index: int
+    document_id: str = ""
+    locator_type: str = ""
+    locator: str = ""
 
 
-def load_regulation_documents(regulations_dir: str) -> list[tuple[str, str]]:
-    """Load all .md/.txt files from the regulations directory.
+def load_canonical_documents(normalized_dir: str) -> list[LegalDocument]:
+    """Load normalized JSON documents in deterministic filename order."""
+    directory = Path(normalized_dir)
+    if not directory.exists():
+        raise FileNotFoundError(f"Normalized directory not found: {directory}")
 
-    Returns a list of (filename, full_text) tuples. Raises FileNotFoundError
-    if the directory doesn't exist, and returns an empty list (with no
-    fabricated content) if the directory exists but has no documents.
-    """
-    dir_path = Path(regulations_dir)
-    if not dir_path.exists():
-        raise FileNotFoundError(f"Regulations directory not found: {dir_path}")
-
-    documents = []
-    for path in sorted(dir_path.glob("*.md")) + sorted(dir_path.glob("*.txt")):
-        documents.append((path.name, path.read_text(encoding="utf-8")))
-    return documents
+    return [
+        LegalDocument.model_validate(json.loads(path.read_text(encoding="utf-8")))
+        for path in sorted(directory.glob("*.json"))
+    ]
 
 
-def chunk_text(
-    text: str, source_file: str, chunk_size_chars: int, chunk_overlap_chars: int
+def _leaf_chunks(
+    document: LegalDocument,
+    text: str,
+    locator_type: str,
+    locator: str,
+    max_chunk_chars: int | None,
 ) -> list[DocumentChunk]:
-    """Split text into overlapping fixed-size chunks."""
-    if chunk_overlap_chars >= chunk_size_chars:
-        raise ValueError("chunk_overlap_chars must be smaller than chunk_size_chars")
+    if max_chunk_chars is None or len(text) <= max_chunk_chars:
+        texts = [text]
+    else:
+        texts = [
+            text[start : start + max_chunk_chars]
+            for start in range(0, len(text), max_chunk_chars)
+        ]
+
+    return [
+        DocumentChunk(
+            text=chunk_text,
+            source_file=document.source.raw_file,
+            chunk_index=index,
+            document_id=document.document_id,
+            locator_type=locator_type,
+            locator=locator,
+        )
+        for index, chunk_text in enumerate(texts)
+    ]
+
+
+def _article_chunks(
+    document: LegalDocument,
+    article: LegalArticle,
+    max_chunk_chars: int | None,
+    *,
+    qcvn: bool = False,
+) -> list[DocumentChunk]:
+    if qcvn:
+        article_locator = article.article_id
+        article_type = "section"
+    else:
+        article_locator = f"Điều {article.article_id}"
+        article_type = "article"
+
+    if not article.clauses:
+        return _leaf_chunks(
+            document, article.text or "", article_type, article_locator, max_chunk_chars
+        )
 
     chunks: list[DocumentChunk] = []
-    start = 0
-    index = 0
-    text_length = len(text)
-
-    while start < text_length:
-        end = min(start + chunk_size_chars, text_length)
-        chunk_text_value = text[start:end].strip()
-        if chunk_text_value:
-            chunks.append(
-                DocumentChunk(
-                    text=chunk_text_value, source_file=source_file, chunk_index=index
+    for clause in article.clauses:
+        clause_locator = (
+            f"{article_locator}.{clause.clause_id}"
+            if qcvn
+            else f"{article_locator} Khoản {clause.clause_id}"
+        )
+        if not clause.points:
+            chunks.extend(
+                _leaf_chunks(
+                    document,
+                    clause.text or "",
+                    "section" if qcvn else "clause",
+                    clause_locator,
+                    max_chunk_chars,
                 )
             )
-            index += 1
-        if end == text_length:
-            break
-        start = end - chunk_overlap_chars
+            continue
 
+        for point in clause.points:
+            point_locator = (
+                f"{clause_locator}.{point.point_id}"
+                if qcvn
+                else f"{clause_locator} Điểm {point.point_id}"
+            )
+            chunks.extend(
+                _leaf_chunks(
+                    document,
+                    point.text or "",
+                    "section" if qcvn else "point",
+                    point_locator,
+                    max_chunk_chars,
+                )
+            )
+    return chunks
+
+
+def build_legal_chunks(
+    document: LegalDocument, max_chunk_chars: int | None = None
+) -> list[DocumentChunk]:
+    """Project a canonical document's structural leaves into retrieval chunks."""
+    if max_chunk_chars is not None and max_chunk_chars <= 0:
+        raise ValueError("max_chunk_chars must be positive")
+
+    chunks: list[DocumentChunk] = []
+    for article in document.articles:
+        chunks.extend(_article_chunks(document, article, max_chunk_chars))
+
+    for section in document.sections:
+        if not section.articles:
+            chunks.extend(
+                _leaf_chunks(
+                    document,
+                    section.text or "",
+                    "section",
+                    section.section_id,
+                    max_chunk_chars,
+                )
+            )
+            continue
+        for article in section.articles:
+            chunks.extend(_article_chunks(document, article, max_chunk_chars, qcvn=True))
     return chunks
 
 
 def build_corpus_chunks(
-    regulations_dir: str, chunk_size_chars: int, chunk_overlap_chars: int
+    normalized_dir: str, max_chunk_chars: int | None = None
 ) -> list[DocumentChunk]:
-    """Load every document in regulations_dir and chunk it."""
-    all_chunks: list[DocumentChunk] = []
-    for filename, text in load_regulation_documents(regulations_dir):
-        all_chunks.extend(
-            chunk_text(text, filename, chunk_size_chars, chunk_overlap_chars)
-        )
-    return all_chunks
+    """Load validated canonical JSON and project its legal leaves."""
+    return [
+        chunk
+        for document in load_canonical_documents(normalized_dir)
+        for chunk in build_legal_chunks(document, max_chunk_chars)
+    ]
