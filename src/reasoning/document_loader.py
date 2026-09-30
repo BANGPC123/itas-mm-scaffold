@@ -6,9 +6,8 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 import re
+from typing import Any
 import unicodedata
-
-from src.reasoning.legal_models import LegalArticle, LegalDocument
 
 
 @dataclass
@@ -141,28 +140,118 @@ def chunk_regulation_text(
     return chunks
 
 
-def compute_corpus_fingerprint(
-    documents: list[LegalDocument], schema_version: str, embedding_model: str
-) -> str:
-    """Return a stable hash for the semantic canonical corpus and index inputs."""
-    semantic_documents = []
-    for document in documents:
-        semantic_document = document.model_dump(mode="json")
-        semantic_document["source"].pop("raw_file")
-        semantic_document["source"].pop("retrieved_at")
-        semantic_documents.append(semantic_document)
+_SOURCE_FIELDS = (
+    "document_id",
+    "document_number",
+    "title",
+    "source_kind",
+    "source_url",
+    "raw_file",
+    "sha256",
+    "text_sha256",
+    "retrieved_at",
+)
+_CHUNK_FIELDS = ("id", "document_id", "locator_type", "locator", "text", "checksum")
 
-    canonical_documents = sorted(
-        semantic_documents,
-        key=lambda document: json.dumps(
-            document, sort_keys=True, separators=(",", ":"), ensure_ascii=False
-        ),
-    )
+
+def _required_string(record: dict[str, Any], field: str, record_type: str) -> str:
+    value = record.get(field)
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f"{record_type} requires non-empty {field}")
+    return value
+
+
+def _required_count(record: dict[str, Any], field: str, record_type: str) -> int:
+    value = record.get(field)
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise ValueError(f"{record_type} requires non-negative {field}")
+    return value
+
+
+def _validate_corpus(corpus: dict[str, Any]) -> None:
+    manifest = corpus.get("manifest")
+    sources = corpus.get("sources")
+    chunks = corpus.get("chunks")
+    if not isinstance(manifest, dict):
+        raise ValueError("corpus requires a manifest object")
+    if not isinstance(sources, list) or not sources:
+        raise ValueError("corpus requires non-empty sources")
+    if not isinstance(chunks, list) or not chunks:
+        raise ValueError("corpus requires non-empty chunks")
+
+    _required_string(manifest, "schema_version", "manifest")
+    _required_string(manifest, "generated_at", "manifest")
+    upstream = manifest.get("upstream")
+    if not isinstance(upstream, dict):
+        raise ValueError("manifest requires an upstream object")
+    _required_string(upstream, "repository", "manifest upstream")
+    _required_string(upstream, "commit", "manifest upstream")
+    if _required_count(manifest, "source_count", "manifest") != len(sources):
+        raise ValueError("manifest source_count does not match sources")
+    if _required_count(manifest, "chunk_count", "manifest") != len(chunks):
+        raise ValueError("manifest chunk_count does not match chunks")
+
+    source_ids: set[str] = set()
+    source_chunk_counts: dict[str, int] = {}
+    for source in sources:
+        if not isinstance(source, dict):
+            raise ValueError("each source must be an object")
+        for field in _SOURCE_FIELDS:
+            _required_string(source, field, "source")
+        document_id = source["document_id"]
+        if document_id in source_ids:
+            raise ValueError(f"duplicate source id: {document_id}")
+        source_ids.add(document_id)
+        source_chunk_counts[document_id] = _required_count(source, "chunk_count", "source")
+
+    chunk_ids: set[str] = set()
+    actual_chunk_counts = dict.fromkeys(source_ids, 0)
+    for chunk in chunks:
+        if not isinstance(chunk, dict):
+            raise ValueError("each chunk must be an object")
+        for field in _CHUNK_FIELDS:
+            _required_string(chunk, field, "chunk")
+        _required_count(chunk, "ordinal", "chunk")
+        heading = chunk.get("heading")
+        if heading is not None and (not isinstance(heading, str) or not heading.strip()):
+            raise ValueError("chunk heading must be null or non-empty text")
+        chunk_id = chunk["id"]
+        if chunk_id in chunk_ids:
+            raise ValueError(f"duplicate chunk id: {chunk_id}")
+        chunk_ids.add(chunk_id)
+        document_id = chunk["document_id"]
+        if document_id not in source_ids:
+            raise ValueError(f"chunk references unknown source: {document_id}")
+        actual_chunk_counts[document_id] += 1
+
+    if actual_chunk_counts != source_chunk_counts:
+        raise ValueError("source chunk_count does not match chunks")
+
+
+def load_regulation_corpus(corpus_path: str | Path) -> dict:
+    """Load the validated unified regulation corpus artifact."""
+    corpus = json.loads(Path(corpus_path).read_text(encoding="utf-8"))
+    if not isinstance(corpus, dict):
+        raise ValueError("corpus root must be an object")
+    _validate_corpus(corpus)
+    return corpus
+
+
+def compute_corpus_fingerprint(
+    corpus: dict, schema_version: str, embedding_model: str
+) -> str:
+    """Return a stable hash for corpus semantics and index inputs."""
+    _validate_corpus(corpus)
+    semantic_corpus = json.loads(json.dumps(corpus))
+    semantic_corpus["manifest"].pop("generated_at")
+    for source in semantic_corpus["sources"]:
+        source.pop("retrieved_at")
+        source.pop("raw_file")
     canonical_data = json.dumps(
         {
             "schema_version": schema_version,
             "embedding_model": embedding_model,
-            "documents": canonical_documents,
+            "corpus": semantic_corpus,
         },
         sort_keys=True,
         separators=(",", ":"),
@@ -171,136 +260,20 @@ def compute_corpus_fingerprint(
     return hashlib.sha256(canonical_data.encode("utf-8")).hexdigest()
 
 
-def load_canonical_documents(normalized_dir: str) -> list[LegalDocument]:
-    """Load normalized JSON documents in deterministic filename order."""
-    directory = Path(normalized_dir)
-    if not directory.exists():
-        raise FileNotFoundError(f"Normalized directory not found: {directory}")
-
-    return [
-        LegalDocument.model_validate(json.loads(path.read_text(encoding="utf-8")))
-        for path in sorted(directory.glob("*.json"))
-    ]
-
-
-def _leaf_chunks(
-    document: LegalDocument,
-    text: str,
-    locator_type: str,
-    locator: str,
-    max_chunk_chars: int | None,
-) -> list[DocumentChunk]:
-    if max_chunk_chars is None or len(text) <= max_chunk_chars:
-        texts = [text]
-    else:
-        texts = [
-            text[start : start + max_chunk_chars]
-            for start in range(0, len(text), max_chunk_chars)
-        ]
-
+def build_corpus_chunks(corpus_path: str | Path) -> list[DocumentChunk]:
+    """Project corpus chunks into retrieval records in artifact order."""
+    corpus = load_regulation_corpus(corpus_path)
+    source_files = {
+        source["document_id"]: source["raw_file"] for source in corpus["sources"]
+    }
     return [
         DocumentChunk(
-            text=chunk_text,
-            source_file=document.source.raw_file,
-            chunk_index=index,
-            document_id=document.document_id,
-            locator_type=locator_type,
-            locator=locator,
+            text=chunk["text"],
+            source_file=source_files[chunk["document_id"]],
+            chunk_index=chunk["ordinal"],
+            document_id=chunk["document_id"],
+            locator_type=chunk["locator_type"],
+            locator=chunk["locator"],
         )
-        for index, chunk_text in enumerate(texts)
-    ]
-
-
-def _article_chunks(
-    document: LegalDocument,
-    article: LegalArticle,
-    max_chunk_chars: int | None,
-    *,
-    qcvn: bool = False,
-) -> list[DocumentChunk]:
-    if qcvn:
-        article_locator = article.article_id
-        article_type = "section"
-    else:
-        article_locator = f"Điều {article.article_id}"
-        article_type = "article"
-
-    if not article.clauses:
-        return _leaf_chunks(
-            document, article.text or "", article_type, article_locator, max_chunk_chars
-        )
-
-    chunks: list[DocumentChunk] = []
-    for clause in article.clauses:
-        clause_locator = (
-            f"{article_locator}.{clause.clause_id}"
-            if qcvn
-            else f"{article_locator} Khoản {clause.clause_id}"
-        )
-        if not clause.points:
-            chunks.extend(
-                _leaf_chunks(
-                    document,
-                    clause.text or "",
-                    "section" if qcvn else "clause",
-                    clause_locator,
-                    max_chunk_chars,
-                )
-            )
-            continue
-
-        for point in clause.points:
-            point_locator = (
-                f"{clause_locator}.{point.point_id}"
-                if qcvn
-                else f"{clause_locator} Điểm {point.point_id}"
-            )
-            chunks.extend(
-                _leaf_chunks(
-                    document,
-                    point.text or "",
-                    "section" if qcvn else "point",
-                    point_locator,
-                    max_chunk_chars,
-                )
-            )
-    return chunks
-
-
-def build_legal_chunks(
-    document: LegalDocument, max_chunk_chars: int | None = None
-) -> list[DocumentChunk]:
-    """Project a canonical document's structural leaves into retrieval chunks."""
-    if max_chunk_chars is not None and max_chunk_chars <= 0:
-        raise ValueError("max_chunk_chars must be positive")
-
-    chunks: list[DocumentChunk] = []
-    for article in document.articles:
-        chunks.extend(_article_chunks(document, article, max_chunk_chars))
-
-    for section in document.sections:
-        if not section.articles:
-            chunks.extend(
-                _leaf_chunks(
-                    document,
-                    section.text or "",
-                    "section",
-                    section.section_id,
-                    max_chunk_chars,
-                )
-            )
-            continue
-        for article in section.articles:
-            chunks.extend(_article_chunks(document, article, max_chunk_chars, qcvn=True))
-    return chunks
-
-
-def build_corpus_chunks(
-    normalized_dir: str, max_chunk_chars: int | None = None
-) -> list[DocumentChunk]:
-    """Load validated canonical JSON and project its legal leaves."""
-    return [
-        chunk
-        for document in load_canonical_documents(normalized_dir)
-        for chunk in build_legal_chunks(document, max_chunk_chars)
+        for chunk in corpus["chunks"]
     ]

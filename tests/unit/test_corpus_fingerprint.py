@@ -1,53 +1,54 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+import copy
 
 from src.reasoning.document_loader import compute_corpus_fingerprint
-from src.reasoning.legal_models import LegalArticle, LegalDocument, LegalSource
 
 
-def _document(*, raw_file: str = "raw/law/source.json", retrieved_at: datetime | None = None) -> LegalDocument:
-    return LegalDocument(
-        document_id="law-36-2024-qh15",
-        title="Law 36",
-        document_type="law",
-        source=LegalSource(
-            source_url="https://example.gov.vn/law-36",
-            raw_file=raw_file,
-            sha256="a" * 64,
-            retrieved_at=retrieved_at or datetime(2026, 9, 29, tzinfo=timezone.utc),
-        ),
-        articles=[LegalArticle(article_id="1", text="Semantic legal text.")],
-    )
+from tests.unit.test_document_loader import _corpus
 
 
-def test_fingerprint_stable_for_same_semantic_documents():
-    document = _document()
+def test_fingerprint_stable_for_same_semantic_corpus():
+    corpus = _corpus()
 
-    first = compute_corpus_fingerprint([document], "1", "nomic-embed-text")
-    second = compute_corpus_fingerprint([document], "1", "nomic-embed-text")
+    first = compute_corpus_fingerprint(corpus, "1", "nomic-embed-text")
+    second = compute_corpus_fingerprint(corpus, "1", "nomic-embed-text")
 
     assert first == second
-    assert first == compute_corpus_fingerprint(
-        [document.model_copy(deep=True)], "1", "nomic-embed-text"
+    assert first == compute_corpus_fingerprint(copy.deepcopy(corpus), "1", "nomic-embed-text")
+
+
+def test_fingerprint_ignores_volatile_corpus_metadata():
+    corpus = _corpus()
+    relocated = copy.deepcopy(corpus)
+    relocated["manifest"]["generated_at"] = "2026-10-01T00:00:00+00:00"
+    relocated["sources"][0]["retrieved_at"] = "2026-10-01T00:00:00+00:00"
+    relocated["sources"][0]["raw_file"] = "C:/different-machine/source.json"
+
+    assert compute_corpus_fingerprint(corpus, "1", "nomic-embed-text") == compute_corpus_fingerprint(
+        relocated, "1", "nomic-embed-text"
     )
 
 
-def test_fingerprint_changes_with_schema_or_embedding_model():
-    document = _document()
-    fingerprint = compute_corpus_fingerprint([document], "1", "nomic-embed-text")
+def test_fingerprint_changes_for_semantic_corpus_or_index_inputs():
+    corpus = _corpus()
+    fingerprint = compute_corpus_fingerprint(corpus, "1", "nomic-embed-text")
 
-    assert fingerprint != compute_corpus_fingerprint([document], "2", "nomic-embed-text")
-    assert fingerprint != compute_corpus_fingerprint([document], "1", "other-embedding")
+    changed_source_sha = copy.deepcopy(corpus)
+    changed_source_sha["sources"][0]["sha256"] = "c" * 64
+    changed_text_sha = copy.deepcopy(corpus)
+    changed_text_sha["sources"][0]["text_sha256"] = "d" * 64
+    changed_text = copy.deepcopy(corpus)
+    changed_text["chunks"][0]["text"] = "Changed legal chunk."
+    changed_locator = copy.deepcopy(corpus)
+    changed_locator["chunks"][0]["locator"] = "Điều 8"
 
-
-def test_fingerprint_ignores_retrieved_at_and_local_raw_path():
-    original = _document()
-    relocated = _document(
-        raw_file="C:/different-machine/raw/law/source.json",
-        retrieved_at=datetime(2026, 9, 30, tzinfo=timezone.utc),
-    )
-
-    assert compute_corpus_fingerprint(
-        [original], "1", "nomic-embed-text"
-    ) == compute_corpus_fingerprint([relocated], "1", "nomic-embed-text")
+    for changed in (
+        changed_source_sha,
+        changed_text_sha,
+        changed_text,
+        changed_locator,
+    ):
+        assert fingerprint != compute_corpus_fingerprint(changed, "1", "nomic-embed-text")
+    assert fingerprint != compute_corpus_fingerprint(corpus, "2", "nomic-embed-text")
+    assert fingerprint != compute_corpus_fingerprint(corpus, "1", "other-embedding")

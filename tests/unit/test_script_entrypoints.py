@@ -10,7 +10,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 
 @pytest.mark.parametrize(
     "script",
-    ["scripts/normalize_regulations.py", "scripts/build_vector_index.py"],
+    ["scripts/fetch_regulations.py", "scripts/build_vector_index.py"],
 )
 def test_direct_script_help_imports_project_modules(script: str):
     result = subprocess.run(
