@@ -84,6 +84,38 @@ def test_source_identity_mismatch_fails_closed(tmp_path: Path) -> None:
     assert not (tmp_path / "raw").exists()
 
 
+def test_official_html_checks_page_identity_but_chunks_only_article_body(tmp_path: Path) -> None:
+    decree_number = "168/2024/NĐ-CP"
+    config = write_config(
+        tmp_path / "config.json",
+        [
+            {
+                "document_id": "decree-168-2024-nd-cp",
+                "document_number": decree_number,
+                "title": "Decree on road traffic penalties",
+                "source_kind": "official_html",
+                "expected_document_number": decree_number,
+                "source_url": "https://example.test/decree",
+            }
+        ],
+    )
+    page_html = (
+        f"<html><head><title>Decree {decree_number}</title></head><body>"
+        "<article itemprop='articleBody'><p>Article-body legal text that is long enough."
+        "</p></article></body></html>"
+    ).encode("utf-8")
+
+    with patch(
+        "scripts.fetch_regulations.requests.get", return_value=FakeResponse(page_html)
+    ):
+        corpus = fetch_regulations(config, tmp_path / "raw", tmp_path / "corpus.json")
+
+    chunk_text = "\n".join(chunk["text"] for chunk in corpus["chunks"])
+    assert "Article-body legal text that is long enough." in chunk_text
+    assert decree_number not in chunk_text
+    assert "Decree" not in chunk_text
+
+
 def test_same_raw_bytes_are_a_noop(tmp_path: Path) -> None:
     config = write_config(tmp_path / "config.json", [vbpl_document()])
     raw_file = tmp_path / "raw" / "law-36-2024-qh15" / "source.json"

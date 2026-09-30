@@ -129,10 +129,11 @@ def _candidate(
     elif source_kind == "official_html":
         response = fetch_with_retries(source_url)
         raw_bytes, extension = response.content, "html"
-        text = extract_official_article_text(raw_bytes.decode("utf-8"))
+        page_html = raw_bytes.decode("utf-8")
         number = expected_number
-        if expected_number not in text:
+        if expected_number not in page_html:
             raise ValueError(f"official HTML document number mismatch: {expected_number!r}")
+        text = extract_official_article_text(page_html)
     elif source_kind == "official_pdf":
         response = fetch_with_retries(_required(entry, "attachment_url"))
         raw_bytes, extension = response.content, "pdf"
