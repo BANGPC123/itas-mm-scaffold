@@ -62,7 +62,12 @@ class OllamaClient:
                     f"Is `ollama serve` running? Original error: {exc}"
                 ) from exc
 
-            response_body = response.json()
+            try:
+                response_body = response.json()
+            except ValueError as exc:
+                raise ValueError(
+                    "Ollama returned malformed embeddings for a batch"
+                ) from exc
             batch_embeddings = (
                 response_body.get("embeddings")
                 if isinstance(response_body, dict)

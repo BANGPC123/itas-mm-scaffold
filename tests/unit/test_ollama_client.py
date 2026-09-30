@@ -72,6 +72,18 @@ def test_embed_many_rejects_incomplete_or_malformed_batch_responses(response_bod
             _client().embed_many(["first", "second"])
 
 
+def test_embed_many_normalizes_non_json_batch_response():
+    response = MagicMock()
+    response.json.side_effect = ValueError("invalid JSON")
+
+    with patch("src.reasoning.ollama_client.requests.post", return_value=response):
+        with pytest.raises(
+            ValueError,
+            match="^Ollama returned malformed embeddings for a batch$",
+        ):
+            _client().embed_many(["chunk"])
+
+
 def test_embed_many_wraps_request_failures():
     with patch(
         "src.reasoning.ollama_client.requests.post",
