@@ -56,6 +56,8 @@ def test_query_round_trips_full_legal_metadata():
             locator="Article 6 Clause 1 Point a",
         )
     ]
+    ollama_client.embed.assert_called_once_with("speed limit")
+    ollama_client.embed_many.assert_not_called()
 
 
 def test_query_preserves_result_order_and_metadata_pairing():
@@ -88,15 +90,66 @@ def test_index_chunks_rejects_incomplete_legal_metadata_before_embedding_or_upse
     with pytest.raises(ValueError, match="legal identity"):
         store.index_chunks([legacy_chunk])
 
-    store.ollama_client.embed.assert_not_called()
+    store.ollama_client.embed_many.assert_not_called()
     collection.upsert.assert_not_called()
+
+
+def test_index_chunks_uses_batch_embeddings_and_preserves_chunk_order():
+    collection = MagicMock()
+    ollama_client = MagicMock()
+    ollama_client.embed_many.return_value = [[0.1], [0.2]]
+    store = _store_with(collection, ollama_client)
+    chunks = [
+        DocumentChunk(
+            text="First rule",
+            source_file="first.json",
+            chunk_index=1,
+            document_id="law-a",
+            locator_type="article",
+            locator="Article 1",
+        ),
+        DocumentChunk(
+            text="Second rule",
+            source_file="second.json",
+            chunk_index=2,
+            document_id="law-b",
+            locator_type="clause",
+            locator="Article 2 Clause 1",
+        ),
+    ]
+
+    store.index_chunks(chunks)
+
+    ollama_client.embed_many.assert_called_once_with(["First rule", "Second rule"])
+    ollama_client.embed.assert_not_called()
+    assert collection.upsert.call_args.kwargs == {
+        "ids": ["law-a::article::Article 1::1", "law-b::clause::Article 2 Clause 1::2"],
+        "embeddings": [[0.1], [0.2]],
+        "documents": ["First rule", "Second rule"],
+        "metadatas": [
+            {
+                "document_id": "law-a",
+                "source_file": "first.json",
+                "chunk_index": 1,
+                "locator_type": "article",
+                "locator": "Article 1",
+            },
+            {
+                "document_id": "law-b",
+                "source_file": "second.json",
+                "chunk_index": 2,
+                "locator_type": "clause",
+                "locator": "Article 2 Clause 1",
+            },
+        ],
+    }
 
 
 def test_rebuild_uses_deterministic_chunk_ids():
     previous = MagicMock()
     candidate = MagicMock()
     ollama_client = MagicMock()
-    ollama_client.embed.return_value = [0.1, 0.2]
+    ollama_client.embed_many.return_value = [[0.1, 0.2]]
     store = _store_with(previous, ollama_client)
     store._client.get_or_create_collection.return_value = candidate
     chunks = [
@@ -138,12 +191,14 @@ def test_rebuild_uses_deterministic_chunk_ids():
             "locator": "Article 6 Clause 1 Point a",
         }],
     )
+    ollama_client.embed_many.assert_called_once_with(["Rule text"])
+    ollama_client.embed.assert_not_called()
 
 
 def test_embed_failure_keeps_existing_collection():
     previous = MagicMock()
     store = _store_with(previous, MagicMock())
-    store.ollama_client.embed.side_effect = RuntimeError("embedding unavailable")
+    store.ollama_client.embed_many.side_effect = RuntimeError("embedding unavailable")
     chunk = DocumentChunk(
         text="Rule text",
         source_file="raw/law/source.json",
@@ -163,13 +218,14 @@ def test_embed_failure_keeps_existing_collection():
 
     store._client.delete_collection.assert_not_called()
     assert store._collection is previous
+    store.ollama_client.embed.assert_not_called()
 
 
 def test_successful_rebuild_removes_stale_chunks():
     previous = MagicMock()
     replacement = MagicMock()
     ollama_client = MagicMock()
-    ollama_client.embed.return_value = [0.1]
+    ollama_client.embed_many.return_value = [[0.1]]
     store = _store_with(previous, ollama_client)
     store._client.get_or_create_collection.return_value = replacement
     chunk = DocumentChunk(
@@ -191,3 +247,5 @@ def test_successful_rebuild_removes_stale_chunks():
     store._client.delete_collection.assert_called_once_with(name="traffic_regulations")
     assert store._collection is replacement
     assert replacement.upsert.call_args.kwargs["documents"] == ["Current rule"]
+    ollama_client.embed_many.assert_called_once_with(["Current rule"])
+    ollama_client.embed.assert_not_called()

@@ -37,8 +37,8 @@ class VectorStore:
             return
 
         ids = [self._chunk_id(chunk) for chunk in chunks]
-        embeddings = [self.ollama_client.embed(c.text) for c in chunks]
         documents = [c.text for c in chunks]
+        embeddings = self.ollama_client.embed_many(documents)
         metadatas = [self._metadata(chunk) for chunk in chunks]
 
         self._collection.upsert(
@@ -83,8 +83,8 @@ class VectorStore:
             raise ValueError("Cannot rebuild a vector store from an empty corpus")
 
         ids = [self._chunk_id(chunk) for chunk in chunks]
-        embeddings = [self.ollama_client.embed(chunk.text) for chunk in chunks]
         documents = [chunk.text for chunk in chunks]
+        embeddings = self.ollama_client.embed_many(documents)
         metadatas = [self._metadata(chunk) for chunk in chunks]
         metadata = {
             "corpus_fingerprint": fingerprint,
