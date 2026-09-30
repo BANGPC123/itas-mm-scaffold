@@ -59,6 +59,22 @@ def test_pdf_skips_fontless_image_pages(monkeypatch, tmp_path):
     assert extract_pdf_text(tmp_path / "mixed.pdf") == "Điều 2. Text layer from the PDF"
 
 
+def test_pdf_preserves_pypdf_nul_token_boundaries(monkeypatch, tmp_path):
+    class TextPage:
+        def get(self, key, default=None):
+            return {"/Resources": {"/Font": {}}}.get(key, default)
+
+        def extract_text(self):
+            return "QCVN\0" "41:2024/BGTVT\nCỘNG\0HÒA"
+
+    class Reader:
+        pages = [TextPage()]
+
+    monkeypatch.setattr("src.reasoning.legal_normalizer.PdfReader", lambda _: Reader())
+
+    assert extract_pdf_text(tmp_path / "qcvn.pdf") == "QCVN 41:2024/BGTVT\nCỘNG HÒA"
+
+
 def test_pdf_without_usable_text_fails_closed(monkeypatch, tmp_path):
     class ImagePage:
         def get(self, key, default=None):

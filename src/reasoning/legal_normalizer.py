@@ -112,7 +112,7 @@ def extract_pdf_text(path: str | Path) -> str:
         resources = _resolved(page.get("/Resources", {})) or {}
         if "/Font" not in resources:
             continue
-        text.append(page.extract_text() or "")
+        text.append((page.extract_text() or "").replace("\0", " "))
     normalized = normalize_vietnamese("\n".join(text))
     if len(normalized) < 20 or not re.search(r"\w", normalized, re.UNICODE):
         raise ValueError("PDF has no usable text layer; OCR is not supported")
