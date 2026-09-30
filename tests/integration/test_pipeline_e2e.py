@@ -16,11 +16,27 @@ import numpy as np
 import pytest
 
 from src.pipeline.orchestrator import Pipeline
+from src.utils.config import load_config as load_real_config
 
 
 @pytest.fixture
-def pipeline_with_mocked_externals():
-    with patch("src.reasoning.ollama_client.OllamaClient.embed") as mock_embed, patch(
+def pipeline_with_mocked_externals(tmp_path):
+    def isolated_load_config(name):
+        config = load_real_config(name)
+        if name != "reasoning":
+            return config
+        return {
+            **config,
+            "rag": {
+                **config["rag"],
+                "vector_store_dir": str(tmp_path / "chroma_db"),
+                "collection_name": "pipeline_e2e",
+            },
+        }
+
+    with patch(
+        "src.pipeline.orchestrator.load_config", side_effect=isolated_load_config
+    ), patch("src.reasoning.ollama_client.OllamaClient.embed") as mock_embed, patch(
         "src.reasoning.ollama_client.OllamaClient.generate"
     ) as mock_generate, patch(
         "src.interaction.tts_engine.TtsEngine.synthesize"
