@@ -5,9 +5,7 @@ ollama:
   request_timeout_s: 30
 
 rag:
-  regulations_dir: "data/regulations"
-  chunk_size_chars: 800
-  chunk_overlap_chars: 120
+  corpus_file: "data/regulations/corpus.json"
   top_k: 4
   vector_store_dir: "chroma_db"
   collection_name: "traffic_regulations"

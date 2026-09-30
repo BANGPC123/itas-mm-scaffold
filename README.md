@@ -149,6 +149,22 @@ Not yet implemented — no trained model exists to evaluate yet. Once the
 sign detector is trained, add mAP/precision/recall/confusion-matrix
 reporting against a held-out test split (see Limitations).
 
+## Regulation corpus
+
+Build the legal corpus and its derived Chroma index in this order:
+
+```bash
+python scripts/fetch_regulations.py
+python scripts/build_vector_index.py
+```
+
+The Selective Port v1 scope is limited to Law 36/2024/QH15, Decree
+168/2024/NÄ-CP, and QCVN 41:2024/BGTVT. QCVN sign-image pages are not OCRed;
+the corpus never uses model knowledge to repair legal text. Raw source files
+remain immutable provenance, while Chroma is derived and can be safely rebuilt
+from `data/regulations/corpus.json`. The corpus port is attributed to
+`lqb464/LuatRAG@ae2b1c796503e2a58493771bc341b66fb488e053`.
+
 ## Inference
 
 `src/pipeline/orchestrator.py` exposes

@@ -1,4 +1,4 @@
-"""One-off script: rebuild the Chroma vector index from canonical JSON.
+"""One-off script: rebuild the Chroma vector index from the corpus artifact.
 
 Usage:
     python scripts/build_vector_index.py
@@ -12,9 +12,9 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.reasoning.document_loader import (
-    build_legal_chunks,
+    DocumentChunk,
     compute_corpus_fingerprint,
-    load_canonical_documents,
+    load_regulation_corpus,
 )
 from src.reasoning.ollama_client import OllamaClient
 from src.reasoning.vector_store import VectorStore
@@ -28,22 +28,29 @@ def build_index() -> None:
     reasoning_cfg = load_config("reasoning")
     rag_cfg = reasoning_cfg["rag"]
 
-    documents = load_canonical_documents(rag_cfg["normalized_dir"])
-    if not documents:
+    corpus = load_regulation_corpus(rag_cfg["corpus_file"])
+    source_files = {
+        source["document_id"]: source["raw_file"] for source in corpus["sources"]
+    }
+    chunks = [
+        DocumentChunk(
+            text=chunk["text"],
+            source_file=source_files[chunk["document_id"]],
+            chunk_index=chunk["ordinal"],
+            document_id=chunk["document_id"],
+            locator_type=chunk["locator_type"],
+            locator=chunk["locator"],
+        )
+        for chunk in corpus["chunks"]
+    ]
+    if not chunks:
         raise ValueError("Cannot build a vector index from an empty corpus")
 
-    chunks = [chunk for document in documents for chunk in build_legal_chunks(document)]
-    if not chunks:
-        raise ValueError("Cannot build a vector index with no legal chunks")
-
-    schema_versions = {document.schema_version for document in documents}
-    if len(schema_versions) != 1:
-        raise ValueError("Canonical documents must share one schema version")
-    schema_version = schema_versions.pop()
+    schema_version = corpus["manifest"]["schema_version"]
 
     embedding_model = reasoning_cfg["ollama"]["embedding_model"]
     fingerprint = compute_corpus_fingerprint(
-        documents, schema_version, embedding_model
+        corpus, schema_version, embedding_model
     )
     ollama_client = OllamaClient(reasoning_cfg["ollama"])
     ollama_client.embed("")
@@ -57,7 +64,7 @@ def build_index() -> None:
     logger.info(
         "Rebuilt legal index: documents=%d chunks=%d fingerprint=%s "
         "schema_version=%s embedding_model=%s",
-        len(documents),
+        len(corpus["sources"]),
         len(chunks),
         fingerprint,
         schema_version,
