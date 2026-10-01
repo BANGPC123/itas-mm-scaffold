@@ -16,6 +16,7 @@ import numpy as np
 import pytest
 
 from src.pipeline.orchestrator import Pipeline
+from src.reasoning.document_loader import DocumentChunk
 from src.utils.config import load_config as load_real_config
 
 
@@ -37,11 +38,14 @@ def pipeline_with_mocked_externals(tmp_path):
     with patch(
         "src.pipeline.orchestrator.load_config", side_effect=isolated_load_config
     ), patch("src.reasoning.ollama_client.OllamaClient.embed") as mock_embed, patch(
+        "src.reasoning.ollama_client.OllamaClient.embed_many"
+    ) as mock_embed_many, patch(
         "src.reasoning.ollama_client.OllamaClient.generate"
     ) as mock_generate, patch(
         "src.interaction.tts_engine.TtsEngine.synthesize"
     ) as mock_tts:
         mock_embed.return_value = [0.0] * 8
+        mock_embed_many.side_effect = lambda texts: [[0.0] * 8 for _ in texts]
         mock_generate.return_value = "Hãy giảm tốc độ do đang ở khu vực đô thị."
         mock_tts.return_value = "data/processed/tts_output/guidance_test.wav"
 
@@ -51,6 +55,18 @@ def pipeline_with_mocked_externals(tmp_path):
 
 def test_pipeline_runs_end_to_end_with_no_signs_detected(pipeline_with_mocked_externals):
     pipeline, mock_generate, mock_tts = pipeline_with_mocked_externals
+    pipeline.rag_chain.vector_store.index_chunks(
+        [
+            DocumentChunk(
+                text="Drive safely.",
+                source_file="raw/test/source.json",
+                chunk_index=0,
+                document_id="test-regulation",
+                locator_type="article",
+                locator="Article 1",
+            )
+        ]
+    )
 
     # Blank image: no weights configured, so no signs will be detected —
     # this exercises the "no detections" path through Reasoning.
