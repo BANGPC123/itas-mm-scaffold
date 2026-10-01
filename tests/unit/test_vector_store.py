@@ -27,6 +27,18 @@ def test_query_empty_collection_returns_empty_without_embedding():
     ollama_client.embed.assert_not_called()
 
 
+def test_get_index_metadata_returns_collection_metadata():
+    collection = MagicMock()
+    collection.metadata = {
+        "corpus_fingerprint": "fingerprint",
+        "schema_version": "1",
+        "embedding_model": "nomic-embed-text",
+    }
+    store = _store_with(collection, MagicMock())
+
+    assert store.get_index_metadata() == collection.metadata
+
+
 def test_query_round_trips_full_legal_metadata():
     collection = MagicMock()
     collection.count.return_value = 1

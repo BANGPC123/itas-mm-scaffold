@@ -1,0 +1,148 @@
+{
+  "cases": [
+    {
+      "id": "speed-01",
+      "category": "speed",
+      "query": "Người lái xe phải chấp hành quy định gì về tốc độ và khoảng cách an toàn với xe phía trước?",
+      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 12. C hấp hành quy định về tốc độ và khoảng cách giữa các xe"}]
+    },
+    {
+      "id": "speed-02",
+      "category": "speed",
+      "query": "Người điều khiển phương tiện phải bảo đảm tốc độ phù hợp với những điều kiện nào của đường và giao thông?",
+      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 12. C hấp hành quy định về tốc độ và khoảng cách giữa các xe"}]
+    },
+    {
+      "id": "speed-03",
+      "category": "speed",
+      "query": "Ô tô chạy quá tốc độ quy định trên 20 km/h đến 35 km/h bị phạt tiền bao nhiêu?",
+      "expected": [{"document_id": "decree-168-2024-nd-cp", "locator": "Điều 6. Xử phạt, trừ điểm giấy phép lái xe của người điều khiển xe ô tô, xe chở người bốn bánh có gắn động cơ, xe chở hàng bốn bánh có gắn động cơ và các loại"}]
+    },
+    {
+      "id": "signals-01",
+      "category": "signals",
+      "query": "Thứ tự ưu tiên phải chấp hành giữa hiệu lệnh người điều khiển giao thông, đèn tín hiệu, biển báo và vạch kẻ đường là gì?",
+      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 11. Chấp hành báo hiệu đường bộ"}]
+    },
+    {
+      "id": "signals-02",
+      "category": "signals",
+      "query": "Đèn tín hiệu giao thông có những màu nào và tín hiệu màu đỏ có ý nghĩa gì?",
+      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 11. Chấp hành báo hiệu đường bộ"}]
+    },
+    {
+      "id": "signals-03",
+      "category": "signals",
+      "query": "Theo QCVN 41:2024/BGTVT, khi lắp đèn tín hiệu theo chiều thẳng đứng thì thứ tự màu đèn ra sao?",
+      "expected": [{"document_id": "qcvn-41-2024-bgtvt", "locator": "Điều 6. Điều khiển giao thông bằng tín hiệu đèn"}]
+    },
+    {
+      "id": "prohibitory-signs-01",
+      "category": "prohibitory_signs",
+      "query": "Biển báo cấm được dùng để biểu thị điều gì?",
+      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 11. Chấp hành báo hiệu đường bộ"}]
+    },
+    {
+      "id": "prohibitory-signs-02",
+      "category": "prohibitory_signs",
+      "query": "Theo QCVN 41:2024/BGTVT, biển báo cấm có tác dụng gì?",
+      "expected": [{"document_id": "qcvn-41-2024-bgtvt", "locator": "Điều 21. Tác dụng của biển báo cấm"}]
+    },
+    {
+      "id": "prohibitory-signs-03",
+      "category": "prohibitory_signs",
+      "query": "Hiệu lực của biển báo cấm áp dụng trên các làn đường như thế nào?",
+      "expected": [{"document_id": "qcvn-41-2024-bgtvt", "locator": "Điều 15. Hiệu lực của biển báo"}]
+    },
+    {
+      "id": "lanes-01",
+      "category": "lanes",
+      "query": "Phương tiện đi với tốc độ thấp hơn phải đi về bên nào theo chiều đi của mình?",
+      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 13. Sử dụng làn đường"}]
+    },
+    {
+      "id": "lanes-02",
+      "category": "lanes",
+      "query": "Trên đường có nhiều làn cùng chiều, người điều khiển được chuyển làn ở đâu và phải đi trong bao nhiêu làn?",
+      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 13. Sử dụng làn đường"}]
+    },
+    {
+      "id": "lanes-03",
+      "category": "lanes",
+      "query": "QCVN 41:2024/BGTVT phân loại vạch kẻ đường như thế nào?",
+      "expected": [{"document_id": "qcvn-41-2024-bgtvt", "locator": "Điều 49. Phân loại vạch kẻ đường"}]
+    },
+    {
+      "id": "stopping-parking-01",
+      "category": "stopping_parking",
+      "query": "Dừng xe và đỗ xe được định nghĩa như thế nào theo Luật Trật tự, an toàn giao thông đường bộ?",
+      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 18. Dừng xe, đỗ xe"}]
+    },
+    {
+      "id": "stopping-parking-02",
+      "category": "stopping_parking",
+      "query": "Người điều khiển không được dừng xe hoặc đỗ xe tại những vị trí nào?",
+      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 18. Dừng xe, đỗ xe"}]
+    },
+    {
+      "id": "stopping-parking-03",
+      "category": "stopping_parking",
+      "query": "Nếu buộc phải dừng hoặc đỗ xe do sự cố trên đường cao tốc thì phải cảnh báo phía sau tối thiểu bao xa?",
+      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 25. Giao thông trên đường cao tốc"}]
+    },
+    {
+      "id": "overtaking-01",
+      "category": "overtaking",
+      "query": "Vượt xe được hiểu là tình huống giao thông như thế nào?",
+      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 14. Vượt xe và nhường đường cho xe xin vượt"}]
+    },
+    {
+      "id": "overtaking-02",
+      "category": "overtaking",
+      "query": "Người lái xe muốn vượt xe phải báo hiệu và thực hiện như thế nào để bảo đảm an toàn?",
+      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 14. Vượt xe và nhường đường cho xe xin vượt"}]
+    },
+    {
+      "id": "overtaking-03",
+      "category": "overtaking",
+      "query": "Trong trường hợp nào người điều khiển phương tiện không được vượt xe?",
+      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 14. Vượt xe và nhường đường cho xe xin vượt"}]
+    },
+    {
+      "id": "penalties-01",
+      "category": "penalties",
+      "query": "Ô tô có nồng độ cồn chưa vượt quá 50 miligam/100 mililít máu bị phạt tiền bao nhiêu?",
+      "expected": [{"document_id": "decree-168-2024-nd-cp", "locator": "Điều 6. Xử phạt, trừ điểm giấy phép lái xe của người điều khiển xe ô tô, xe chở người bốn bánh có gắn động cơ, xe chở hàng bốn bánh có gắn động cơ và các loại"}]
+    },
+    {
+      "id": "penalties-02",
+      "category": "penalties",
+      "query": "Người điều khiển xe mô tô không chấp hành hiệu lệnh của đèn tín hiệu giao thông bị xử phạt theo quy định nào?",
+      "expected": [{"document_id": "decree-168-2024-nd-cp", "locator": "Điều 7. Xử phạt, trừ điểm giấy phép lái của người điều khiển xe mô tô, xe gắn máy, các loại xe tương tự xe mô tô và các loại xe tương tự xe gắn máy vi phạm qu"}]
+    },
+    {
+      "id": "penalties-03",
+      "category": "penalties",
+      "query": "Giấy phép lái xe có bao nhiêu điểm và dữ liệu điểm trừ được cập nhật khi nào?",
+      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 58. Điểm của giấy phép lái xe"}]
+    },
+    {
+      "id": "qcvn-sign-meaning-01",
+      "category": "qcvn_sign_meaning",
+      "query": "QCVN 41:2024/BGTVT chia biển báo hiệu đường bộ thành những nhóm cơ bản nào?",
+      "expected": [{"document_id": "qcvn-41-2024-bgtvt", "locator": "Điều 11. Phân loại biển báo hiệu"}]
+    },
+    {
+      "id": "qcvn-sign-meaning-02",
+      "category": "qcvn_sign_meaning",
+      "query": "Biển chỉ dẫn có tác dụng gì và thường có hình dạng, màu nền như thế nào?",
+      "expected": [{"document_id": "qcvn-41-2024-bgtvt", "locator": "Điều 11. Phân loại biển báo hiệu"}]
+    },
+    {
+      "id": "qcvn-sign-meaning-03",
+      "category": "qcvn_sign_meaning",
+      "query": "Theo QCVN 41:2024/BGTVT, biển hiệu lệnh có tác dụng gì?",
+      "expected": [{"document_id": "qcvn-41-2024-bgtvt", "locator": "Điều 31. Tác dụng của biển hiệu lệnh"}]
+    }
+  ]
+}

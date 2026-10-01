@@ -104,6 +104,10 @@ class VectorStore:
         )
         logger.info("Rebuilt vector store with %d chunks.", len(chunks))
 
+    def get_index_metadata(self) -> dict[str, object]:
+        """Return metadata published with the current index collection."""
+        return dict(self._collection.metadata or {})
+
     def query(self, query_text: str, top_k: int) -> list[DocumentChunk]:
         """Return the top_k most relevant chunks with source metadata.
 
