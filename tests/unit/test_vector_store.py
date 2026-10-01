@@ -261,3 +261,24 @@ def test_successful_rebuild_removes_stale_chunks():
     assert replacement.upsert.call_args.kwargs["documents"] == ["Current rule"]
     ollama_client.embed_many.assert_called_once_with(["Current rule"])
     ollama_client.embed.assert_not_called()
+
+
+def test_init_can_require_existing_collection(monkeypatch):
+    collection = MagicMock()
+    client = MagicMock()
+    client.get_collection.return_value = collection
+    persistent_client = MagicMock(return_value=client)
+    monkeypatch.setattr(
+        "src.reasoning.vector_store.chromadb.PersistentClient",
+        persistent_client,
+    )
+    config = {
+        "vector_store_dir": "chroma_db",
+        "collection_name": "traffic_regulations",
+    }
+
+    store = VectorStore(config, MagicMock(), create_if_missing=False)
+
+    assert store._collection is collection
+    client.get_collection.assert_called_once_with(name="traffic_regulations")
+    client.get_or_create_collection.assert_not_called()

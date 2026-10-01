@@ -103,7 +103,11 @@ def main() -> None:
     if invalid:
         raise ValueError(f"benchmark targets absent from corpus: {invalid}")
 
-    store = VectorStore(reasoning_cfg["rag"], OllamaClient(reasoning_cfg["ollama"]))
+    store = VectorStore(
+        reasoning_cfg["rag"],
+        OllamaClient(reasoning_cfg["ollama"]),
+        create_if_missing=False,
+    )
     scores: list[dict] = []
     failures: list[tuple[dict, list[DocumentChunk]]] = []
     for case in cases:

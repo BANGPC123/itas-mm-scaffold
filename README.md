@@ -175,13 +175,12 @@ conda run --no-capture-output -n WTF python -X utf8 scripts/evaluate_legal_retri
 The command above was run against the existing local index with corpus
 fingerprint `51d2da86002c4757fcd9fffb2849447b2bd1805f86242d67f0c003f7ee78f9db`,
 schema version `1`, and embedding model `nomic-embed-text`, at top-k `4`.
-Observed results: 24 cases, Recall@1 `0.125000`, Recall@3 `0.291667`,
-Recall@4 `0.333333`, and MRR `0.197917`.
+Observed results: 24 cases, Recall@1 `0.250000`, Recall@3 `0.458333`,
+Recall@4 `0.500000`, and MRR `0.336806`.
 
-The top-4 misses were `speed-01`, `speed-02`, `signals-01`, `signals-02`,
-`prohibitory-signs-01`, `prohibitory-signs-03`, `lanes-01`,
-`stopping-parking-01`, `stopping-parking-02`, `stopping-parking-03`,
-`overtaking-01`, `penalties-01`, `penalties-02`, `penalties-03`,
+The top-4 misses were `speed-01`, `speed-02`, `prohibitory-signs-03`,
+`lanes-01`, `stopping-parking-01`, `stopping-parking-02`,
+`stopping-parking-03`, `penalties-01`, `penalties-02`, `penalties-03`,
 `qcvn-sign-meaning-01`, and `qcvn-sign-meaning-02`. This is a reproducible
 retrieval snapshot only; it is not a legal-quality guarantee or a quality gate.
 

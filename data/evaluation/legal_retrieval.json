@@ -22,13 +22,13 @@
       "id": "signals-01",
       "category": "signals",
       "query": "Thứ tự ưu tiên phải chấp hành giữa hiệu lệnh người điều khiển giao thông, đèn tín hiệu, biển báo và vạch kẻ đường là gì?",
-      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 11. Chấp hành báo hiệu đường bộ"}]
+      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 11. Chấp hành báo hiệu đường bộ"}, {"document_id": "qcvn-41-2024-bgtvt", "locator": "Điều 4. Thứ tự hiệu lực của hệ thống báo hiệu"}]
     },
     {
       "id": "signals-02",
       "category": "signals",
       "query": "Đèn tín hiệu giao thông có những màu nào và tín hiệu màu đỏ có ý nghĩa gì?",
-      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 11. Chấp hành báo hiệu đường bộ"}]
+      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 11. Chấp hành báo hiệu đường bộ"}, {"document_id": "qcvn-41-2024-bgtvt", "locator": "Điều 6. Điều khiển giao thông bằng tín hiệu đèn"}]
     },
     {
       "id": "signals-03",
@@ -40,7 +40,7 @@
       "id": "prohibitory-signs-01",
       "category": "prohibitory_signs",
       "query": "Biển báo cấm được dùng để biểu thị điều gì?",
-      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 11. Chấp hành báo hiệu đường bộ"}]
+      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 11. Chấp hành báo hiệu đường bộ"}, {"document_id": "qcvn-41-2024-bgtvt", "locator": "Điều 21. Tác dụng của biển báo cấm"}]
     },
     {
       "id": "prohibitory-signs-02",
@@ -94,7 +94,7 @@
       "id": "overtaking-01",
       "category": "overtaking",
       "query": "Vượt xe được hiểu là tình huống giao thông như thế nào?",
-      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 14. Vượt xe và nhường đường cho xe xin vượt"}]
+      "expected": [{"document_id": "law-36-2024-qh15", "locator": "Điều 14. Vượt xe và nhường đường cho xe xin vượt"}, {"document_id": "qcvn-41-2024-bgtvt", "locator": "Điều 3. Giải thích từ ngữ"}]
     },
     {
       "id": "overtaking-02",

@@ -19,13 +19,22 @@ logger = get_logger(__name__)
 
 
 class VectorStore:
-    def __init__(self, rag_config: dict[str, Any], ollama_client: OllamaClient):
+    def __init__(
+        self,
+        rag_config: dict[str, Any],
+        ollama_client: OllamaClient,
+        *,
+        create_if_missing: bool = True,
+    ):
         self.ollama_client = ollama_client
         self._client = chromadb.PersistentClient(path=rag_config["vector_store_dir"])
         self._collection_name = rag_config["collection_name"]
-        self._collection = self._client.get_or_create_collection(
-            name=self._collection_name
-        )
+        if create_if_missing:
+            self._collection = self._client.get_or_create_collection(
+                name=self._collection_name
+            )
+        else:
+            self._collection = self._client.get_collection(name=self._collection_name)
 
     def index_chunks(self, chunks: list[DocumentChunk]) -> None:
         """Embed and upsert a list of chunks. Idempotent by chunk id."""
