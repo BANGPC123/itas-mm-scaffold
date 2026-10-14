@@ -9,7 +9,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install core test dependencies
-        run: python -m pip install 'numpy>=1.26,<2' opencv-python-headless pyyaml pydantic fastapi python-multipart httpx requests pypdf chromadb pytest pytest-mock
+        run: python -m pip install 'numpy>=1.26,<2' opencv-python-headless pillow pyyaml pydantic fastapi python-multipart httpx requests pypdf chromadb pytest pytest-mock
       - name: Test rules, API, retrieval and orchestration without model weights
         run: >-
           python -m pytest -q
