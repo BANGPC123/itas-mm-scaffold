@@ -38,7 +38,7 @@ After restarting the API, `scripts/verify_live_fusion_20261014.py` ran 5 real fr
 
 - `python -m pytest -q tests`: **465 passed**, 6 warnings at time of comprehensive suite run.
 - Frontend `npm --prefix frontend run build`: **PASS**.
-- New complete video replay: see `output/video_fusion_20261014/` and `verification.json` if successfully completed. Replay uses verified October 13 ML candidate cache + updated edge veto; does **not** run the added YOLO11 on 35,793 frames, so it is not a new 59-class annotated video.
+- **Complete video VERIFIED:** `output/video_fusion_20261014/test_video_annotated.mp4`, 445,360,104 bytes, 35,793/35,793 decoded frames, 1280×720 at 30 FPS, 3,580 previously verified analysis samples, **29/29** audio events audible, **12/12** verification checks passed. Output SHA256 `0e6c79be7e6d1d0ea137056461aeccb9c4739215ade7302402880d8f73e18abb`. The replay removed 6,016 additional original lane points without introducing new points. It uses verified October 13 ML candidate cache + updated edge veto; does **not** run the added YOLO11 on 35,793 frames, so it is not a new 59-class annotated video. The API serves it via `/pipeline/capstone-video/user-fusion`, HTTP 206 range request for bytes 0–1023 confirmed after completed verification. Original video artifact remains untouched.
 - Research only. No human-reviewed, source-disjoint Vietnam lane and traffic-sign benchmark; no validated legal knowledge base (`validated_corpus=false`); no real driving safety certification.
 - User-supplied YOLO checkpoint contains AGPL-3.0 license metadata, weight never pushed to GitHub.
 
