@@ -31,5 +31,22 @@ def display_quality(line,shape):
         if np.quantile(np.abs(slopes),.9)>2.0:return False
     return True
 
-def visual_polylines(lane,shape):
-    return [list(p) for p in lane.polylines if display_quality(p,shape)]
+def visual_polylines(lane,shape,*,mode='precision'):
+    """Switch between legacy precision-first and unfiltered learned hypotheses.
+
+    Candidate mode is useful for diagnosing missing lanes; it NEVER establishes
+    verified ego boundaries or legal sign scope. Keep original points only.
+    """
+    if mode not in ('precision','candidate'):
+        raise ValueError('Unsupported visual lane display mode')
+    if mode=='precision':
+        return [list(p) for p in lane.polylines if display_quality(p,shape)]
+    h,w=shape[:2]
+    kept=[]
+    for line in lane.polylines:
+        xy=np.asarray(line,dtype=float)
+        if (xy.ndim==2 and xy.shape[1]==2 and len(xy)>=3 and
+            np.isfinite(xy).all() and np.all(xy[:,0]>=0) and
+            np.all(xy[:,0]<w) and np.all(xy[:,1]>=0) and np.all(xy[:,1]<h)):
+            kept.append(list(line))
+    return kept

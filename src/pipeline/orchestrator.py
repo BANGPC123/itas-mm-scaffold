@@ -45,8 +45,10 @@ class Pipeline:
             client=OllamaClient(self.reasoning_cfg['ollama'])
             self.rag_chain=RagChain(self.reasoning_cfg,VectorStore(self.reasoning_cfg['rag'],client),client)
 
-    def run(self,image,latitude,longitude,synthesize_audio=True,*,road_bottom=1.,annotate=True,stream_id=None,frame_timestamp=None,exclude_rects=None,lane_visual_roi=False,observed_at=None,auxiliary_sign_review=False):
+    def run(self,image,latitude,longitude,synthesize_audio=True,*,road_bottom=1.,annotate=True,stream_id=None,frame_timestamp=None,exclude_rects=None,lane_visual_roi=False,observed_at=None,auxiliary_sign_review=False,lane_display_mode='precision'):
         if image is None or image.size==0:raise ValueError('Input image is empty')
+        if lane_display_mode not in ('precision','candidate'):
+            raise ValueError('Unsupported lane display mode')
         if not np.isfinite(road_bottom) or not .3 <= road_bottom <= 1:
             raise ValueError('road_bottom must be between 0.3 and 1')
         warnings=[];timings={};started=time.perf_counter()
@@ -107,13 +109,18 @@ class Pipeline:
             lane.ego_boundaries=[]
             lane.lane_center_offset_px=None
         from src.perception.lane_display_quality import visual_polylines
-        lane.display_polylines=lane.polylines if lane.backend=='camera_road_paint_visual' else visual_polylines(lane,image.shape)
+        lane.display_polylines=lane.polylines if lane.backend=='camera_road_paint_visual' else visual_polylines(lane,image.shape,mode=lane_display_mode)
         if stream_id is not None and lane.backend!='camera_road_paint_visual':
             from src.perception.lane_temporal import LaneStreamPool
             if not hasattr(self,'lane_stream_pool'):self.lane_stream_pool=LaneStreamPool()
             from src.perception.lane_display_quality import visual_polylines
-            safe_display=lane.polylines if lane.backend=='camera_road_paint_visual' else visual_polylines(lane,image.shape)
+            safe_display=lane.polylines if lane.backend=='camera_road_paint_visual' else visual_polylines(lane,image.shape,mode=lane_display_mode)
             lane.display_polylines=self.lane_stream_pool.get(stream_id,image.shape,(road_bottom,lane.backend)).update(safe_display,frame_timestamp,image.shape,image=image)
+        if lane_display_mode=='candidate' and lane.backend=='ufld_v2':
+            # High-recall visual mode is not trusted lane geometry.
+            lane.ego_boundaries=[]
+            lane.lane_center_offset_px=None
+            warnings.append('Chế độ giữ vạch: đây chỉ là ứng viên UFLD chưa xác minh; không dùng cho làn áp dụng biển báo.')
         if lane_visual_roi and lane.backend=='camera_road_paint_visual':
             cfg_surface=load_config('perception').get('lane_visual_fallback',{})
             if cfg_surface.get('surface_veto',False) and not getattr(getattr(self,'camera_lane_visual',None),'uses_road_surface_mask',False):
@@ -163,6 +170,8 @@ class Pipeline:
             if getattr(lane,'camera_view','unknown')!='side_or_cabin':
                 try:
                     extra_review=self.auxiliary_sign_reviewer.detect(road,signs)
+                    from src.perception.sign_concordance import label_agreement
+                    extra_review=label_agreement(self.sign_recognizer,road,extra_review)
                 except Exception:
                     warnings.append('YOLO11 phụ trợ không khả dụng trong frame này; bộ nhận diện chính vẫn hoạt động.')
             if self.auxiliary_sign_reviewer.status!='ready':
@@ -210,7 +219,9 @@ class Pipeline:
         annotated=None
         if annotate:
             overlay=image.copy()
-            for points in (lane.display_polylines if lane.display_polylines is not None else lane.polylines):cv2.polylines(overlay,[np.array(points,np.int32)],False,(70,200,70),2)
+            for points in (lane.display_polylines if lane.display_polylines is not None else lane.polylines):
+                color=(60,180,255) if lane_display_mode=='candidate' and lane.backend=='ufld_v2' else (70,200,70)
+                cv2.polylines(overlay,[np.array(points,np.int32)],False,color,2)
             for sign in signs:
                 x1,y1,x2,y2=map(int,sign.bbox_xyxy)
                 color=(140,140,140) if sign.applicability=='ignored' else (0,190,255)
@@ -218,7 +229,8 @@ class Pipeline:
                 cv2.putText(overlay,sign.label,(x1,max(16,y1-6)),cv2.FONT_HERSHEY_SIMPLEX,.5,color,1,cv2.LINE_AA)
             for extra in extra_review:
                 x1,y1,x2,y2=map(int,extra['bbox_xyxy'])
-                cv2.rectangle(overlay,(x1,y1),(x2,y2),(255,80,200),2)
+                hue=(225,225,80) if extra.get('agreement_status')=='cross_model_visual_agreement' else (255,80,200)
+                cv2.rectangle(overlay,(x1,y1),(x2,y2),hue,2)
                 cv2.putText(overlay,'YOLO11 review only',(x1,max(16,y1-8)),cv2.FONT_HERSHEY_SIMPLEX,.45,(255,80,200),1,cv2.LINE_AA)
             ok,encoded=cv2.imencode('.jpg',overlay,[cv2.IMWRITE_JPEG_QUALITY,85])
             annotated='data:image/jpeg;base64,'+base64.b64encode(encoded).decode() if ok else None

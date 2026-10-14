@@ -12,6 +12,7 @@ export default function VideoPanel({onRun}) {
   const [running,setRunning]=useState(false), [error,setError]=useState('');
   const [roadBottom,setRoadBottom]=useState(.65), [stats,setStats]=useState(null);
   const [laneVisualRoi,setLaneVisualRoi]=useState(true);
+  const [laneDisplayMode,setLaneDisplayMode]=useState('precision');
   const [reviewAuxiliary,setReviewAuxiliary]=useState(false);
   const [recordingStart,setRecordingStart]=useState('');
   const [masking,setMasking]=useState(false), [exclusions,setExclusions]=useState([]);
@@ -44,7 +45,7 @@ export default function VideoPanel({onRun}) {
         ctx.beginPath();ctx.moveTo(0,canvas.height*roadBottom);ctx.lineTo(canvas.width,canvas.height*roadBottom);ctx.stroke();ctx.setLineDash([]);
         if(visible){
           const {perception,frame_shape}=sample.result;
-          const roiVisualOnly=perception.lane.backend==='yolopv2_visual_candidate' || perception.lane.backend==='ufld_v2_roi_visual_only' || perception.lane.backend==='camera_road_paint_visual';
+          const roiVisualOnly=perception.lane.backend==='yolopv2_visual_candidate' || perception.lane.backend==='ufld_v2_roi_visual_only' || perception.lane.backend==='camera_road_paint_visual' || (laneDisplayMode==='candidate'&&perception.lane.backend==='ufld_v2');
           ctx.save();ctx.scale(canvas.width/frame_shape[1],canvas.height/frame_shape[0]);
           ctx.save();
           if(laneVisualRoi && perception.lane.backend!=='camera_road_paint_visual') {
@@ -84,10 +85,11 @@ export default function VideoPanel({onRun}) {
           }
           for(const candidate of perception.auxiliary_sign_candidates||[]){
             const [x1,y1,x2,y2]=candidate.bbox_xyxy;
-            ctx.strokeStyle='#d88bff';ctx.lineWidth=2;ctx.setLineDash([5,5]);
+            const agreed=candidate.agreement_status==='cross_model_visual_agreement';
+            ctx.strokeStyle=agreed?'#70deeb':'#d88bff';ctx.lineWidth=2;ctx.setLineDash([5,5]);
             ctx.strokeRect(x1,y1,x2-x1,y2-y1);ctx.setLineDash([]);
             ctx.font='16px sans-serif';ctx.fillStyle='#f2cfff';
-            ctx.fillText('YOLO11 (chưa xác minh): '+candidate.label_vi,x1,Math.max(18,y1-5),Math.max(20,frame_shape[1]-x1-6));
+            ctx.fillText((agreed?'Hai AI cùng mã (chưa xác minh luật): ':'YOLO11 (cần rà): ')+candidate.label_vi,x1,Math.max(18,y1-5),Math.max(20,frame_shape[1]-x1-6));
           }
           ctx.restore();
         }
@@ -104,7 +106,7 @@ export default function VideoPanel({onRun}) {
     };
     id=requestAnimationFrame(paint);
     return()=>cancelAnimationFrame(id);
-  },[roadBottom,exclusions]);
+  },[roadBottom,exclusions,laneDisplayMode]);
   const camera=async()=>{
     release();setExclusions([]);setMasking(false);setRunning(false);setError('');setStats(null);
     try{
@@ -153,7 +155,7 @@ export default function VideoPanel({onRun}) {
           context.drawImage(v,0,0,canvas.width,canvas.height);
           return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('Không đọc được khung hình video.')),'image/jpeg',.85));
         },
-        analyze:(blob,frameTimestamp)=>onRun({file:new File([blob],'frame.jpg',{type:'image/jpeg'}),latitude,longitude,speak:false,stream:true,roadBottom,signal,streamId,frameTimestamp,excludeRects:exclusions,laneVisualRoi,auxiliarySignReview:reviewAuxiliary,
+        analyze:(blob,frameTimestamp)=>onRun({file:new File([blob],'frame.jpg',{type:'image/jpeg'}),latitude,longitude,speak:false,stream:true,roadBottom,signal,streamId,frameTimestamp,excludeRects:exclusions,laneVisualRoi,laneDisplayMode,auxiliarySignReview:reviewAuxiliary,
           observedAt:stream.current?new Date().toISOString():recordingStart?new Date(new Date(recordingStart).getTime()+frameTimestamp*1000).toISOString():undefined}),
         publish:(result,timestamp)=>{
           latest.current={result,timestamp};
@@ -196,6 +198,8 @@ export default function VideoPanel({onRun}) {
       Nhận diện vạch đường theo vùng mặt đường, lọc tap-lô và xe che khuất
     </label>
     <p>Hệ thống tìm vùng mặt đường theo khung hình, kết hợp mô hình làn và kiểm tra vạch sơn nhìn thấy. Vạch màu vàng là dự đoán; phần bị xe che khuất không dùng để xác định phạm vi biển báo.</p>
+    <label>Hiển thị ứng viên UFLD-v2 (chỉ trực quan): <select value={laneDisplayMode} disabled={running} onChange={e=>setLaneDisplayMode(e.target.value)}><option value="precision">Ưu tiên ít nét sai</option><option value="candidate">Giữ vạch chưa chắc chắn (để rà)</option></select></label>
+    <p>Chế độ giữ vạch có thể hiện thêm nét sai. Khi mô hình vạch sơn theo mặt đường đủ điều kiện hoạt động, lớp phủ đó vẫn được ưu tiên; không có chế độ nào tự xác nhận làn pháp lý.</p>
     <label><input type="checkbox" checked={reviewAuxiliary} disabled={running} onChange={e=>setReviewAuxiliary(e.target.checked)}/> Bật YOLO11 optimized (59 lớp) làm lớp gợi ý màu tím, chỉ dùng rà soát — không xác minh luật</label>
     <label htmlFor="road-bottom">Ranh dưới vùng phát hiện biển: {Math.round(roadBottom*100)}% chiều cao ảnh</label>
     <input id="road-bottom" type="range" min="30" max="100" value={Math.round(roadBottom*100)} disabled={running} onChange={e=>setRoadBottom(Number(e.target.value)/100)}/>

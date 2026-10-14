@@ -103,10 +103,12 @@ CAPSTONE_VIDEOS={
     'signs':'output/capstone_sign_gallery_named_tts_20261011/video_named_with_tts.mp4',
     'user-hybrid':'output/video_tests/user_test_video_lane_dedup_checked_20261011/hybrid_lane_75s.mp4',
     'user-complete':'output/video_recheck_full_20261014/test_video_annotated.mp4',
+    'user-fusion':'output/video_fusion_20261014/test_video_annotated.mp4',
     'independent-car':'output/video_quality_20261013/independent_car_v2/independent_car_annotated.mp4'
 }
 
 VIDEO_COMPLETION_DIR=Path(__file__).resolve().parents[2]/'output/video_recheck_full_20261014'
+VIDEO_FUSION_DIR=Path(__file__).resolve().parents[2]/'output/video_fusion_20261014'
 INDEPENDENT_VIDEO_DIR=Path(__file__).resolve().parents[2]/'output/video_quality_20261013/independent_car_v2'
 
 @router.get('/video-completion-status')
@@ -136,6 +138,25 @@ def video_completion_status():
         'video_url':'/pipeline/capstone-video/user-complete' if ready else None,
         'report_url':'/pipeline/video-completion-report' if ready else None}
 
+@router.get('/video-fusion-status')
+def video_fusion_status():
+    import json
+    p=VIDEO_FUSION_DIR
+    def get(name):
+        path=p/name
+        return json.loads(path.read_text(encoding='utf-8')) if path.is_file() else None
+    summary=get('summary.json')
+    verification=get('verification.json')
+    movie=p/'test_video_annotated.mp4'
+    ready=bool(summary and verification and movie.is_file() and
+        summary.get('complete_source_scan') and not summary.get('failures') and
+        verification.get('passed') and verification.get('video_size')==movie.stat().st_size
+        and verification.get('video_mtime_ns')==movie.stat().st_mtime_ns)
+    return {'complete':ready,'summary':summary if ready else None,
+            'video_url':'/pipeline/capstone-video/user-fusion' if ready else None,
+            'ml_checkpoint_changed':False,'auxiliary_yolo11_video_included':False,
+            'lane_veto_updated':True,'human_lane_gt_certified':False}
+
 @router.get('/video-completion-report')
 def video_completion_report():
     report=Path(__file__).resolve().parents[2]/'docs/ITAS_MM_INDEPENDENT_RELEASE_20261014.md'
@@ -146,6 +167,8 @@ def video_completion_report():
 def capstone_video(kind:str):
     path=CAPSTONE_VIDEOS.get(kind)
     if not path:raise HTTPException(404,'No such capstone video')
+    if kind=='user-fusion' and not video_fusion_status()['complete']:
+        raise HTTPException(404,'Video fusion chưa vượt kiểm tra giải mã và checksum')
     if kind=='user-complete' and not video_completion_status()['complete']:
         raise HTTPException(404,'Video đầy đủ đang chờ kiểm tra cuối')
     if kind=='independent-car' and not video_completion_status()['independent_video']['complete']:
@@ -245,7 +268,7 @@ def status():
             'message':'Các dự đoán chưa được chứng nhận cho điều khiển hoặc cảnh báo lái xe ngoài thực địa.'}
 
 @router.post('/run',response_model=PipelineRunResponse)
-def run_pipeline(image:UploadFile=File(...),latitude:float=Form(...,ge=-90,le=90),longitude:float=Form(...,ge=-180,le=180),synthesize_audio:bool=Form(True),road_bottom:float=Form(1.,ge=.3,le=1.),annotate:bool=Form(True),lane_visual_roi:bool=Form(False),auxiliary_sign_review:bool=Form(False),stream_id:str|None=Form(None,max_length=64,pattern=r'^[A-Za-z0-9_-]+$'),frame_timestamp:float|None=Form(None,ge=0,allow_inf_nan=False),exclusion_zones:str=Form('[]',max_length=1200),observed_at:datetime|None=Form(None)):
+def run_pipeline(image:UploadFile=File(...),latitude:float=Form(...,ge=-90,le=90),longitude:float=Form(...,ge=-180,le=180),synthesize_audio:bool=Form(True),road_bottom:float=Form(1.,ge=.3,le=1.),annotate:bool=Form(True),lane_visual_roi:bool=Form(False),lane_display_mode:Literal['precision','candidate']=Form('precision'),auxiliary_sign_review:bool=Form(False),stream_id:str|None=Form(None,max_length=64,pattern=r'^[A-Za-z0-9_-]+$'),frame_timestamp:float|None=Form(None,ge=0,allow_inf_nan=False),exclusion_zones:str=Form('[]',max_length=1200),observed_at:datetime|None=Form(None)):
     if observed_at is not None and (observed_at.tzinfo is None or observed_at.utcoffset() is None):
         raise HTTPException(422,'Ngày giờ quan sát cần có múi giờ; không dùng giờ phát lại làm giờ ghi hình.')
     if (stream_id is None)!=(frame_timestamp is None):raise HTTPException(422,'Video requires both stream_id and frame_timestamp')
@@ -275,6 +298,7 @@ def run_pipeline(image:UploadFile=File(...),latitude:float=Form(...,ge=-90,le=90
         temporal={'stream_id':stream_id,'frame_timestamp':frame_timestamp} if stream_id is not None else {}
         if rects:temporal['exclude_rects']=rects
         if lane_visual_roi:temporal['lane_visual_roi']=True
+        if lane_display_mode!='precision':temporal['lane_display_mode']=lane_display_mode
         if auxiliary_sign_review:temporal['auxiliary_sign_review']=True
         if observed_at is not None:temporal['observed_at']=observed_at
         result=get_inference_worker().submit(get_pipeline().run,decoded,latitude,longitude,synthesize_audio,

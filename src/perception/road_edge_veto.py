@@ -28,15 +28,21 @@ def suppress_road_edge_contours(polylines, ground_probability, *,
             retained.append(poly)
             continue
         margins=[]
+        # Occluding cars may leave a narrow semantic road strip by a median.
+        # Only a long, densely sampled contour may use this narrower support.
+        narrow_candidate=(len(points)>=12 and np.ptp(points[:,1])*coordinate_scale>=h*.16)
+        narrow_rows=0
         for x,y in points[::max(1,len(points)//30)]:
             x=int(round(x*coordinate_scale));y=int(round(y*coordinate_scale))
             if not (0<=x<w and 0<=y<h):
                 continue
             road_x=np.flatnonzero(ground[y]>.55)
             if len(road_x)<w*.12:
-                continue
+                if not narrow_candidate or len(road_x)<w*.045:
+                    continue
+                narrow_rows+=1
             left,right=int(road_x[0]),int(road_x[-1])
-            if right-left <= w*.12:
+            if right-left <= w*(.045 if narrow_candidate else .12):
                 continue
             margins.append(min(x-left,right-x)/(right-left))
         # Insufficient semantic mask: abstain instead of deleting markings.
@@ -44,7 +50,10 @@ def suppress_road_edge_contours(polylines, ground_probability, *,
             retained.append(poly)
             continue
         near=float(np.mean(np.asarray(margins)<edge_margin_ratio))
-        if near>=.67 and float(np.median(margins))<edge_margin_ratio:
+        # Narrow masks are weaker evidence: require a strong, consistently
+        # one-sided contour instead of suppressing intermittent center dashes.
+        threshold=.78 if narrow_rows>=6 else .67
+        if near>=threshold and float(np.median(margins))<edge_margin_ratio:
             rejected+=1
         else:
             retained.append(poly)

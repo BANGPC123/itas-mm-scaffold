@@ -3,6 +3,7 @@ import {useEffect,useState} from "react";
 export default function DemoVideos({apiBase=""}) {
   const [status,setStatus]=useState(null);
   const [completion,setCompletion]=useState(null);
+  const [fusion,setFusion]=useState(null);
   useEffect(()=>{
     let active=true;
     fetch(apiBase+"/pipeline/capstone-status")
@@ -13,6 +14,10 @@ export default function DemoVideos({apiBase=""}) {
       .then(r=>r.ok?r.json():Promise.reject(Error("API unavailable")))
       .then(data=>{if(active)setCompletion(data)})
       .catch(()=>{if(active)setCompletion({complete:false})});
+    fetch(apiBase+'/pipeline/video-fusion-status')
+      .then(r=>r.ok?r.json():Promise.reject(Error('API unavailable')))
+      .then(data=>{if(active)setFusion(data)})
+      .catch(()=>{if(active)setFusion({complete:false})});
     return()=>{active=false};
   },[apiBase]);
   const testMetrics=completion?.sign_test?.results?.[completion?.selected_sign_method||"960"];
@@ -33,6 +38,11 @@ export default function DemoVideos({apiBase=""}) {
         Đây là phép đo trên ảnh có nhãn, chưa phải độ chính xác thực địa của video này.
       </p>}
       <a href={apiBase+completion.report_url}>Đọc báo cáo đánh giá và số liệu TEST</a>
+    </div>}
+    {fusion?.complete && <div style={{marginBottom:24}}>
+      <h3>Video mới — lọc mép đường hẹp khi bị xe che khuất</h3>
+      <video controls playsInline preload="metadata" style={{width:'100%',maxWidth:1100,borderRadius:8}} src={apiBase+fusion.video_url}/>
+      <p>Phiên bản đã kiểm tra giải mã, giữ checkpoint AI cũ và tăng bộ lọc mép đường. YOLO11 59 lớp chỉ hiện khi bạn bật chế độ gợi ý trực tiếp ở phần phân tích video, không nằm trong file video này.</p>
     </div>}
     {completion?.independent_video?.complete && <div style={{marginBottom:24}}>
       <h3>Hành trình ô tô khác — Hòa Bình</h3>

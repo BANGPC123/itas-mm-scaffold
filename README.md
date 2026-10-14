@@ -1,3 +1,7 @@
+# Nâng cấp kết hợp model và kiểm chứng (14/10/2026)
+
+Đã thử nghiệm cơ chế đối chiếu mã biển của YOLO11 59 lớp với MobileNetV3 gốc, bổ sung chế độ UFLD-v2 hiển thị nhiều ứng viên hơn và sửa bộ lọc mép đường khi bị xe che khuất. **Không có bằng chứng đủ để tự động gộp YOLO vào biển đã xác minh cho ô tô**: trên 240 ảnh VAL chỉ có 17 ứng viên ngoài vùng biển gốc và không ứng viên nào đạt đồng thuận mã ở ngưỡng nghiêm ngặt. Kiểm tra camera thực đã chứng minh một nét mép đường sai được loại, 26 nét khác trên sáu ảnh được giữ. Xem [báo cáo fusion, benchmark và giới hạn](docs/FUSION_ENHANCEMENT_20261014.md). Các tính năng thử nghiệm không được dùng làm quyết định lái xe.
+
 # Cập nhật 14/10/2026 — YOLO11 optimized và benchmark UFLD-v2 từ ZIP
 
 Đã giải nén an toàn hai gói `comment.zip` và `yolo11_optimized.zip`; nguồn gốc, SHA256, danh sách 59 lớp biển và kết quả VAL được ghi trong [báo cáo nhập mô hình](docs/IMPORTED_COMMENT_YOLO11_20261014.md). Có thể bật **YOLO11 optimized — gợi ý phụ trợ màu tím** khi phân tích ảnh/video. Đây là chế độ rà soát tùy chọn và không thay thế detector chính hoặc tự suy luận hiệu lực biển với ô tô, vì thử nghiệm trên VAL chưa chứng minh cải thiện precision/recall. Trọng số gốc nằm cục bộ trong `data/raw/user_archives_20261014/yolo11_optimized/weights/best.pt` và không được push lên GitHub.
