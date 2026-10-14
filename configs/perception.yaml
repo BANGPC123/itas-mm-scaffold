@@ -1,16 +1,17 @@
 sign_detector:
-  # No default weights ship with this repo — train on a labeled dataset first.
-  # See README.md "Training the sign detector".
-  weights_path: null            # e.g. "models/sign_detector/best.pt"
+  image_size: 640
+  video_image_size: 960
+  video_multiscale: true
+  secondary_image_size: 640
+  weights_path: models/sign_detector/retrained_20261009.pt
   confidence_threshold: 0.35
   iou_threshold: 0.45
-  device: "cpu"                 # "cuda:0" if a GPU is available
-  # Compound-sign grouping: panels whose box centers are within this many
-  # pixels (at model input resolution) are grouped into one logical sign.
+  device: "auto"
+  # Retained for the legacy grouping entry point; runtime uses applicability rules.
   compound_group_distance_px: 40
 
 sahi:
-  enabled: true
+  enabled: false
   slice_height: 512
   slice_width: 512
   overlap_height_ratio: 0.2
@@ -18,8 +19,24 @@ sahi:
   postprocess_type: "NMS"
   postprocess_match_threshold: 0.5
 
+lane_visual_fallback:
+  camera_aware: true
+  surface_veto: true
+  surface_veto_path: models/lane/candidates/segformer_cityscapes_20261011
+  # Optional dashboard-heavy MP4 VISUAL ONLY. Never use BDD mask for scope.
+  model: yolopv2
+  weights_path: models/lane/candidates/yolopv2_official_20261011/yolopv2.pt
+  roi: 0.80
+  mask_threshold: 0.56
+  min_span_ratio: 0.20
+
 lane_detector:
-  # Classical CV baseline (see README "Current status"). Not a learned model.
+  backend: ufld_v2
+  filter_geometry: false
+  half: true
+  weights_path: models/lane/selected_20261009.pth
+  device: auto
+  # Parameters used only when the classical backend is explicitly selected.
   canny_low_threshold: 50
   canny_high_threshold: 150
   hough_rho: 2
@@ -28,3 +45,22 @@ lane_detector:
   hough_min_line_length: 40
   hough_max_line_gap: 25
   roi_top_ratio: 0.6   # fraction of image height where the region of interest starts
+
+sign_recognizer:
+  weights_path: models/sign_recognizer/retrained_20261009.pt
+  confidence_threshold: 0.63
+  min_short_side: 32
+  video_min_short_side: 12
+  reference_gate_path: models/sign_recognizer/reference_gate_20261011_final.npz
+  reference_gate_margin: 0.015
+
+applicability:
+  current_vehicle: car
+  panel_overlap: 0.5
+  panel_gap_ratio: 0.5
+  projection_y_ratio: 0.8
+  boundary_margin_ratio: 0.1
+
+# Automatic candidates displayed separately from verified legal conditions.
+supplementary_ocr:
+  enabled: true

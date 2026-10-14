@@ -1,0 +1,36 @@
+name: Core software checks
+on: [push, pull_request]
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install core test dependencies
+        run: python -m pip install 'numpy>=1.26,<2' opencv-python-headless pyyaml pydantic fastapi python-multipart httpx requests pypdf chromadb pytest pytest-mock
+      - name: Test rules, API, retrieval and orchestration without model weights
+        run: >-
+          python -m pytest -q
+          tests/unit/test_completion_scope.py tests/unit/test_completion_api.py
+          tests/unit/test_lexical_retrieval.py tests/unit/test_document_loader.py
+          tests/unit/test_legacy_document_loader.py tests/unit/test_api.py
+          tests/unit/test_rag_chain.py tests/unit/test_vector_store.py
+          tests/unit/test_build_vector_index.py tests/unit/test_corpus_fingerprint.py
+          tests/unit/test_ollama_client.py tests/unit/test_retrieval_evaluation.py
+          tests/unit/test_legal_normalizer.py tests/unit/test_fetch_regulations.py
+          tests/unit/test_script_entrypoints.py tests/unit/test_applicability.py
+          tests/unit/test_qcvn_505a_vehicle_scope_20261011.py
+          tests/unit/test_sign_speech.py tests/unit/test_lane_temporal.py
+          tests/integration/test_pipeline_e2e.py
+      - name: Evaluate unchanged legal retrieval benchmark
+        run: python scripts/evaluate_offline_retrieval.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Test and build frontend
+        run: |
+          node --test frontend/src/*.test.js
+          npm --prefix frontend ci
+          npm --prefix frontend run build

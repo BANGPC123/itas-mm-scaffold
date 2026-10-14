@@ -1,10 +1,4 @@
-"""Lane detection: classical computer-vision baseline.
-
-This is intentionally NOT a learned model. It exists so the Perception
-stage produces real, runnable output without requiring a training dataset
-first. Replace with a learned row-wise / structure-aware architecture as
-described in the project proposal — see README.md "Limitations".
-"""
+"""Configured UFLD-v2 inference, with an explicitly selectable Hough baseline."""
 from __future__ import annotations
 
 from typing import Any
@@ -21,6 +15,19 @@ logger = get_logger(__name__)
 class LaneDetector:
     def __init__(self, perception_config: dict[str, Any]):
         cfg = perception_config["lane_detector"]
+        self.learned = None
+        self.backend = cfg.get("backend", "classical")
+        self.filter_geometry = cfg.get('filter_geometry',True)
+        if self.backend == "ufld_v2":
+            from pathlib import Path
+            if Path(cfg["weights_path"]).is_file():
+                from src.perception.ufld_v2 import UFLDv2
+                device = cfg.get("device", "cpu")
+                if device == "auto":
+                    import torch
+                    device = "cuda:0" if torch.cuda.is_available() else "cpu"
+                self.learned = UFLDv2(cfg["weights_path"], device, half=cfg.get('half', False))
+            return
         self.canny_low = cfg["canny_low_threshold"]
         self.canny_high = cfg["canny_high_threshold"]
         self.hough_rho = cfg["hough_rho"]
@@ -36,6 +43,8 @@ class LaneDetector:
         Returns LaneInfo with an empty line list if no lines are found
         (e.g. blank/black input) rather than raising.
         """
+        if self.backend == "ufld_v2":
+            return self.learned.detect(image,filter_geometry=self.filter_geometry) if self.learned else LaneInfo([],backend="unavailable")
         if image is None or image.size == 0:
             logger.warning("Received empty image; returning no lane lines.")
             return LaneInfo(lane_lines=[])

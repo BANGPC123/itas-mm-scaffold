@@ -1,0 +1,6 @@
+path: D:/itas-mm/data/processed/canonical/itas_mm_v1/localization
+train: images/train
+val: images/val
+test: images/test
+nc: 1
+names: [traffic_sign]

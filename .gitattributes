@@ -1,0 +1,6 @@
+data/regulations/raw/decree-168-2024-nd-cp/source.html whitespace=-trailing-space
+
+# Immutable legal-source bytes must retain their recorded SHA256.
+data/regulations/raw/** -text
+data/regulations/current_raw/** -text
+data/regulations/current_raw/**/*.pdf binary
