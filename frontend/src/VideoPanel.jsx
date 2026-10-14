@@ -12,6 +12,7 @@ export default function VideoPanel({onRun}) {
   const [offlineBusy,setOfflineBusy]=useState(false);
   const [offlineHz,setOfflineHz]=useState(6);
   const [offlineAux,setOfflineAux]=useState(true);
+  const [offlineHighres,setOfflineHighres]=useState(false);
   const [offlineMaxSeconds,setOfflineMaxSeconds]=useState('');
   const [speak,setSpeak]=useState(true), [speechError,setSpeechError]=useState('');
   const [observation,setObservation]=useState('');
@@ -145,6 +146,7 @@ export default function VideoPanel({onRun}) {
       const body=new FormData();body.append('file',file);
       body.append('analysis_hz',String(offlineHz));
       body.append('auxiliary_review',String(offlineAux));
+      body.append('highres_rescue',String(offlineHighres));
       if(recordingStart){
         const date=new Date(recordingStart);
         if(!Number.isFinite(date.getTime()))throw new Error('Ngày giờ ghi hình chưa hợp lệ.');
@@ -222,6 +224,7 @@ export default function VideoPanel({onRun}) {
       <h3>Phân tích MP4 chất lượng cao — không cần camera, không cần chạy real-time</h3>
       <p>Máy chủ đọc video theo thứ tự frame, dùng 3 lượt phát hiện biển (960/640/1280 px), xác nhận qua nhiều frame và phân tích vạch sơn theo mặt đường. Kết quả được dựng thành video MP4 riêng, kiểm tra giải mã trước khi cho xem. Tốc độ xử lý có thể chậm hơn video thật; lớp YOLO11 bổ sung không tạo cảnh báo tự động.</p>
       <label>Tần suất phân tích AI (Hz): <select value={offlineHz} disabled={offlineBusy} onChange={e=>setOfflineHz(Number(e.target.value))}><option value="3">3 — ít tài nguyên</option><option value="6">6 — khuyến nghị</option><option value="10">10 — chi tiết hơn, xử lý lâu hơn</option></select></label>
+      <label><input type="checkbox" checked={offlineHighres} disabled={offlineBusy} onChange={e=>setOfflineHighres(e.target.checked)}/> Thử lượt 1280 px (tìm biển nhỏ; F1 TEST tĩnh giảm nhẹ, mặc định tắt)</label>
       <label><input type="checkbox" checked={offlineAux} disabled={offlineBusy} onChange={e=>setOfflineAux(e.target.checked)}/> Hiển thị thêm gợi ý YOLO11 59 lớp màu tím (chưa xác minh, không dùng để phát cảnh báo)</label>
       <label>Chỉ xử lý N giây đầu (để trống = toàn bộ video) <input type="number" min="1" max="7200" placeholder="Toàn bộ" value={offlineMaxSeconds} onChange={e=>setOfflineMaxSeconds(e.target.value)} disabled={offlineBusy}/></label>
       <button type="button" onClick={startOfflineJob} disabled={offlineBusy||!selectedFile.current||['queued','waiting_for_inference','running'].includes(offlineJob?.status)}>{offlineBusy?'Đang tải video...':'Bắt đầu phân tích MP4 offline chất lượng cao'}</button>

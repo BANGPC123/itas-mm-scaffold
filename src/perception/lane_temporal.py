@@ -89,3 +89,57 @@ class LaneStreamPool:
         while len(self.sessions)>self.max_sessions:
             self.sessions.popitem(last=False)
         return st
+
+class OfflineLaneEvidence:
+    """Show *current-frame* UFLD proposals only after consecutive agreement.
+
+    Never emits missing-frame ghosts. It is solely for an amber annotation
+    channel and is never connected to ego boundaries or sign applicability.
+    """
+    def __init__(self,min_hits=2,max_age=.5,max_lines=8):
+        if min_hits<2:raise ValueError('Need at least two independent frames')
+        self.min_hits=min_hits;self.max_age=max_age;self.max_lines=max_lines
+        self.last=None;self.shape=None;self.scene=None;self.tracks=[]
+
+    def update(self,polylines,timestamp,shape,image=None):
+        if not math.isfinite(timestamp) or timestamp<0:
+            raise ValueError('Bad timestamp')
+        scene=None
+        if image is not None:
+            import cv2
+            scene=cv2.resize(cv2.cvtColor(image,cv2.COLOR_BGR2GRAY),
+                              (32,18)).astype(float)/255.
+        cut=(scene is not None and self.scene is not None and
+             float(np.abs(scene-self.scene).mean())>.24)
+        if (self.last is None or timestamp<=self.last or
+            timestamp-self.last>self.max_age or shape!=self.shape or cut):
+            self.tracks=[]
+        self.last=timestamp;self.shape=shape;self.scene=scene
+        old=self.tracks
+        new=[];output=[];used=set()
+        for poly in list(polylines)[:self.max_lines*2]:
+            options=sorted((distance,i) for i,(last_poly,votes) in enumerate(old)
+                if i not in used and
+                (distance:=_curve_match(poly,last_poly,shape[1])) is not None)
+            if len(options)>1 and options[1][0]-options[0][0]<=.015*shape[1]:
+                options=[]
+            if options:
+                _,idx=options[0]
+                used.add(idx)
+                votes=old[idx][1]+1
+            else:votes=1
+            new.append((list(poly),min(votes,self.min_hits)))
+            if votes>=self.min_hits:output.append(list(poly))
+            if len(new)>=self.max_lines:break
+        self.tracks=new
+        return output
+
+
+def offline_visual_fallback_allowed(lane):
+    """Fail closed if independent road/paint fusion rejects a proposed lane.
+
+    In particular, UFLD orange contours through dashboards and vehicles must
+    not be resurrected after camera-aware paint verification rejects them.
+    """
+    return (lane.backend=='ufld_v2' and lane.camera_view=='forward'
+            and not lane.polylines and not lane.ego_boundaries)

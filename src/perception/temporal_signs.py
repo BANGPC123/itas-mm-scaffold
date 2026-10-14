@@ -37,21 +37,34 @@ class Evidence:
 
 
 class TemporalSigns:
-    def __init__(self,max_age=.75,max_tracks=64):
+    def __init__(self,max_age=.75,max_tracks=64,*,min_votes=2,allow_one_miss=False):
+        if not 2<=min_votes<=5:raise ValueError('min_votes must be 2 to 5')
         self.max_age=max_age;self.max_tracks=max_tracks
+        self.min_votes=min_votes;self.allow_one_miss=allow_one_miss
+        self.scene_descriptor=None
         self.tracks=[];self.last=None;self.shape=None;self.next_id=1
 
     def update(self,image,signs,timestamp):
         if not math.isfinite(timestamp) or timestamp<0:raise ValueError('Invalid frame timestamp')
+        background_veto_boxes=[s.bbox_xyxy for s in signs
+            if s.recognition_source=='background_rejected']
         signs=[s for s in signs if s.recognition_source!='background_rejected']
-        if self.last is not None and (timestamp<=self.last or timestamp-self.last>self.max_age or self.shape!=image.shape):
+        scene=None
+        if self.allow_one_miss:
+            import cv2
+            scene=cv2.resize(cv2.cvtColor(image,cv2.COLOR_BGR2GRAY),(32,18)).astype(float)/255.
+        abrupt_cut=(scene is not None and self.scene_descriptor is not None and
+            float(abs(scene-self.scene_descriptor).mean())>.24)
+        if self.last is not None and (timestamp<=self.last or timestamp-self.last>self.max_age or self.shape!=image.shape or abrupt_cut):
             self.tracks=[]
         self.last=timestamp;self.shape=image.shape
+        self.scene_descriptor=scene
         if insufficient_information(image):
             self.tracks=[]
             for sign in signs:sign.label='unknown';sign.recognition_confidence=None
             return signs
-        old=[t for t in self.tracks if timestamp-t.seen<=self.max_age]
+        old=[t for t in self.tracks if timestamp-t.seen<=self.max_age and
+            all(overlap(t.box,b)<.3 for b in background_veto_boxes)]
         matches=[[i for i,t in enumerate(old) if overlap(s.bbox_xyxy,t.box)>=.3] for s in signs]
         reserved={i for candidates in matches for i in candidates}
         for index,sign in enumerate(signs):
@@ -82,7 +95,7 @@ class TemporalSigns:
                 quality=crop_quality(crop)
                 if quality>=track.quality or timestamp-track.best_time>self.max_age:
                     track.quality=quality;track.confidence=sign.recognition_confidence;track.best_time=timestamp
-                if track.votes>=2 and track.confirmed is None:track.confirmed=timestamp
+                if track.votes>=self.min_votes and track.confirmed is None:track.confirmed=timestamp
             sign.track_id=track.identifier
             if track.confirmed is not None and timestamp-track.best_time<=self.max_age:
                 sign.label=track.label;sign.recognition_confidence=track.confidence
@@ -92,13 +105,23 @@ class TemporalSigns:
             else:
                 sign.label='unknown';sign.recognition_confidence=None
             current.append(track)
-        # A missing detection terminates the track; old boxes are never emitted.
-        self.tracks=current
+        # Missing sign boxes are NEVER emitted. Offline mode alone may retain
+        # evidence over one 6/10 Hz sampling gap, with hard time/scene reset.
+        if self.allow_one_miss:
+            used_ids={t.identifier for t in current}
+            retained=[t for t in old if t.identifier not in used_ids and
+                timestamp-t.seen<=min(.36,self.max_age)]
+            self.tracks=(current+retained)[:self.max_tracks]
+        else:
+            self.tracks=current
         return signs
 
 
 class StreamEvidence:
-    def __init__(self):self.sessions={}
+    def __init__(self,*,min_votes=2,allow_one_miss=False):
+        self.sessions={}
+        self.min_votes=min_votes
+        self.allow_one_miss=allow_one_miss
 
     def get(self,key,shape,road_bottom):
         now=time.monotonic()
@@ -107,6 +130,7 @@ class StreamEvidence:
         if key not in self.sessions or self.sessions[key][1]!=context:
             if len(self.sessions)>=8:
                 del self.sessions[min(self.sessions,key=lambda k:self.sessions[k][0])]
-            self.sessions[key]=(now,context,TemporalSigns())
+            self.sessions[key]=(now,context,TemporalSigns(
+                min_votes=self.min_votes,allow_one_miss=self.allow_one_miss))
         else:self.sessions[key]=(now,context,self.sessions[key][2])
         return self.sessions[key][2]

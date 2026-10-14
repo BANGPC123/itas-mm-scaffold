@@ -29,7 +29,7 @@ def file_sha256(path):
 
 def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
            max_seconds=None,recorded_at=None,include_auxiliary=False,
-           pipeline=None):
+           pipeline=None,highres_rescue=False):
     if not source.is_file():raise FileNotFoundError(source)
     if out.exists():raise FileExistsError('Output must be new: '+str(out))
     if not (1.<=analysis_hz<=12.) or start_second<0:
@@ -61,11 +61,12 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
         '-crf','21','-threads','2','-pix_fmt','yuv420p',str(out/'silent.mp4')],
         stdin=subprocess.PIPE)
     font=ImageFont.truetype('C:/Windows/Fonts/arial.ttf',18)
-    motion=OverlayMotion();aux_motion=OverlayMotion()
-    last_payload=None;lines=[];boxes=[];aux_boxes=[];aux_labels=[]
+    motion=OverlayMotion();aux_motion=OverlayMotion();candidate_motion=OverlayMotion()
+    last_payload=None;lines=[];boxes=[];aux_boxes=[];aux_labels=[];candidate_lines=[]
     counters={'samples':0,'known_signs':0,'uncertain_signs':0,
               'auxiliary_review_boxes':0,'lanes_displayed':0,
-              'legal_speech_samples':0,'warnings':0}
+              'legal_speech_samples':0,'warnings':0,
+              'temporal_ufld_candidate_lines':0}
     started=time.perf_counter();failures=[];index=0
     try:
         with (out/'predictions.jsonl').open('w',encoding='utf8') as jsonl:
@@ -80,13 +81,17 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
                         road_bottom=.70,annotate=False,stream_id=pipeline_id,
                         frame_timestamp=absolute,observed_at=observed,
                         lane_visual_roi=True,lane_display_mode='precision',
-                        offline_video_quality=True,auxiliary_sign_review=include_auxiliary)
+                        offline_video_quality=True,offline_highres_rescue=highres_rescue,
+                        auxiliary_sign_review=include_auxiliary)
                     signs=result.perception.signs;lane=result.perception.lane
                     lines=[[(round(x*w/sw),round(y*h/sh)) for x,y in p]
                             for p in (lane.display_polylines or [])]
                     boxes=[[v*(w/sw if k%2==0 else h/sh) for k,v in enumerate(s.bbox_xyxy)]
                            for s in signs]
                     motion.reset(canvas,lines,boxes)
+                    candidate_lines=[[(round(x*w/sw),round(y*h/sh)) for x,y in p]
+                        for p in lane.candidate_polylines]
+                    candidate_motion.reset(canvas,candidate_lines,[])
                     aux_labels=result.perception.auxiliary_sign_candidates
                     aux_boxes=[[v*(w/sw if k%2==0 else h/sh) for k,v in enumerate(e['bbox_xyxy'])]
                         for e in aux_labels]
@@ -98,6 +103,7 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
                     counters['uncertain_signs']+=sum(s.label=='unknown' for s in signs)
                     counters['auxiliary_review_boxes']+=len(result.perception.auxiliary_sign_candidates)
                     counters['lanes_displayed']+=len(lines)
+                    counters['temporal_ufld_candidate_lines']+=len(candidate_lines)
                     counters['legal_speech_samples']+=int(bool(result.reasoning.speech_text))
                     counters['warnings']+=len(result.warnings)
                     jsonl.write(json.dumps({
@@ -112,8 +118,15 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
                 else:
                     lines,boxes=motion.advance(canvas)
                     _,aux_boxes=aux_motion.advance(canvas)
+                    candidate_lines,_=candidate_motion.advance(canvas)
                 rendered=draw_frame(canvas,last_payload,lines,boxes,
                                     absolute,font,fps,fps/step)
+                if candidate_lines:
+                    for poly in candidate_lines:
+                        if len(poly)>=2:
+                            cv2.polylines(rendered,[np.asarray(poly,np.int32)],False,(0,155,255),2)
+                    cv2.putText(rendered,'UFLD candidates (temporal, not verified)',
+                        (14,min(h-24,84)),cv2.FONT_HERSHEY_SIMPLEX,.48,(0,155,255),1,cv2.LINE_AA)
                 if include_auxiliary and aux_labels:
                     # Purple candidates explicitly remain unverified; never
                     # render them as released/legal sign warnings.
@@ -164,8 +177,8 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
         'start_sec':start_second,'source_frames':total,'output_frames':frames,
         'decoded_frames':decoded,'output_size':[w,h],
         'fps':fps,'analysis_hz':fps/step,'source_frame_interval':step,
-        'sign_mode':'960+640+1280, temporally confirmed',
-        'models_finetuned_during_run':False,'input_recording_datetime_known':recorded_at is not None,
+        'sign_mode':('960+640+1280' if highres_rescue else '960+640')+', three-frame confirmation',
+        'models_finetuned_during_run':False,'highres_1280_enabled':bool(highres_rescue),'input_recording_datetime_known':recorded_at is not None,
         'auxiliary_research_enabled':include_auxiliary,'counts':counters,
         'elapsed_seconds':time.perf_counter()-started,'failures':failures,
         'video_sha256':file_sha256(video),'verified_full_decode':verified,
@@ -185,10 +198,13 @@ def main():
     ap.add_argument('--max-seconds',type=float)
     ap.add_argument('--recorded-at',type=str,help='ISO-8601 with timezone')
     ap.add_argument('--auxiliary-review',action='store_true')
+    ap.add_argument('--highres-rescue',action='store_true',
+        help='Experimental third detector pass; TEST static F1 is slightly worse')
     a=ap.parse_args()
     date=datetime.fromisoformat(a.recorded_at) if a.recorded_at else None
     render(a.source,a.output,analysis_hz=a.analysis_hz,
            start_second=a.start_second,max_seconds=a.max_seconds,
-           recorded_at=date,include_auxiliary=a.auxiliary_review)
+           recorded_at=date,include_auxiliary=a.auxiliary_review,
+           highres_rescue=a.highres_rescue)
 
 if __name__=='__main__':main()

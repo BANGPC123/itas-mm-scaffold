@@ -35,6 +35,7 @@ class Pipeline:
         self.rag_chain=None
         from src.perception.temporal_signs import StreamEvidence
         self.stream_evidence=StreamEvidence()
+        self.offline_stream_evidence=StreamEvidence(min_votes=3,allow_one_miss=True)
         self.reasoning_cfg=load_config('reasoning')
         from src.reasoning.offline_legal_retrieval import OfflineLegalRetriever
         self.offline_legal=OfflineLegalRetriever()
@@ -45,7 +46,7 @@ class Pipeline:
             client=OllamaClient(self.reasoning_cfg['ollama'])
             self.rag_chain=RagChain(self.reasoning_cfg,VectorStore(self.reasoning_cfg['rag'],client),client)
 
-    def run(self,image,latitude,longitude,synthesize_audio=True,*,road_bottom=1.,annotate=True,stream_id=None,frame_timestamp=None,exclude_rects=None,lane_visual_roi=False,observed_at=None,auxiliary_sign_review=False,lane_display_mode='precision',offline_video_quality=False):
+    def run(self,image,latitude,longitude,synthesize_audio=True,*,road_bottom=1.,annotate=True,stream_id=None,frame_timestamp=None,exclude_rects=None,lane_visual_roi=False,observed_at=None,auxiliary_sign_review=False,lane_display_mode='precision',offline_video_quality=False,offline_highres_rescue=False):
         if image is None or image.size==0:raise ValueError('Input image is empty')
         if lane_display_mode not in ('precision','candidate'):
             raise ValueError('Unsupported lane display mode')
@@ -59,14 +60,15 @@ class Pipeline:
             self.sign_detector.image_size=(getattr(self,'video_detector_size',960) if stream_id is not None else getattr(self,'still_detector_size',640))
         secondary_signs=None
         preclassified=False
-        if offline_video_quality:
-            # Explicitly slow three-resolution pass; no realtime latency SLA.
+        if offline_video_quality and offline_highres_rescue:
+            # Extra 1280 pass is opt-in: canonical TEST static code F1
+            # decreased from 76.75% to 76.64% when enabled.
             from src.perception.offline_sign_quality import detect_offline_high_accuracy
             signs=detect_offline_high_accuracy(self.sign_detector,self.sign_recognizer,road,
                 detector_confidence=.75,recognition_confidence=.93,
                 min_short_side=self.video_min_short_side)
             preclassified=True
-            warnings.append('Chế độ phân tích video chất lượng cao: dò biển ở 960/640/1280 px, không yêu cầu thời gian thực.')
+            warnings.append('Thử nghiệm phát hiện bổ sung 1280 px: có thể tăng bỏ sót ít nhưng gây thêm nhận nhầm.')
         elif stream_id is not None and getattr(self.sign_detector,'video_multiscale',False):
             signs,secondary_signs=self.sign_detector.detect_views(road)
         else:signs=self.sign_detector.detect(road)
@@ -91,9 +93,11 @@ class Pipeline:
         signs=[s for s in signs if s.recognition_source!='background_rejected']
         if stream_id is not None:
             if frame_timestamp is None:raise ValueError('Video frame timestamp is required')
-            signs=self.stream_evidence.get(stream_id,road.shape,road_bottom).update(road,signs,frame_timestamp)
+            memory=self.offline_stream_evidence if offline_video_quality else self.stream_evidence
+            signs=memory.get(stream_id,road.shape,road_bottom).update(road,signs,frame_timestamp)
         timings['recognition']=(time.perf_counter()-tick)*1000
         tick=time.perf_counter();lane=self.lane_detector.detect(image)
+        raw_ufld_hypotheses=list(lane.polylines) if offline_video_quality and lane.backend=='ufld_v2' else []
         if lane_visual_roi and lane.backend=='ufld_v2' and load_config('perception').get('lane_visual_fallback',{}).get('camera_aware',False):
             from src.perception.camera_lane import CameraLaneVisual
             if not hasattr(self,'camera_lane_visual'):
@@ -115,6 +119,24 @@ class Pipeline:
                     min_span_ratio=cfg_visual.get('min_span_ratio',.20))
             lane,used=self.secondary_lane_visual.detect_if_needed(image,lane)
             if used:warnings.append('YOLOPv2: gợi ý đường làn chỉ để hiển thị, không dùng xác định phạm vi biển báo.')
+        if offline_video_quality and stream_id is not None:
+            # Separate high-recall, two-frame UFLD hypotheses from the
+            # verified/paint-backed display. Never use for car legal scope.
+            from src.perception.lane_temporal import OfflineLaneEvidence
+            from src.perception.lane_display_quality import visual_polylines
+            if not hasattr(self,'offline_lane_memory'):self.offline_lane_memory={}
+            if len(self.offline_lane_memory)>20:
+                self.offline_lane_memory.pop(next(iter(self.offline_lane_memory)))
+            memory=self.offline_lane_memory.setdefault(stream_id,OfflineLaneEvidence())
+            from src.utils.types import LaneInfo
+            provisional=visual_polylines(LaneInfo([],polylines=raw_ufld_hypotheses),
+                image.shape,mode='candidate')
+            confirmed=memory.update(provisional,frame_timestamp,image.shape,image=image)
+            # Do not overlay duplicate paint-backed lines; candidate can
+            # appear only where the safer lane display has no evidence.
+            from src.perception.lane_temporal import offline_visual_fallback_allowed
+            if offline_visual_fallback_allowed(lane):
+                lane.candidate_polylines=confirmed[:5]
         from src.perception.lane_consistency import credible_ego
         if lane.backend == 'ufld_v2' and not credible_ego(lane.ego_boundaries,image.shape):
             lane.ego_boundaries=[]
@@ -145,8 +167,9 @@ class Pipeline:
         if lane_visual_roi and getattr(lane,'camera_view','forward')=='side_or_cabin':
             for sign in signs:
                 sign.label='unknown';sign.recognition_source='side_or_reflected_view'
-            if stream_id in self.stream_evidence.sessions:
-                self.stream_evidence.sessions[stream_id][2].tracks=[]
+            for memory in (self.stream_evidence,self.offline_stream_evidence):
+                if stream_id in memory.sessions:
+                    memory.sessions[stream_id][2].tracks=[]
             warnings.append('Camera đang quay ngang/vào cabin; biển trong gương không dùng xác định hướng đi hiện tại.')
         signs=self.applicability.apply(signs,lane,image.shape,self.current_vehicle,observed_at=observed_at)
         verified_zone_status='unknown'

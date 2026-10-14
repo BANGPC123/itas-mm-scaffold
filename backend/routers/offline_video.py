@@ -23,7 +23,7 @@ MAX_UPLOAD_BYTES=850*1024*1024
 MAX_VIDEO_FRAMES=100000
 
 
-def _run_job(job_id, source, output, analysis_hz, start_sec, max_sec, auxiliary_review, recorded_at):
+def _run_job(job_id, source, output, analysis_hz, start_sec, max_sec, auxiliary_review, recorded_at, highres_rescue):
     with registry:
         jobs[job_id]['status']='waiting_for_inference'
     # Hold the normal inference lock, avoiding model races between the
@@ -36,7 +36,8 @@ def _run_job(job_id, source, output, analysis_hz, start_sec, max_sec, auxiliary_
             result=render(source,output,analysis_hz=analysis_hz,
                 start_second=start_sec,max_seconds=max_sec,
                 include_auxiliary=auxiliary_review,
-                recorded_at=recorded_at,pipeline=get_pipeline())
+                recorded_at=recorded_at,highres_rescue=highres_rescue,
+                pipeline=get_pipeline())
             with registry:
                 jobs[job_id]['status']='complete'
                 jobs[job_id]['frames']=result['output_frames']
@@ -75,7 +76,8 @@ def _read_job(job_id):
         state['video_url']=f'/pipeline/offline-video/jobs/{job_id}/video'
         state['report_url']=f'/pipeline/offline-video/jobs/{job_id}/report'
         state['quality']={'analysis_hz':report['analysis_hz'],
-           'sign_detection_passes':'960/640/1280','temporal_confirmation':True,
+           'sign_detection_passes':('960/640/1280' if report.get('highres_1280_enabled') else '960/640'),
+           'temporal_confirmation':True,
            'human_labeled_accuracy_available':False}
     return state
 
@@ -86,7 +88,8 @@ def start_video_job(file:UploadFile=File(...),
                     start_second:float=Form(0.,ge=0.),
                     max_seconds:float|None=Form(None,ge=1.,le=7200.),
                     auxiliary_review:bool=Form(True),
-                    recorded_at:datetime|None=Form(None)):
+                    recorded_at:datetime|None=Form(None),
+                    highres_rescue:bool=Form(False)):
     if recorded_at is not None and (recorded_at.tzinfo is None or recorded_at.utcoffset() is None):
         raise HTTPException(422,'Ngày giờ video phải có múi giờ.')
     # Deliberately only MP4 files: no arbitrary remote URLs or local paths.
@@ -129,7 +132,7 @@ def start_video_job(file:UploadFile=File(...),
                       'out':str(folder/'result'),'upload_bytes':count,
                       'source_sha256':sha.hexdigest()}
         future=get_inference_worker().submit(_run_job,job_id,source,
-            folder/'result',analysis_hz,start_second,max_seconds,auxiliary_review,recorded_at)
+            folder/'result',analysis_hz,start_second,max_seconds,auxiliary_review,recorded_at,highres_rescue)
         jobs[job_id]['future']=future
     return {'job_id':job_id,'status':'queued','source_bytes':count,
             'status_url':f'/pipeline/offline-video/jobs/{job_id}'}
