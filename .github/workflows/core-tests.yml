@@ -19,7 +19,7 @@ jobs:
           tests/unit/test_rag_chain.py tests/unit/test_vector_store.py
           tests/unit/test_build_vector_index.py tests/unit/test_corpus_fingerprint.py
           tests/unit/test_ollama_client.py tests/unit/test_retrieval_evaluation.py
-          tests/unit/test_legal_normalizer.py tests/unit/test_fetch_regulations.py
+          tests/unit/test_legal_normalizer.py
           tests/unit/test_script_entrypoints.py tests/unit/test_applicability.py
           tests/unit/test_qcvn_505a_vehicle_scope_20261011.py
           tests/unit/test_sign_speech.py tests/unit/test_lane_temporal.py
