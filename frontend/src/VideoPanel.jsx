@@ -7,6 +7,12 @@ export default function VideoPanel({onRun}) {
   const video=useRef(null), overlay=useRef(null), active=useRef(false), stream=useRef(null);
   const url=useRef(null), generation=useRef(0), request=useRef(null), latest=useRef(null);
   const audio=useRef(null), speaker=useRef(null), maskStart=useRef(null);
+  const selectedFile=useRef(null);
+  const [offlineJob,setOfflineJob]=useState(null);
+  const [offlineBusy,setOfflineBusy]=useState(false);
+  const [offlineHz,setOfflineHz]=useState(6);
+  const [offlineAux,setOfflineAux]=useState(true);
+  const [offlineMaxSeconds,setOfflineMaxSeconds]=useState('');
   const [speak,setSpeak]=useState(true), [speechError,setSpeechError]=useState('');
   const [observation,setObservation]=useState('');
   const [running,setRunning]=useState(false), [error,setError]=useState('');
@@ -116,8 +122,39 @@ export default function VideoPanel({onRun}) {
   };
   const choose=e=>{
     const file=e.target.files?.[0];if(!file)return;
-    release();setRecordingStart('');setExclusions([]);setMasking(false);setRunning(false);setError('');setStats(null);video.current.srcObject=null;
+    release();selectedFile.current=file;setOfflineJob(null);setRecordingStart('');setExclusions([]);setMasking(false);setRunning(false);setError('');setStats(null);video.current.srcObject=null;
     url.current=URL.createObjectURL(file);video.current.src=url.current;
+  };
+  useEffect(()=>{
+    if(!offlineJob?.job_id||!['queued','waiting_for_inference','running'].includes(offlineJob.status))return;
+    let active=true;
+    const interval=setInterval(async()=>{
+      try{
+        const reply=await fetch(`${API}/pipeline/offline-video/jobs/${offlineJob.job_id}`);
+        if(reply.ok&&active)setOfflineJob(await reply.json());
+      }catch{/* Keep the last progress; network can reconnect. */}
+    },3500);
+    return()=>{active=false;clearInterval(interval)};
+  },[offlineJob?.job_id,offlineJob?.status]);
+  const startOfflineJob=async()=>{
+    const file=selectedFile.current;
+    if(!file){setError('Hãy chọn tệp MP4 trước.');return}
+    if(!file.name.toLowerCase().endsWith('.mp4')){setError('Phân tích offline hiện chỉ hỗ trợ MP4.');return}
+    setOfflineBusy(true);setError('');
+    try{
+      const body=new FormData();body.append('file',file);
+      body.append('analysis_hz',String(offlineHz));
+      body.append('auxiliary_review',String(offlineAux));
+      if(recordingStart){
+        const date=new Date(recordingStart);
+        if(!Number.isFinite(date.getTime()))throw new Error('Ngày giờ ghi hình chưa hợp lệ.');
+        body.append('recorded_at',date.toISOString());
+      }
+      if(offlineMaxSeconds.trim())body.append('max_seconds',offlineMaxSeconds.trim());
+      const response=await fetch(`${API}/pipeline/offline-video/start`,{method:'POST',body});
+      if(!response.ok)throw new Error((await response.json()).detail||'Không khởi động được tác vụ offline.');
+      setOfflineJob(await response.json());
+    }catch(e){setError(e.message||'Lỗi tải video offline.')}finally{setOfflineBusy(false)}
   };
   const start=async()=>{
     const latitude=Number(lat),longitude=Number(lon);
@@ -180,7 +217,19 @@ export default function VideoPanel({onRun}) {
   return <section className="panel" style={{marginTop:24}}>
     <h2>Video MP4 — demo trên máy tính, không cần camera thật</h2>
     <p>Video phát ở tốc độ gốc. Nhận diện cập nhật tối đa 10 lần/giây; kết quả quá 300 ms sẽ ẩn. Ngữ cảnh ô tô, GPS mô phỏng. Đường làn và mã biển là dự đoán, KHÔNG dùng để điều khiển xe. Cảnh báo âm thanh chỉ phát nếu mã biển, loại xe và phạm vi làn đã được xác minh.</p>
-    <label htmlFor="video-file">Video trên máy</label> <input id="video-file" type="file" accept="video/*" onChange={choose} disabled={running}/>
+    <label htmlFor="video-file">Video trên máy</label> <input id="video-file" type="file" accept="video/*" onChange={choose} disabled={running||offlineBusy}/>
+    <div style={{border:'1px solid #aaa',padding:12,borderRadius:8,marginTop:12}}>
+      <h3>Phân tích MP4 chất lượng cao — không cần camera, không cần chạy real-time</h3>
+      <p>Máy chủ đọc video theo thứ tự frame, dùng 3 lượt phát hiện biển (960/640/1280 px), xác nhận qua nhiều frame và phân tích vạch sơn theo mặt đường. Kết quả được dựng thành video MP4 riêng, kiểm tra giải mã trước khi cho xem. Tốc độ xử lý có thể chậm hơn video thật; lớp YOLO11 bổ sung không tạo cảnh báo tự động.</p>
+      <label>Tần suất phân tích AI (Hz): <select value={offlineHz} disabled={offlineBusy} onChange={e=>setOfflineHz(Number(e.target.value))}><option value="3">3 — ít tài nguyên</option><option value="6">6 — khuyến nghị</option><option value="10">10 — chi tiết hơn, xử lý lâu hơn</option></select></label>
+      <label><input type="checkbox" checked={offlineAux} disabled={offlineBusy} onChange={e=>setOfflineAux(e.target.checked)}/> Hiển thị thêm gợi ý YOLO11 59 lớp màu tím (chưa xác minh, không dùng để phát cảnh báo)</label>
+      <label>Chỉ xử lý N giây đầu (để trống = toàn bộ video) <input type="number" min="1" max="7200" placeholder="Toàn bộ" value={offlineMaxSeconds} onChange={e=>setOfflineMaxSeconds(e.target.value)} disabled={offlineBusy}/></label>
+      <button type="button" onClick={startOfflineJob} disabled={offlineBusy||!selectedFile.current||['queued','waiting_for_inference','running'].includes(offlineJob?.status)}>{offlineBusy?'Đang tải video...':'Bắt đầu phân tích MP4 offline chất lượng cao'}</button>
+      {offlineJob&&<div role="status"><p>Job: {offlineJob.job_id} · Trạng thái: {offlineJob.status} · {offlineJob.progress?`${offlineJob.progress.encoded_source_frames}/${offlineJob.progress.expected} frame`:''}</p>
+        {offlineJob.status==='complete'&&<><video controls playsInline preload="metadata" style={{width:'100%'}} src={API+offlineJob.video_url}/><p><a href={API+offlineJob.video_url}>Lưu video kết quả</a> · <a href={API+offlineJob.report_url}>Báo cáo kiểm chứng</a></p></>}
+        {offlineJob.status==='failed'&&<p role="alert">Phân tích gặp lỗi; kết quả chưa được công nhận. {offlineJob.message}</p>}
+      </div>}
+    </div>
 
     <label><input type="checkbox" checked={speak} disabled={running} onChange={e=>setSpeak(e.target.checked)}/> Đọc tên biển AI dự đoán bằng giọng Việt tại máy; cảnh báo chỉ khi đã xác minh</label>
     <label>Ngày giờ bắt đầu ghi hình (theo múi giờ thiết bị), nếu biết <input type="datetime-local" value={recordingStart} disabled={running} onChange={e=>setRecordingStart(e.target.value)}/></label>

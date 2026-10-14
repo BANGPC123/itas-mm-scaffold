@@ -12,7 +12,7 @@ from contextlib import asynccontextmanager
 import asyncio
 import os
 
-from backend.routers import context, pipeline
+from backend.routers import context, pipeline, offline_video
 
 @asynccontextmanager
 async def lifespan(app):
@@ -56,6 +56,7 @@ app.add_middleware(
 
 app.include_router(context.router)
 app.include_router(pipeline.router)
+app.include_router(offline_video.router)
 
 
 @app.get("/health")

@@ -3,6 +3,7 @@ import {useEffect,useState} from "react";
 export default function DemoVideos({apiBase=""}) {
   const [status,setStatus]=useState(null);
   const [completion,setCompletion]=useState(null);
+  const [offlineDemo,setOfflineDemo]=useState(null);
   const [fusion,setFusion]=useState(null);
   useEffect(()=>{
     let active=true;
@@ -14,6 +15,10 @@ export default function DemoVideos({apiBase=""}) {
       .then(r=>r.ok?r.json():Promise.reject(Error("API unavailable")))
       .then(data=>{if(active)setCompletion(data)})
       .catch(()=>{if(active)setCompletion({complete:false})});
+    fetch(apiBase+'/pipeline/offline-video/demo-status')
+      .then(r=>r.ok?r.json():Promise.reject(Error('API unavailable')))
+      .then(data=>{if(active)setOfflineDemo(data)})
+      .catch(()=>{if(active)setOfflineDemo({complete:false})});
     fetch(apiBase+'/pipeline/video-fusion-status')
       .then(r=>r.ok?r.json():Promise.reject(Error('API unavailable')))
       .then(data=>{if(active)setFusion(data)})
@@ -38,6 +43,11 @@ export default function DemoVideos({apiBase=""}) {
         Đây là phép đo trên ảnh có nhãn, chưa phải độ chính xác thực địa của video này.
       </p>}
       <a href={apiBase+completion.report_url}>Đọc báo cáo đánh giá và số liệu TEST</a>
+    </div>}
+    {offlineDemo?.complete && <div style={{marginBottom:24}}>
+      <h3>Video mô phỏng offline — phân tích biển 3 độ phân giải, 6 Hz</h3>
+      <video controls playsInline preload="metadata" style={{width:'100%',maxWidth:1100,borderRadius:8}} src={apiBase+offlineDemo.video_url}/>
+      <p>Đoạn mẫu 30 giây, xuất 900/900 frame và giải mã xác minh đầy đủ. Phân tích chậm hơn tốc độ thật; gợi ý YOLO11 bổ sung không nằm trong video mẫu này. Với video mới, dùng chức năng "Phân tích MP4 chất lượng cao" ở trên.</p>
     </div>}
     {fusion?.complete && <div style={{marginBottom:24}}>
       <h3>Video mới — lọc mép đường hẹp khi bị xe che khuất</h3>

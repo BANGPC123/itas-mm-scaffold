@@ -1,3 +1,9 @@
+# Chế độ xử lý MP4 offline — tối ưu mô phỏng (14/10/2026)
+
+ITAS-MM phục vụ **video MP4 đã quay**, không yêu cầu camera thật. Giao diện tại `http://127.0.0.1:8000` có **“Phân tích MP4 chất lượng cao”**: chọn video, tần suất AI 3/6/10 Hz, có thể nhập thời điểm bắt đầu ghi hình, chọn YOLO11 59 lớp làm khung tím cần rà; hệ thống xử lý theo thứ tự frame, xuất MP4 kết quả và chỉ cho tải khi giải mã kiểm chứng đạt. Các job lưu tại `output/offline_video_jobs/`. Có đoạn mẫu 30 giây đã giải mã đủ 900/900 frame. CLI dùng `scripts/render_offline_video_max_20261014.py`. Xem [hướng dẫn và benchmark VAL/TEST](docs/OFFLINE_VIDEO_MAX_ACCURACY_20261014.md).
+
+**Không được tự nhận đã tăng F1 tổng thể**: trên TEST ảnh tĩnh, lượt phát hiện thứ ba tăng recall rất nhẹ nhưng F1 giảm từ 76,75% còn 76,64%; video có nhiều frame để kiểm tra theo thời gian nhưng chưa có GT đầy đủ để đo hiệu quả thực tế. Mô hình YOLO11 thứ hai tiếp tục chỉ hiển thị gợi ý; không tự kết luận biển cấm áp dụng cho ô tô.
+
 # Nâng cấp kết hợp model và kiểm chứng (14/10/2026)
 
 Đã thử nghiệm cơ chế đối chiếu mã biển của YOLO11 59 lớp với MobileNetV3 gốc, bổ sung chế độ UFLD-v2 hiển thị nhiều ứng viên hơn và sửa bộ lọc mép đường khi bị xe che khuất. **Không có bằng chứng đủ để tự động gộp YOLO vào biển đã xác minh cho ô tô**: trên 240 ảnh VAL chỉ có 17 ứng viên ngoài vùng biển gốc và không ứng viên nào đạt đồng thuận mã ở ngưỡng nghiêm ngặt. Kiểm tra camera thực đã chứng minh một nét mép đường sai được loại, 26 nét khác trên sáu ảnh được giữ. Xem [báo cáo fusion, benchmark và giới hạn](docs/FUSION_ENHANCEMENT_20261014.md). Các tính năng thử nghiệm không được dùng làm quyết định lái xe.

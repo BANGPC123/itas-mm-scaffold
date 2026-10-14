@@ -268,9 +268,11 @@ def status():
             'message':'Các dự đoán chưa được chứng nhận cho điều khiển hoặc cảnh báo lái xe ngoài thực địa.'}
 
 @router.post('/run',response_model=PipelineRunResponse)
-def run_pipeline(image:UploadFile=File(...),latitude:float=Form(...,ge=-90,le=90),longitude:float=Form(...,ge=-180,le=180),synthesize_audio:bool=Form(True),road_bottom:float=Form(1.,ge=.3,le=1.),annotate:bool=Form(True),lane_visual_roi:bool=Form(False),lane_display_mode:Literal['precision','candidate']=Form('precision'),auxiliary_sign_review:bool=Form(False),stream_id:str|None=Form(None,max_length=64,pattern=r'^[A-Za-z0-9_-]+$'),frame_timestamp:float|None=Form(None,ge=0,allow_inf_nan=False),exclusion_zones:str=Form('[]',max_length=1200),observed_at:datetime|None=Form(None)):
+def run_pipeline(image:UploadFile=File(...),latitude:float=Form(...,ge=-90,le=90),longitude:float=Form(...,ge=-180,le=180),synthesize_audio:bool=Form(True),road_bottom:float=Form(1.,ge=.3,le=1.),annotate:bool=Form(True),lane_visual_roi:bool=Form(False),lane_display_mode:Literal['precision','candidate']=Form('precision'),auxiliary_sign_review:bool=Form(False),offline_video_quality:bool=Form(False),stream_id:str|None=Form(None,max_length=64,pattern=r'^[A-Za-z0-9_-]+$'),frame_timestamp:float|None=Form(None,ge=0,allow_inf_nan=False),exclusion_zones:str=Form('[]',max_length=1200),observed_at:datetime|None=Form(None)):
     if observed_at is not None and (observed_at.tzinfo is None or observed_at.utcoffset() is None):
         raise HTTPException(422,'Ngày giờ quan sát cần có múi giờ; không dùng giờ phát lại làm giờ ghi hình.')
+    if offline_video_quality and stream_id is None:
+        raise HTTPException(422,'Chế độ phân tích tối đa yêu cầu video và timestamp.')
     if (stream_id is None)!=(frame_timestamp is None):raise HTTPException(422,'Video requires both stream_id and frame_timestamp')
     import json
     try:
@@ -300,6 +302,7 @@ def run_pipeline(image:UploadFile=File(...),latitude:float=Form(...,ge=-90,le=90
         if lane_visual_roi:temporal['lane_visual_roi']=True
         if lane_display_mode!='precision':temporal['lane_display_mode']=lane_display_mode
         if auxiliary_sign_review:temporal['auxiliary_sign_review']=True
+        if offline_video_quality:temporal['offline_video_quality']=True
         if observed_at is not None:temporal['observed_at']=observed_at
         result=get_inference_worker().submit(get_pipeline().run,decoded,latitude,longitude,synthesize_audio,
             road_bottom=road_bottom,annotate=annotate,**temporal).result()

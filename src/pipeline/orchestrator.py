@@ -45,7 +45,7 @@ class Pipeline:
             client=OllamaClient(self.reasoning_cfg['ollama'])
             self.rag_chain=RagChain(self.reasoning_cfg,VectorStore(self.reasoning_cfg['rag'],client),client)
 
-    def run(self,image,latitude,longitude,synthesize_audio=True,*,road_bottom=1.,annotate=True,stream_id=None,frame_timestamp=None,exclude_rects=None,lane_visual_roi=False,observed_at=None,auxiliary_sign_review=False,lane_display_mode='precision'):
+    def run(self,image,latitude,longitude,synthesize_audio=True,*,road_bottom=1.,annotate=True,stream_id=None,frame_timestamp=None,exclude_rects=None,lane_visual_roi=False,observed_at=None,auxiliary_sign_review=False,lane_display_mode='precision',offline_video_quality=False):
         if image is None or image.size==0:raise ValueError('Input image is empty')
         if lane_display_mode not in ('precision','candidate'):
             raise ValueError('Unsupported lane display mode')
@@ -58,7 +58,16 @@ class Pipeline:
         if hasattr(self.sign_detector,'image_size'):
             self.sign_detector.image_size=(getattr(self,'video_detector_size',960) if stream_id is not None else getattr(self,'still_detector_size',640))
         secondary_signs=None
-        if stream_id is not None and getattr(self.sign_detector,'video_multiscale',False):
+        preclassified=False
+        if offline_video_quality:
+            # Explicitly slow three-resolution pass; no realtime latency SLA.
+            from src.perception.offline_sign_quality import detect_offline_high_accuracy
+            signs=detect_offline_high_accuracy(self.sign_detector,self.sign_recognizer,road,
+                detector_confidence=.75,recognition_confidence=.93,
+                min_short_side=self.video_min_short_side)
+            preclassified=True
+            warnings.append('Chế độ phân tích video chất lượng cao: dò biển ở 960/640/1280 px, không yêu cầu thời gian thực.')
+        elif stream_id is not None and getattr(self.sign_detector,'video_multiscale',False):
             signs,secondary_signs=self.sign_detector.detect_views(road)
         else:signs=self.sign_detector.detect(road)
         if exclude_rects:
@@ -72,7 +81,9 @@ class Pipeline:
             warnings.append('Một số vùng camera bị loại trừ; biển thật trong vùng cũng sẽ không được nhận dạng.')
         timings['detection']=(time.perf_counter()-started)*1000
         tick=time.perf_counter()
-        if secondary_signs is not None:
+        if preclassified:
+            pass
+        elif secondary_signs is not None:
             from src.perception.sign_multiscale import recognize_views
             signs=recognize_views(self.sign_recognizer,road,signs,secondary_signs,min_short_side=self.video_min_short_side)
         elif stream_id is None:signs=self.sign_recognizer.recognize(road,signs)
