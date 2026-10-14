@@ -1,15 +1,84 @@
+# Python cache and test/build artifacts
 __pycache__/
-*.pyc
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
 .venv/
+venv/
+.ocr-venv/
+.tts-venv/
+.runtime-packages/
+.clr-runtime/
+
+# Local secrets and credentials
 .env
-*.pt
-*.onnx
-data/raw/*
-data/processed/*
-!data/raw/.gitkeep
-!data/processed/.gitkeep
-chroma_db/
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+
+# JavaScript dependencies and builds
 node_modules/
 frontend/dist/
-.pytest_cache/
+frontend/.vite/
+npm-debug.log*
+
+# Generated research outputs / personal input videos
+output/
+tmp/
 *.log
+*.tmp
+*.bak
+*.swp
+
+# Large model checkpoints and binary weights (provision locally)
+models/
+*.pt
+*.pth
+*.onnx
+*.tflite
+*.safetensors
+*.ckpt
+*.npz
+*.bin
+yolo*.pt
+
+# Downloaded source datasets, unreviewed image packs, and processed data
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/audit/
+data/tools/
+data/demo/
+data/import-backup/
+data/lane_vietnam_review_*/
+data/lane_external_source_review_*/
+data/*-files.json
+data/drive-*.json
+data/*-import-report.json
+data/*-archive-verification.json
+data/zip-import-report.json
+
+# Archived official documents and generated visual evidence stay local
+data/regulations/raw/
+data/regulations/current_raw/
+data/regulations/official_*/
+docs/evidence/
+docs/*visual-check*.png
+*.pdf
+*.mp4
+*.webm
+*.wav
+*.avi
+*.mov
+
+# Rebuildable vector stores and vendored working trees
+chroma_db/
+third_party/Ultra-Fast-Lane-Detection-v2/
+third_party/CLRNet_research/
