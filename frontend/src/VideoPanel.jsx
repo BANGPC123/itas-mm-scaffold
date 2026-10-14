@@ -12,6 +12,7 @@ export default function VideoPanel({onRun}) {
   const [running,setRunning]=useState(false), [error,setError]=useState('');
   const [roadBottom,setRoadBottom]=useState(.65), [stats,setStats]=useState(null);
   const [laneVisualRoi,setLaneVisualRoi]=useState(true);
+  const [reviewAuxiliary,setReviewAuxiliary]=useState(false);
   const [recordingStart,setRecordingStart]=useState('');
   const [masking,setMasking]=useState(false), [exclusions,setExclusions]=useState([]);
   const [lat,setLat]=useState('10.7769'), [lon,setLon]=useState('106.7009');
@@ -81,6 +82,13 @@ export default function VideoPanel({onRun}) {
               ctx.fillStyle='#e6f1ff';ctx.fillText(carLabel,labelX,carY,frame_shape[1]-8);
             }
           }
+          for(const candidate of perception.auxiliary_sign_candidates||[]){
+            const [x1,y1,x2,y2]=candidate.bbox_xyxy;
+            ctx.strokeStyle='#d88bff';ctx.lineWidth=2;ctx.setLineDash([5,5]);
+            ctx.strokeRect(x1,y1,x2-x1,y2-y1);ctx.setLineDash([]);
+            ctx.font='16px sans-serif';ctx.fillStyle='#f2cfff';
+            ctx.fillText('YOLO11 (chưa xác minh): '+candidate.label_vi,x1,Math.max(18,y1-5),Math.max(20,frame_shape[1]-x1-6));
+          }
           ctx.restore();
         }
         for(const [x1,y1,x2,y2] of exclusions){
@@ -145,7 +153,7 @@ export default function VideoPanel({onRun}) {
           context.drawImage(v,0,0,canvas.width,canvas.height);
           return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('Không đọc được khung hình video.')),'image/jpeg',.85));
         },
-        analyze:(blob,frameTimestamp)=>onRun({file:new File([blob],'frame.jpg',{type:'image/jpeg'}),latitude,longitude,speak:false,stream:true,roadBottom,signal,streamId,frameTimestamp,excludeRects:exclusions,laneVisualRoi,
+        analyze:(blob,frameTimestamp)=>onRun({file:new File([blob],'frame.jpg',{type:'image/jpeg'}),latitude,longitude,speak:false,stream:true,roadBottom,signal,streamId,frameTimestamp,excludeRects:exclusions,laneVisualRoi,auxiliarySignReview:reviewAuxiliary,
           observedAt:stream.current?new Date().toISOString():recordingStart?new Date(new Date(recordingStart).getTime()+frameTimestamp*1000).toISOString():undefined}),
         publish:(result,timestamp)=>{
           latest.current={result,timestamp};
@@ -188,6 +196,7 @@ export default function VideoPanel({onRun}) {
       Nhận diện vạch đường theo vùng mặt đường, lọc tap-lô và xe che khuất
     </label>
     <p>Hệ thống tìm vùng mặt đường theo khung hình, kết hợp mô hình làn và kiểm tra vạch sơn nhìn thấy. Vạch màu vàng là dự đoán; phần bị xe che khuất không dùng để xác định phạm vi biển báo.</p>
+    <label><input type="checkbox" checked={reviewAuxiliary} disabled={running} onChange={e=>setReviewAuxiliary(e.target.checked)}/> Bật YOLO11 optimized (59 lớp) làm lớp gợi ý màu tím, chỉ dùng rà soát — không xác minh luật</label>
     <label htmlFor="road-bottom">Ranh dưới vùng phát hiện biển: {Math.round(roadBottom*100)}% chiều cao ảnh</label>
     <input id="road-bottom" type="range" min="30" max="100" value={Math.round(roadBottom*100)} disabled={running} onChange={e=>setRoadBottom(Number(e.target.value)/100)}/>
     <p>Đặt ranh cắt biển phía trên tap-lô để giảm nhận nhầm đồng hồ trong xe. Model làn xử lý toàn bộ ảnh, không dùng ranh này. 65% là thiết lập tham khảo cho video cũ, cần hiệu chỉnh theo camera.</p>

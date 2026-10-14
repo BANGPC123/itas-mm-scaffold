@@ -19,6 +19,7 @@ class Pipeline:
         torch.set_num_threads(4)
         cfg=load_config('perception')
         self.sign_detector=SignDetector(cfg)
+        self.auxiliary_cfg=cfg.get('auxiliary_sign_review',{})
         self.still_detector_size=cfg.get('sign_detector',{}).get('image_size',640)
         self.video_detector_size=cfg.get('sign_detector',{}).get('video_image_size',self.still_detector_size)
         self.sign_recognizer=SignRecognizer(cfg)
@@ -44,7 +45,7 @@ class Pipeline:
             client=OllamaClient(self.reasoning_cfg['ollama'])
             self.rag_chain=RagChain(self.reasoning_cfg,VectorStore(self.reasoning_cfg['rag'],client),client)
 
-    def run(self,image,latitude,longitude,synthesize_audio=True,*,road_bottom=1.,annotate=True,stream_id=None,frame_timestamp=None,exclude_rects=None,lane_visual_roi=False,observed_at=None):
+    def run(self,image,latitude,longitude,synthesize_audio=True,*,road_bottom=1.,annotate=True,stream_id=None,frame_timestamp=None,exclude_rects=None,lane_visual_roi=False,observed_at=None,auxiliary_sign_review=False):
         if image is None or image.size==0:raise ValueError('Input image is empty')
         if not np.isfinite(road_bottom) or not .3 <= road_bottom <= 1:
             raise ValueError('road_bottom must be between 0.3 and 1')
@@ -153,7 +154,21 @@ class Pipeline:
         for sign in signs:
             sign.car_context=assess_car(sign,image,candidates,video=stream_id is not None,
                 observed_at=observed_at,camera_view=getattr(lane,'camera_view','unknown') if lane_visual_roi else 'forward')
-        perception=PerceptionResult(signs,lane,candidates)
+        extra_review=[]
+        if auxiliary_sign_review:
+            # Research-only parallel proposals. They never enter signs/context/RAG/TTS.
+            from src.perception.auxiliary_sign_review import AuxiliarySignReviewer
+            if not hasattr(self,'auxiliary_sign_reviewer'):
+                self.auxiliary_sign_reviewer=AuxiliarySignReviewer(self.auxiliary_cfg)
+            if getattr(lane,'camera_view','unknown')!='side_or_cabin':
+                try:
+                    extra_review=self.auxiliary_sign_reviewer.detect(road,signs)
+                except Exception:
+                    warnings.append('YOLO11 phụ trợ không khả dụng trong frame này; bộ nhận diện chính vẫn hoạt động.')
+            if self.auxiliary_sign_reviewer.status!='ready':
+                warnings.append('YOLO11 nghiên cứu chưa sẵn sàng: '+self.auxiliary_sign_reviewer.status)
+            warnings.append('YOLO11 phụ trợ chỉ hiển thị ứng viên, không dùng xác lập hiệu lực biển báo cho ô tô.')
+        perception=PerceptionResult(signs,lane,candidates,extra_review)
         zone=self.zone_classifier.classify(latitude,longitude)
         if self.sign_detector._model is None:warnings.append('Bộ phát hiện biển báo chưa có trọng số đã huấn luyện.')
         if self.sign_recognizer.model is None:warnings.append('Bộ nhận dạng biển báo chưa sẵn sàng.')
@@ -201,6 +216,10 @@ class Pipeline:
                 color=(140,140,140) if sign.applicability=='ignored' else (0,190,255)
                 cv2.rectangle(overlay,(x1,y1),(x2,y2),color,2)
                 cv2.putText(overlay,sign.label,(x1,max(16,y1-6)),cv2.FONT_HERSHEY_SIMPLEX,.5,color,1,cv2.LINE_AA)
+            for extra in extra_review:
+                x1,y1,x2,y2=map(int,extra['bbox_xyxy'])
+                cv2.rectangle(overlay,(x1,y1),(x2,y2),(255,80,200),2)
+                cv2.putText(overlay,'YOLO11 review only',(x1,max(16,y1-8)),cv2.FONT_HERSHEY_SIMPLEX,.45,(255,80,200),1,cv2.LINE_AA)
             ok,encoded=cv2.imencode('.jpg',overlay,[cv2.IMWRITE_JPEG_QUALITY,85])
             annotated='data:image/jpeg;base64,'+base64.b64encode(encoded).decode() if ok else None
         timings['total']=(time.perf_counter()-started)*1000

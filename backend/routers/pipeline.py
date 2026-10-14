@@ -169,6 +169,26 @@ def capstone_status():
         'videos':{key:'/pipeline/capstone-video/'+key for key in CAPSTONE_VIDEOS},
         'remaining_gaps':doc['still_unfinished']}
 
+@router.get('/auxiliary-sign-status')
+def auxiliary_sign_status():
+    """Non-regulatory YOLO11 checkpoint evidence; safe even when weights are absent."""
+    import hashlib,json
+    root=Path(__file__).resolve().parents[2]
+    cfg=load_config('perception').get('auxiliary_sign_review',{})
+    weights=root/cfg.get('weights_path','__missing__')
+    labels=root/cfg.get('labels_path','__missing__')
+    info=json.loads(labels.read_text(encoding='utf-8')) if labels.is_file() else {}
+    sha=hashlib.sha256(weights.read_bytes()).hexdigest() if weights.is_file() else None
+    report=root/'output/import_yolo11_comment_20261014/val_localization.json'
+    val=json.loads(report.read_text(encoding='utf-8')) if report.is_file() else None
+    return {'enabled_for_opt_in_preview':bool(cfg.get('enabled',False)),
+        'checkpoint_available':weights.is_file(),
+        'checkpoint_sha256_matches_manifest':bool(sha and sha==info.get('source_sha256')),
+        'classes':info.get('num_classes',0),'training_domain_not_revalidated':True,
+        'review_only':True,'changes_primary_sign_detector':False,
+        'affects_car_scope_or_legal_speech':False,
+        'validation':val,'field_accuracy_certified':False}
+
 @router.get('/sign-catalog')
 def sign_catalog():
     from src.perception.sign_catalog import NAMES_VI
@@ -225,7 +245,7 @@ def status():
             'message':'Các dự đoán chưa được chứng nhận cho điều khiển hoặc cảnh báo lái xe ngoài thực địa.'}
 
 @router.post('/run',response_model=PipelineRunResponse)
-def run_pipeline(image:UploadFile=File(...),latitude:float=Form(...,ge=-90,le=90),longitude:float=Form(...,ge=-180,le=180),synthesize_audio:bool=Form(True),road_bottom:float=Form(1.,ge=.3,le=1.),annotate:bool=Form(True),lane_visual_roi:bool=Form(False),stream_id:str|None=Form(None,max_length=64,pattern=r'^[A-Za-z0-9_-]+$'),frame_timestamp:float|None=Form(None,ge=0,allow_inf_nan=False),exclusion_zones:str=Form('[]',max_length=1200),observed_at:datetime|None=Form(None)):
+def run_pipeline(image:UploadFile=File(...),latitude:float=Form(...,ge=-90,le=90),longitude:float=Form(...,ge=-180,le=180),synthesize_audio:bool=Form(True),road_bottom:float=Form(1.,ge=.3,le=1.),annotate:bool=Form(True),lane_visual_roi:bool=Form(False),auxiliary_sign_review:bool=Form(False),stream_id:str|None=Form(None,max_length=64,pattern=r'^[A-Za-z0-9_-]+$'),frame_timestamp:float|None=Form(None,ge=0,allow_inf_nan=False),exclusion_zones:str=Form('[]',max_length=1200),observed_at:datetime|None=Form(None)):
     if observed_at is not None and (observed_at.tzinfo is None or observed_at.utcoffset() is None):
         raise HTTPException(422,'Ngày giờ quan sát cần có múi giờ; không dùng giờ phát lại làm giờ ghi hình.')
     if (stream_id is None)!=(frame_timestamp is None):raise HTTPException(422,'Video requires both stream_id and frame_timestamp')
@@ -255,6 +275,7 @@ def run_pipeline(image:UploadFile=File(...),latitude:float=Form(...,ge=-90,le=90
         temporal={'stream_id':stream_id,'frame_timestamp':frame_timestamp} if stream_id is not None else {}
         if rects:temporal['exclude_rects']=rects
         if lane_visual_roi:temporal['lane_visual_roi']=True
+        if auxiliary_sign_review:temporal['auxiliary_sign_review']=True
         if observed_at is not None:temporal['observed_at']=observed_at
         result=get_inference_worker().submit(get_pipeline().run,decoded,latitude,longitude,synthesize_audio,
             road_bottom=road_bottom,annotate=annotate,**temporal).result()

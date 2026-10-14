@@ -1,4 +1,10 @@
-# Bản tích hợp mới nhất — 13/10/2026
+# Cập nhật 14/10/2026 — YOLO11 optimized và benchmark UFLD-v2 từ ZIP
+
+Đã giải nén an toàn hai gói `comment.zip` và `yolo11_optimized.zip`; nguồn gốc, SHA256, danh sách 59 lớp biển và kết quả VAL được ghi trong [báo cáo nhập mô hình](docs/IMPORTED_COMMENT_YOLO11_20261014.md). Có thể bật **YOLO11 optimized — gợi ý phụ trợ màu tím** khi phân tích ảnh/video. Đây là chế độ rà soát tùy chọn và không thay thế detector chính hoặc tự suy luận hiệu lực biển với ô tô, vì thử nghiệm trên VAL chưa chứng minh cải thiện precision/recall. Trọng số gốc nằm cục bộ trong `data/raw/user_archives_20261014/yolo11_optimized/weights/best.pt` và không được push lên GitHub.
+
+Video có đủ 35.793 frame đã được xác minh ngày 14/10 tại `output/video_recheck_full_20261014/test_video_annotated.mp4`; bản video đó **không** chứa lớp phủ YOLO11 mới vì YOLO11 chỉ chạy khi bật tùy chọn trực tiếp. Lane Việt Nam và điều kiện biển phụ chưa được human-certified. Xem thêm [báo cáo kiểm thử độc lập](docs/ITAS_MM_INDEPENDENT_RELEASE_20261014.md).
+
+# Lịch sử tích hợp — 13/10/2026
 
 Đã chạy mới toàn bộ `test_video.mp4`, sửa vạch qua đường/camera bên hông và xuất 35.793 frame cùng 29 câu đọc. TEST 2.326 ảnh đạt precision mã biển 90,84%, recall 66,45% và recall với biển ≥32 px 92,37%. Ngữ cảnh ô tô đọc điều kiện giờ tự động và giữ trạng thái chưa xác định khi thiếu ngày ghi hình hoặc chi tiết biển. [Báo cáo mới và bằng chứng](docs/VIDEO_QUALITY_20261013.md).
 

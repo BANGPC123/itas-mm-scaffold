@@ -1,3 +1,14 @@
+# Imported 59-class checkpoint is a secondary *research overlay*, not an
+# automatic replacement of the verified production detector or legal classifier.
+auxiliary_sign_review:
+  enabled: true
+  weights_path: data/raw/user_archives_20261014/yolo11_optimized/weights/best.pt
+  labels_path: data/reference/yolo11_optimized_classes_20261014.json
+  image_size: 416
+  confidence_threshold: 0.65
+  overlap_iou: 0.35
+  max_candidates: 12
+
 sign_detector:
   image_size: 640
   video_image_size: 960

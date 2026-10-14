@@ -62,6 +62,7 @@ class PerceptionResponse(BaseModel):
     signs: list[SignDetectionResponse]
     lane: LaneResponse
     supplementary_candidates: list[dict] = Field(default_factory=list)
+    auxiliary_sign_candidates: list[dict] = Field(default_factory=list)
     lane_line_count: int
     lane_center_offset_px: float | None
 

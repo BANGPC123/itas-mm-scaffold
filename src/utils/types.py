@@ -59,6 +59,7 @@ class PerceptionResult:
     signs: list[SignDetection]
     lane: LaneInfo
     supplementary_candidates: list[dict] = field(default_factory=list)
+    auxiliary_sign_candidates: list[dict] = field(default_factory=list)
 
 
 @dataclass

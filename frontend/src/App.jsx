@@ -43,6 +43,7 @@ function UploadPanel({ onRun, isRunning }) {
   const [latitude, setLatitude] = useState("10.7769");
   const [longitude, setLongitude] = useState("106.7009");
   const [speak, setSpeak] = useState(false);
+  const [reviewAux, setReviewAux] = useState(false);
   const inputRef = useRef(null);
 
   const handleFileChange = (e) => {
@@ -53,7 +54,7 @@ function UploadPanel({ onRun, isRunning }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!file) return;
-    onRun({ file, latitude: parseFloat(latitude), longitude: parseFloat(longitude), speak });
+    onRun({ file, latitude: parseFloat(latitude), longitude: parseFloat(longitude), speak, auxiliarySignReview:reviewAux });
   };
 
   return (
@@ -110,6 +111,7 @@ function UploadPanel({ onRun, isRunning }) {
       </div>
 
       <label><input type="checkbox" checked={speak} onChange={e => setSpeak(e.target.checked)} /> Đọc kết quả bằng tiếng Việt</label>
+      <label><input type="checkbox" checked={reviewAux} onChange={e=>setReviewAux(e.target.checked)} /> Bổ sung gợi ý YOLO11 optimized (không dùng phát cảnh báo)</label>
       <p>Ngữ cảnh xe hiện tại: ô tô.</p>
       <button className="run-button" type="submit" disabled={!file || isRunning}>
         {isRunning ? "Đang chạy pipeline…" : "Chạy pipeline"}
@@ -178,6 +180,11 @@ function ResultsPanel({ result, error, isRunning, onReview }) {
             ))}
           </ul>
         )}
+        {!!perception.auxiliary_sign_candidates?.length && <div>
+          <h3>YOLO11 optimized — gợi ý phụ trợ</h3>
+          <p>Các ô màu tím chưa được xác minh, không tham gia quyết định biển áp dụng cho ô tô hoặc phát cảnh báo.</p>
+          <ul>{perception.auxiliary_sign_candidates.map((p,i)=><li key={i}>{p.label_vi} — {Math.round(p.confidence*100)}% (ứng viên chưa xác minh)</li>)}</ul>
+        </div>}
         {!!perception.supplementary_candidates?.length && <div>
           <h3>Biển phụ đọc tự động</h3>
           <p>Kết quả OCR do máy đọc, chưa xác định hiệu lực pháp lý.</p>
@@ -240,7 +247,7 @@ export default function App() {
   const [isRunning, setIsRunning] = useState(false);
   const requestSeq = useRef(0);
 
-  const handleRun = useCallback(async ({ file, latitude, longitude, speak = false, stream = false, roadBottom = 1, signal, streamId, frameTimestamp, excludeRects = [], laneVisualRoi = false, observedAt }) => {
+  const handleRun = useCallback(async ({ file, latitude, longitude, speak = false, stream = false, roadBottom = 1, signal, streamId, frameTimestamp, excludeRects = [], laneVisualRoi = false, observedAt, auxiliarySignReview = false }) => {
     if (stream) {
       const form = new FormData();
       form.append('image', file);
@@ -250,6 +257,7 @@ export default function App() {
       form.append('annotate', 'false');
       form.append('road_bottom', roadBottom);
       form.append('lane_visual_roi', String(laneVisualRoi));
+      form.append('auxiliary_sign_review', String(auxiliarySignReview));
       form.append('stream_id', streamId);
       if(observedAt)form.append('observed_at',observedAt);
       form.append('frame_timestamp', frameTimestamp);
@@ -275,6 +283,7 @@ export default function App() {
       formData.append("latitude", latitude);
       formData.append("longitude", longitude);
       formData.append("synthesize_audio", String(speak));
+      formData.append("auxiliary_sign_review", String(auxiliarySignReview));
 
       const response = await fetch(`${API_BASE}/pipeline/run`, {
         method: "POST",
