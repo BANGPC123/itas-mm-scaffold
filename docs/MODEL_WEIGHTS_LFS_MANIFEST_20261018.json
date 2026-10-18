@@ -1,0 +1,94 @@
+{
+  "storage": "Git LFS (pointer files in Git, binary objects stored in LFS)",
+  "file_count": 17,
+  "total_bytes": 2589889919,
+  "files": [
+    {
+      "path": "data/raw/user_archives_20261014/yolo11_optimized/weights/best.pt",
+      "size_bytes": 5454611,
+      "sha256": "bdef54fc5b9c24136d1f71579d868a029c8f7b5e0ec79bb81b5fe01678c87da9"
+    },
+    {
+      "path": "data/raw/user_archives_20261014/yolo11_optimized/weights/last.pt",
+      "size_bytes": 5454611,
+      "sha256": "08edfaa86f1bb3e21bb7b5081e84a49ea176ae53dc0cb34f2623a2b2fcd406ba"
+    },
+    {
+      "path": "models/lane/candidates/clrnet_official/culane_r18.pth",
+      "size_bytes": 47297408,
+      "sha256": "042f0a1e8d5f1cdfcf97b21b93c6f40d3d67cdeb682a5fcf80e49e65af887322"
+    },
+    {
+      "path": "models/lane/candidates/coco_yolo11n_20261011.pt",
+      "size_bytes": 5613764,
+      "sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1"
+    },
+    {
+      "path": "models/lane/candidates/segformer_cityscapes_20261011/pytorch_model.bin",
+      "size_bytes": 14957601,
+      "sha256": "027ed78d8ff9c535df5a66361c92b9673cca3cb923cbeb8c5802385b6b93194c"
+    },
+    {
+      "path": "models/lane/candidates/yolopv2_official_20261011/yolopv2.pt",
+      "size_bytes": 156380200,
+      "sha256": "f2a8c8374203ae3e67ff9c184e931f763957de92a993b23269e4e721627f1f8c"
+    },
+    {
+      "path": "models/lane/culane_res18.pth",
+      "size_bytes": 825264756,
+      "sha256": "956616371ee758551c455d28c1c8a9732b39d7fbd85bc70b9869424a5121f967"
+    },
+    {
+      "path": "models/lane/selected_20261009.pth",
+      "size_bytes": 825280267,
+      "sha256": "5207a4ea327cd770d5702d952a4050d3c51004e7cecdd60d8fc49933e813ab26"
+    },
+    {
+      "path": "models/reasoning/Qwen3-0.6B-Q8_0.gguf",
+      "size_bytes": 639446688,
+      "sha256": "9465e63a22add5354d9bb4b99e90117043c7124007664907259bd16d043bb031"
+    },
+    {
+      "path": "models/sign_detector/best.pt",
+      "size_bytes": 16077153,
+      "sha256": "d37d6284fef0f26222b9d3fec861a4dcdbeaa9e8915ce16d6ab7911709e345a6"
+    },
+    {
+      "path": "models/sign_detector/retrained_20261009.pt",
+      "size_bytes": 5466330,
+      "sha256": "4fe92aafe504f083636bb6e17303a557d36686766c42cb520dddaba41ee22073"
+    },
+    {
+      "path": "models/sign_recognizer/best.pt",
+      "size_bytes": 6305449,
+      "sha256": "9df8aefbe12051c96266b7e86e6f460103a649ab3169897f09cc026fbc8ab6b0"
+    },
+    {
+      "path": "models/sign_recognizer/reference_gate_20261011.npz",
+      "size_bytes": 8078125,
+      "sha256": "c18036b8419ea358590fecc267974904430b7f1ea7bd4627246883015304b57b"
+    },
+    {
+      "path": "models/sign_recognizer/reference_gate_20261011_final.npz",
+      "size_bytes": 8085682,
+      "sha256": "e9f543aba6df389015c537b8f456aeb1d2ec91a2bb5fcf8e3c7528a6ad023cb9"
+    },
+    {
+      "path": "models/sign_recognizer/reference_gate_20261011_v2.npz",
+      "size_bytes": 8089370,
+      "sha256": "8c3ec673778af2b477580c46c8fcf03a293c2fbc1d3ed9b46b3c48879b99c5d8"
+    },
+    {
+      "path": "models/sign_recognizer/retrained_20261009.pt",
+      "size_bytes": 6320907,
+      "sha256": "c1dad57daf61c104d4f0b6cb2387bc2c53ff397eaf948934e4a53a63babb859b"
+    },
+    {
+      "path": "models/sign_recognizer/robust_val.pt",
+      "size_bytes": 6316997,
+      "sha256": "f54454939c475651b70357c20e2361eab4e53080cefaebfcb1f154135c71c080"
+    }
+  ],
+  "caveat": "Includes upstream pretrained third-party models and research checkpoint files. Verify upstream licenses before public redistribution. Source datasets and video inputs are not included.",
+  "git_branch": "feature/itas-mm-weights-lfs-20261018"
+}
