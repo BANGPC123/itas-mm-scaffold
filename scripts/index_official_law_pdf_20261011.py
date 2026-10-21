@@ -4,24 +4,29 @@ Retains source URL and page; no legal interpretation is generated. A legal
 review and any later amendments remain outside this automatic extraction.
 """
 from pathlib import Path
-from pypdf import PdfReader
+from pypdfium2 import PdfDocument
 from collections import Counter
 import hashlib,json,re,datetime
 ROOT=Path(__file__).resolve().parents[1]
 SOURCE=ROOT/'data/regulations/official_20261011'
 OUT=ROOT/'data/processed/legal_reference/official_corpus_20261011'
 OUT.mkdir(parents=True,exist_ok=True)
-if (OUT/'manifest.json').is_file():raise FileExistsError('No overwriting an existing legal corpus')
+if (OUT/'manifest.json').is_file() or (OUT/'chunks.jsonl').is_file():
+    raise FileExistsError('No overwriting an existing or partial legal corpus')
 sources=json.loads((SOURCE/'sources.json').read_text(encoding='utf-8'))['official_documents']
 chunks=[];stats=[]
 for d in sources:
     file=SOURCE/d['file']
     if hashlib.sha256(file.read_bytes()).hexdigest()!=d['sha256']:
         raise RuntimeError('Official PDF source hash mismatch')
-    reader=PdfReader(str(file),strict=False)
+    # PDFium extracts complex technical drawings dramatically faster than pypdf.
+    # Source SHA256 and per-page locator remain unchanged.
+    reader=PdfDocument(str(file))
     pages_with_text=0
-    for idx,page in enumerate(reader.pages):
-        try: text=page.extract_text(extraction_mode='plain') or ''
+    for idx in range(len(reader)):
+        try:
+            page=reader[idx]
+            text=page.get_textpage().get_text_range() or ''
         except Exception: text=''
         text=re.sub(r'[ \t]+',' ',text).strip()
         text=re.sub(r'\n{3,}','\n\n',text)
@@ -53,7 +58,7 @@ for d in sources:
                 'text':'\n'.join(piece),
                 'source_url':d['source_url'],'source_sha256':d['sha256']})
     stats.append({'file':d['file'],'document':d['document'],
-        'total_pdf_pages':len(reader.pages),'pages_with_extracted_text':pages_with_text})
+        'total_pdf_pages':len(reader),'pages_with_extracted_text':pages_with_text})
     print('PDF_EXTRACTED',json.dumps(stats[-1],ensure_ascii=False),flush=True)
 if not chunks:raise RuntimeError('No real source texts indexed')
 with (OUT/'chunks.jsonl').open('w',encoding='utf-8') as f:

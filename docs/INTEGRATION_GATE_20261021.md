@@ -41,3 +41,12 @@ These are **unresolved acceptance dependencies**, not test successes. Rerun all 
 ## Merge decision
 
 **HOLD**: core path, LFS integrity and CPU smoke pass; full clean-clone acceptance remains incomplete. Do not merge `main`. Restore deterministic data dependencies, rerun the complete suite and relevant model/video workflows, verify GPU inference only if part of the acceptance target, then review an integration PR. This branch is a research prototype and is **not** certified or field-validated driving assistance.
+
+
+## Post-loss rebuild update — 2026-10-22
+
+See [REBUILD_FROM_ZERO_20261022.md](REBUILD_FROM_ZERO_20261022.md).
+
+Restored four government-hosted PDF sources (SHA256 pinned in [OFFICIAL_PDF_SNAPSHOT_20261022.json](OFFICIAL_PDF_SNAPSHOT_20261022.json)), an offline legal index (703 page-grounded chunks; scanned Decree 168 has no searchable OCR text), and UFLD-v2 source at its documented commit. All 17 tracked Git LFS weights remain verified. The clean-clone core-assets check now passes.
+
+Full Python suite after these restorations: **444 passed, 41 failed** (including two new rebuild-audit tests). The residual failures depend on missing historical user/field footage, human review data, generated videos or experiment reports. The originally documented Drive folder returned HTTP 404 during a listing attempt. No fabricated labels or acceptance evidence were inserted. **Merge gate: HOLD**.
