@@ -184,7 +184,8 @@ def observed_paint_seeds(evidence):
     segments=cv2.HoughLinesP(evidence*255,1,np.pi/180,threshold=18,
         minLineLength=max(20,round(h*.07)),maxLineGap=round(h*.09))
     if segments is None:return seeds
-    for x1,y1,x2,y2 in segments[:,0]:
+    # HoughLinesP may return (N, 1, 4) or (N, 4) across OpenCV builds.
+    for x1,y1,x2,y2 in np.asarray(segments).reshape(-1,4):
         if abs(y2-y1)<h*.06 or abs(x2-x1)>1.8*abs(y2-y1):continue
         lo,hi=sorted((int(y1),int(y2)));yy=np.arange(lo,hi+1,max(2,round(h/180)))
         xx=x1+(yy-y1)*(x2-x1)/(y2-y1)

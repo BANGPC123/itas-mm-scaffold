@@ -125,3 +125,12 @@ def test_separated_short_dashes_can_seed_a_longitudinal_path():
     evidence=paint_evidence(image,np.ones((240,400),np.float32))
     lines=refine_candidates(observed_paint_seeds(evidence),evidence,image.shape)
     assert lines and np.ptp(np.asarray(lines[0])[:,1])>65
+
+
+@pytest.mark.parametrize('shape',[(2,1,4),(2,4)])
+def test_observed_paint_seeds_accepts_hough_segment_shapes(monkeypatch,shape):
+    segments=np.asarray([[200,90,201,190],[150,95,151,185]],dtype=np.int32).reshape(shape)
+    monkeypatch.setattr(cv2,'HoughLinesP',lambda *args,**kwargs:segments)
+    seeds=observed_paint_seeds(np.zeros((240,400),np.uint8))
+    assert len(seeds)==2
+    assert all(np.ptp(np.asarray(line)[:,1])>60 for line in seeds)
