@@ -54,7 +54,7 @@ def build(entries,output):
                 'all_visible_signs_annotated':f['all_visible_signs_annotated'],
                 'lane_status':f['lane_status'],'lanes':f['lanes'],
                 'signs':[{'id':s['id'],'judgment':s['judgment'],'label':s['label'],
-                          'bbox_xyxy':s['bbox_xyxy'],'panel_role':s['panel_role'],
+                          'bbox_xyxy':s['bbox_xyxy'],'panel_role':s['panel_role'],'parent_id':s.get('parent_id'),
                           'plate_text':s.get('plate_text',''),
                           'plate_text_verified':bool(s.get('plate_text_verified',False))}
                         for s in f['signs'] if s['judgment']!='unreviewed'],

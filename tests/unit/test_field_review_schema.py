@@ -59,3 +59,56 @@ def test_lane_sanity_checks():
     assert validate_review(data)['frames']==1
     f['lanes'][0]['points'][1]=[800,470]
     with pytest.raises(ValueError):validate_review(data)
+
+
+def _with_parent(parent_id='s1',child_role='supplementary',parent_role='primary'):
+    data=base();f=data['frames'][0]
+    f['signs'][0]['panel_role']=parent_role
+    f['signs'].append({'id':'s2','bbox_xyxy':[20,100,60,130],'judgment':'unreviewed',
+        'panel_role':child_role,'label':'unknown','parent_id':parent_id})
+    return data
+
+
+def test_parent_link_is_optional_and_valid_when_supplementary_points_to_primary():
+    validate_review(base())  # older files without parent_id stay valid
+    validate_review(_with_parent())
+    data=_with_parent(parent_id=None,child_role='unknown')
+    validate_review(data)
+
+
+@pytest.mark.parametrize('kwargs',[
+    {'parent_id':'missing'},
+    {'parent_id':'s2'},
+    {'parent_id':7},
+    {'child_role':'primary'},
+    {'parent_role':'unknown'},
+])
+def test_invalid_parent_link_rejected(kwargs):
+    with pytest.raises(ValueError,match='parent link'):
+        validate_review(_with_parent(**kwargs))
+
+
+@pytest.mark.parametrize(('parent_judgment','child_judgment'),[
+    ('not_sign','sign'),
+    ('uncertain','sign'),
+    ('sign','not_sign'),
+])
+def test_confirmed_parent_link_requires_both_sign_judgments(parent_judgment,child_judgment):
+    data=_with_parent()
+    frame=data['frames'][0]
+    frame.update(human_confirmed=True,reviewer='owner',reviewed_at='2026-10-26',
+                 lane_status='no_visible_lane')
+    frame['signs'][0]['judgment']=parent_judgment
+    frame['signs'][1]['judgment']=child_judgment
+    with pytest.raises(ValueError,match='Confirmed parent link'):
+        validate_review(data)
+
+
+def test_confirmed_parent_link_allows_two_sign_judgments():
+    data=_with_parent()
+    frame=data['frames'][0]
+    frame.update(human_confirmed=True,reviewer='owner',reviewed_at='2026-10-26',
+                 lane_status='no_visible_lane')
+    frame['signs'][0]['judgment']='sign'
+    frame['signs'][1]['judgment']='sign'
+    assert validate_review(data)['human_confirmed']==1
