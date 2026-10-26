@@ -110,9 +110,49 @@ The two local commits in this task are:
 
 The parent_id commit body records rejection of non-sign parent/supplementary links, clearing stale child parent_id when a parent changes away from sign, and regression coverage for not_sign/uncertain parents and a not_sign child. The report commit body records detector/recognizer provenance, release-gate evidence and failures, owner-reviewed pilot limits, and that the report contains no images or dataset files.
 
-No push, merge, or PR is authorized or performed. Do not include configs/sign_dataset.yaml, configs/perception.yaml, models/, output/, or the untracked architecture documents in these commits. The local detector proposal remains pending group review: configs/perception.yaml points to ignored models/sign_detector/finetuned_20261026.pt (SHA256 c7fc0b607d603c88d33e02fa9986a787d527f8050b74d204fce40b365149541f), while the legacy test asserts the 2026-10-09 baseline. The report and parent_id changes do not resolve that separate decision.
+Status update 2026-10-26: branch work/kiet-dataset-v2 was pushed by the owner and PR #3 (base integration/itas-mm-release-candidate-20261021) is open and not merged. Do not include configs/sign_dataset.yaml, configs/perception.yaml, models/, output/, or the untracked architecture documents in these commits. The local detector proposal remains pending group review: configs/perception.yaml points to ignored models/sign_detector/finetuned_20261026.pt (SHA256 c7fc0b607d603c88d33e02fa9986a787d527f8050b74d204fce40b365149541f), while the legacy test asserts the 2026-10-09 baseline. The report and parent_id changes do not resolve that separate decision.
 
-PR description draft targeting integration/itas-mm-release-candidate-20261021 remains in output/kiet_wp_20261026/D/commit_scope_and_pr.md for later review; no PR has been opened.
+The PR #3 description was derived from output/kiet_wp_20261026/D/commit_scope_and_pr.md (local, ignored by Git).
+
+## Remaining work and deviations from the research proposal
+
+Status as of 2026-10-26. Items below are open; none is claimed as complete.
+
+### Open work
+
+- **End-to-end video demo: BLOCKED.** Needs a real driving MP4 with usage rights. The historical development video was not found in this checkout. Required check: run the offline pipeline with the proposed detector and verify overlays, TTS audio, legal citations, seek and stale-frame handling. Proposal Tasks 5 and 7 depend on this.
+- **Lane quality: NOT MEASURED.** No human-reviewed Vietnamese lane ground truth exists, so lane precision/recall/F1 promised in proposal Task 6 cannot be reported. The owner-reviewed pilot did not review lanes.
+- **Recognizer on small crops.** TEST accuracy is 0.5135 for crops with short side <16 px, versus 0.9398 for >=32 px. TRAIN and VAL contain no crops below 32 px, so the gap reflects an untrained size range. A future retraining should add small crops; TEST must not be used for that tuning.
+- **Sign codes in the pilot: NOT REVIEWED.** Pilot labels are `unknown`; no human-verified recognizer accuracy exists.
+- **Independent holdout: MISSING.** All human-reviewed frames come from one development video source group; a source-disjoint field TEST set is still required.
+
+### Deviations from the research proposal
+
+- Contrastive-learning feature separation is not implemented; the repository itself records that SAHI/contrastive improvements lack validated ablations.
+- SAHI tiling exists in code but is disabled by default (`sahi.enabled: false`) and has no evaluation.
+- Road-zone context uses simulated GPS only, as scoped in the proposal; no real GPS integration.
+- The proposal cites QCVN 41:2019/BGTVT; the repository corpus uses QCVN 41:2024/BGTVT.
+- Decree 168/2024/ND-CP is a scanned PDF; 0 of 111 pages yield searchable text, so its content is not retrievable offline.
+
+### Legal retrieval benchmark (development regression only)
+
+`scripts/evaluate_offline_retrieval.py`, run 2026-10-26 on the restored corpus (corpus SHA256 1086c043d97db61dd0c0f253144e2803a060d8746b05486e206ae5945b88c065):
+
+| Cases | Recall@1 | Recall@3 | Recall@4 | MRR |
+|---:|---:|---:|---:|---:|
+| 24 | 0.5417 | 0.8333 | 0.8750 | 0.6840 |
+
+Method: BM25 with positional bigram/trigram evidence, no generation. The script reports `independent_field_validation: false` and `legal_currency_verified: false`; this is an existing development suite, not unseen legal QA.
+
+### Detector replacement (pending group decision)
+
+If the group approves the fine-tuned detector, open a separate PR that:
+
+1. points `configs/perception.yaml` to the new checkpoint;
+2. updates `tests/unit/test_release_gate_20261011.py::test_model_configuration_still_points_to_known_baselines` to the new expected contract;
+3. adds `models/sign_detector/finetuned_20261026.pt` (SHA256 c7fc0b607d603c88d33e02fa9986a787d527f8050b74d204fce40b365149541f) through Git LFS and updates `docs/MODEL_WEIGHTS_LFS_MANIFEST_20261018.json` or a successor manifest.
+
+Until then, the shared default remains `models/sign_detector/retrained_20261009.pt`.
 
 ## Local JSON artifact fingerprints
 
