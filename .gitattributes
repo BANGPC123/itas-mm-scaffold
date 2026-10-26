@@ -5,6 +5,9 @@ data/regulations/raw/** -text
 data/regulations/current_raw/** -text
 data/regulations/current_raw/**/*.pdf binary
 
+# Reference manifests carry SHA256 of their own bytes; keep line endings exact.
+data/manifests/** -text
+
 # Model/checkpoint artifacts uploaded by owner through Git LFS (2026-10-18)
 *.pt filter=lfs diff=lfs merge=lfs -text
 *.pth filter=lfs diff=lfs merge=lfs -text
