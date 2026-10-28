@@ -23,6 +23,13 @@ def test_appendix_item_does_not_confuse_neighbouring_codes():
     assert appendix_item('D.2 Biển sốR.302 (a,b,c)', 'R.302a') == ('D', 2, False)
 
 
+def test_appendix_item_supports_suffixes_and_sibling_codes():
+    assert appendix_item('E.23a Biển số I.423(a,b) "Vị trí người đi bộ sang ngang"', 'I.423') == ('E', '23a', False)
+    assert appendix_item('B.27c Biển số P.127c "Biển ghép tốc độ"', 'P.127c') == ('B', '27c', False)
+    assert appendix_item('B.3 Biển số P.103a, Biển số P.103b và P.103c "Cấm ô tô"', 'P.103c') == ('B', 3, False)
+    assert appendix_item('B.3 Biển số P.103a "Cấm ô tô". B.4 Biển số P.104. P.103c', 'P.103c') is None
+
+
 def test_inherited_article_locator_is_replaced_only_with_evidence():
     hit = {'locator': 'Điều 84. Tổ chức thực hiện', 'excerpt': 'B.30 Biển số P.130 "Cấm dừng xe và đỗ xe"'}
     fixed = with_appendix_locator(hit, 'P.130')
@@ -37,3 +44,15 @@ def test_p130_lookup_no_longer_cites_final_article():
     hit = OfflineLegalRetriever().lookup_sign('P.130')
     assert hit and not hit['locator'].startswith('Điều 84')
     assert hit['locator'].startswith('Phụ lục B, mục B.30')
+
+
+@pytest.mark.skipif(not (ROOT / 'data/regulations/corpus.json').is_file(), reason='structured corpus absent')
+def test_three_previously_unresolved_codes_have_evidenced_locators():
+    retriever = OfflineLegalRetriever()
+    expected = {'I.423': 'Phụ lục E, mục E.23a',
+                'P.103c': 'Phụ lục B, mục B.3',
+                'P.127c': 'Phụ lục B, mục B.27c'}
+    for code, locator in expected.items():
+        hit = retriever.lookup_sign(code)
+        assert hit and hit['locator'].startswith(locator)
+        assert hit['locator_source'] == 'appendix_item_in_excerpt'

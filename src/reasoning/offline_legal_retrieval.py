@@ -14,7 +14,7 @@ ROOT=Path(__file__).resolve().parents[2]
 CORPUS=ROOT/'data/processed/legal_reference/official_corpus_20261011'
 CODE_INDEX=ROOT/'data/processed/legal_reference/index.json'
 
-def appendix_item(text,code):
+def _legacy_appendix_item(text,code):
     """Find the QCVN appendix item that defines a sign code, e.g. 'B.30 Biển số P.130'.
 
     Returns (letter, number, is_figure_caption) or None. A suffixed code such as
@@ -40,9 +40,40 @@ def appendix_item(text,code):
     found.sort(key=lambda item:item[2])
     return found[0] if found else None
 
+
+def _extended_appendix_item(text,code):
+    """Resolve suffixed appendix headings and codes listed as siblings."""
+    base,suffix=(code[:-1],code[-1]) if code[-1].isalpha() else (code,'')
+    head=re.compile(r'(Hình\s+)?\b([A-H])\.(\d{1,3})([a-z]?)\s*(?:[-\u2013]\s*)?Biển\s+(?:số\s*)?'
+                    +re.escape(base)+r'(?![0-9])')
+    found=[]
+    for m in head.finditer(text):
+        tail=text[m.end():m.end()+250]
+        next_item=re.search(r'\b[A-H]\.\d{1,3}[a-z]?\s+(?:Biển|Hình)',tail)
+        if next_item:tail=tail[:next_item.start()]
+        if suffix:
+            paren=re.match(r'\s*\(([a-z,\s]+)\)',tail)
+            named=(re.match(re.escape(suffix)+r'(?![a-z0-9])',tail) or
+                   (paren and suffix in re.findall(r'[a-z]',paren.group(1))) or
+                   re.search(r'(?<![A-Za-z0-9.])'+re.escape(code)+r'(?![a-z0-9])',tail))
+            if not named:continue
+        elif re.match(r'[a-z0-9]',tail):
+            continue
+        number=int(m.group(3)) if not m.group(4) else m.group(3)+m.group(4)
+        found.append((m.group(2),number,bool(m.group(1))))
+    found.sort(key=lambda item:item[2])
+    return found[0] if found else None
+
+
+def appendix_item(text,code):
+    """Prefer existing evidenced locators, then try extended heading syntax."""
+    return _legacy_appendix_item(text,code) or _extended_appendix_item(text,code)
+
+
 def appendix_item_rank(text,code):
-    item=appendix_item(text,code)
-    return 2 if item is None else (1 if item[2] else 0)
+    item=_legacy_appendix_item(text,code)
+    if item is not None:return 1 if item[2] else 0
+    return 2 if _extended_appendix_item(text,code) else 3
 
 def with_appendix_locator(hit,code):
     """Replace a heading inherited from the last article by the appendix item.
