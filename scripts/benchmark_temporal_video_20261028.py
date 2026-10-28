@@ -18,6 +18,25 @@ def sha256(path):
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
+def apply_threshold(recognizer, threshold):
+    """Override a checkpoint threshold in memory only, when explicitly requested."""
+    if threshold is not None:
+        if not 0.0 <= threshold <= 1.0:
+            raise ValueError("Threshold must be between zero and one")
+        recognizer.threshold = float(threshold)
+    return recognizer.threshold
+
+
+def recognition_snapshot(signs, image_shape):
+    """Copy the merged crop decisions before temporal confirmation mutates them."""
+    from src.perception.sign_multiscale import crop_side
+    return [{"bbox_xyxy": list(sign.bbox_xyxy), "short_side_px": crop_side(sign.bbox_xyxy, image_shape),
+             "label": sign.label, "detector_confidence": float(sign.confidence),
+             "recognition_confidence": (float(sign.recognition_confidence)
+                                        if sign.recognition_confidence is not None else None),
+             "recognition_source": sign.recognition_source} for sign in signs]
+
+
 def summarize_events(events, max_crop_age_ms=750):
     """Count consecutive repeats and samples with an over-age recognition crop."""
     previous_warnings, previous_alert = set(), ""
@@ -52,14 +71,37 @@ def summarize_events(events, max_crop_age_ms=750):
 
 
 class AuditPipeline:
-    def __init__(self, pipeline, event_path):
+    def __init__(self, pipeline, event_path, trace_raw_recognition=False):
         self.pipeline = pipeline
         self.events = []
         self.event_path = event_path
+        self.trace_raw_recognition = trace_raw_recognition
 
     def run(self, *args, **kwargs):
         started = time.perf_counter()
-        result = self.pipeline.run(*args, **kwargs)
+        if self.trace_raw_recognition:
+            from src.perception import sign_multiscale
+            raw_direct, raw_merged = [], []
+            original_recognize = self.pipeline.sign_recognizer.recognize
+            original_views = sign_multiscale.recognize_views
+
+            def capture_recognize(image, *inner_args, **inner_kwargs):
+                detected = original_recognize(image, *inner_args, **inner_kwargs)
+                raw_direct.append(recognition_snapshot(detected, image.shape))
+                return detected
+
+            def capture_views(recognizer, image, *inner_args, **inner_kwargs):
+                detected = original_views(recognizer, image, *inner_args, **inner_kwargs)
+                raw_merged.append(recognition_snapshot(detected, image.shape))
+                return detected
+
+            with patch.object(self.pipeline.sign_recognizer, "recognize", side_effect=capture_recognize), \
+                 patch.object(sign_multiscale, "recognize_views", side_effect=capture_views):
+                result = self.pipeline.run(*args, **kwargs)
+            raw = raw_merged[-1] if raw_merged else raw_direct[-1] if raw_direct else None
+        else:
+            result = self.pipeline.run(*args, **kwargs)
+            raw = None
         elapsed_ms = (time.perf_counter() - started) * 1000
         speech = result.reasoning.speech_text
         observation = result.reasoning.observation_speech_text
@@ -70,13 +112,16 @@ class AuditPipeline:
                  "crop_ages_ms": [s["crop_age_ms"] for s in signs], "signs": signs,
                  "references": result.reasoning.references, "call_ms": elapsed_ms,
                  "pipeline_timings_ms": result.timings_ms}
+        if self.trace_raw_recognition:
+            event["pre_temporal_signs"] = raw
         self.events.append(event)
         with self.event_path.open("a", encoding="utf-8", newline="\n") as stream:
             stream.write(json.dumps(event, ensure_ascii=False) + "\n")
         return result
 
 
-def run(source, output, starts, duration, analysis_hz, recognizer=None, reference_gate=None):
+def run(source, output, starts, duration, analysis_hz, recognizer=None, reference_gate=None, threshold=None,
+        trace_raw_recognition=False):
     import torch
     from src.pipeline import orchestrator
     from scripts.render_offline_video_max_20261014 import render
@@ -116,13 +161,14 @@ def run(source, output, starts, duration, analysis_hz, recognizer=None, referenc
 
     with patch.object(orchestrator, "load_config", side_effect=load_scoped):
         pipeline = orchestrator.Pipeline()
+    effective_threshold = apply_threshold(pipeline.sign_recognizer, threshold)
     if pipeline.sign_detector._model is None or pipeline.sign_recognizer.model is None or pipeline.lane_detector.learned is None:
         raise RuntimeError("Pipeline models unavailable")
     results = []
     try:
         for start in starts:
             event_path = output / f"events_{start}.jsonl"
-            audit = AuditPipeline(pipeline, event_path)
+            audit = AuditPipeline(pipeline, event_path, trace_raw_recognition)
             begin = time.perf_counter()
             summary = render(source, output / f"segment_{start}", analysis_hz=analysis_hz,
                              start_second=start, max_seconds=duration, pipeline=audit)
@@ -158,6 +204,8 @@ def run(source, output, starts, duration, analysis_hz, recognizer=None, referenc
                              "model_sha256": {name: sha256(path) for name, path in checkpoints.items()},
                              "runner_sha256": sha256(Path(__file__)),
                              "recognizer_override": str(checkpoints["recognizer"]) if recognizer else None,
+                             "recognizer_threshold": effective_threshold,
+                             "trace_raw_recognition": trace_raw_recognition,
                              "reference_gate": (str(reference_gate) if reference_gate else None) if recognizer else perception["sign_recognizer"].get("reference_gate_path"),
                              "hardware": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "CPU",
                              "torch": torch.__version__, "analysis_hz": analysis_hz, "warmup_frames": 0,
@@ -175,8 +223,11 @@ def main():
     parser.add_argument("--analysis-hz", type=float, default=6)
     parser.add_argument("--recognizer", type=Path, help="candidate recognizer checkpoint (config left unchanged)")
     parser.add_argument("--reference-gate", type=Path, help="reference gate for the candidate; omitted means no gate")
+    parser.add_argument("--threshold", type=float, help="explicit in-memory recognition threshold")
+    parser.add_argument("--trace-raw-recognition", action="store_true", help="log merged crop decisions before temporal confirmation")
     args = parser.parse_args()
-    result = run(args.source, args.output, args.starts, args.duration, args.analysis_hz, args.recognizer, args.reference_gate)
+    result = run(args.source, args.output, args.starts, args.duration, args.analysis_hz, args.recognizer, args.reference_gate,
+                 args.threshold, args.trace_raw_recognition)
     print(json.dumps({"status": result["status"], "segments": len(result["segments"])}), flush=True)
 
 
