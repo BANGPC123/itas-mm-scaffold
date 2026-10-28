@@ -64,6 +64,11 @@ sign_recognizer:
   video_min_short_side: 12
   reference_gate_path: models/sign_recognizer/reference_gate_20261011_final.npz
   reference_gate_margin: 0.015
+  # Keep confident detector boxes that the recognizer scores as background
+  # (codes outside its 30-class list, e.g. I.434a bus stop) as unrecognised
+  # signs. Chosen on VAL only: 91% of such boxes at >=0.5 / >=16 px are real signs.
+  keep_background_detector_confidence: 0.5
+  keep_background_min_side: 16
 
 applicability:
   current_vehicle: car

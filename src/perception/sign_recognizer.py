@@ -65,7 +65,8 @@ class SignRecognizer:
                 sign.label = self.classes[index] if confidence >= self.threshold else 'unknown'
                 sign.recognition_source = 'single_frame' if sign.label!='unknown' else 'low_confidence'
                 if self.classes[index] == 'unknown' and confidence >= self.threshold:
-                    sign.recognition_source = 'background_rejected'
+                    sign.recognition_source = ('out_of_vocabulary_candidate'
+                        if self.keeps_confident_detection(sign) else 'background_rejected')
                 elif rejected:
                     sign.label='unknown';sign.recognition_source=rejected
                 if sign.label=='I.409':
@@ -76,6 +77,22 @@ class SignRecognizer:
                     reason=blue_symbol_verdict(crop,sign.label)
                     if reason:sign.label='unknown';sign.recognition_source=reason
         return signs
+
+    def keeps_confident_detection(self, sign):
+        """Keep a confident detector box whose code is outside the class list.
+
+        The recognizer has 30 codes plus a background class, so real signs such
+        as I.434a (bus stop) are scored as background and would be erased.
+        When enabled, a box with detector confidence and short side at or above
+        the configured limits stays visible as an unrecognised sign instead.
+        Disabled unless keep_background_detector_confidence is configured.
+        """
+        limit = self.config.get('keep_background_detector_confidence')
+        if limit is None:
+            return False
+        x1, y1, x2, y2 = sign.bbox_xyxy
+        side = min(x2 - x1, y2 - y1)
+        return sign.confidence >= limit and side >= self.config.get('keep_background_min_side', 16)
 
 
 def crop_tensor(bgr, size=128):
