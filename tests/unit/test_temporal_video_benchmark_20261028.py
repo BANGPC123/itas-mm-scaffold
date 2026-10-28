@@ -29,6 +29,27 @@ def test_threshold_override_is_explicit_and_preserves_default():
         apply_threshold(recognizer, 1.01)
 
 
+def test_gate_margin_override_is_explicit_and_validated():
+    import pytest
+    from scripts.benchmark_temporal_video_20261028 import apply_gate_margin
+
+    section = {"weights_path": "x"}
+    assert apply_gate_margin(section, None) == 0.015 and "reference_gate_margin" not in section
+    assert apply_gate_margin(section, 0.24) == 0.24 and section["reference_gate_margin"] == 0.24
+    with pytest.raises(ValueError):
+        apply_gate_margin(section, -0.1)
+
+
+def test_output_allowed_only_in_new_wp3_or_field_eval_directories(tmp_path):
+    from scripts.benchmark_temporal_video_20261028 import FIELD_EVAL_OUTPUT, ROOT, output_allowed
+
+    assert output_allowed(ROOT / "output/kiet_wp_20261028/wp3/new_run_that_does_not_exist")
+    assert output_allowed(FIELD_EVAL_OUTPUT / "A_video_30_does_not_exist")
+    assert not output_allowed(tmp_path / "elsewhere")
+    assert not output_allowed(ROOT / "output/kiet_wp_20261028/other_run_that_does_not_exist")
+    assert not output_allowed(ROOT / "output/kiet_wp_20261028/wp3")  # exists: never overwrite
+
+
 def test_recognition_snapshot_preserves_pre_temporal_labels_and_clipped_size():
     from types import SimpleNamespace
     from scripts.benchmark_temporal_video_20261028 import recognition_snapshot

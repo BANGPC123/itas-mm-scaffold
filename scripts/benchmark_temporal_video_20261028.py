@@ -18,6 +18,24 @@ def sha256(path):
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
+FIELD_EVAL_OUTPUT = ROOT / "output/kiet_wp_20261029/field_eval"
+
+
+def output_allowed(output):
+    """Runs write only to a new directory inside the WP3 output or the field-video evaluation output."""
+    output = Path(output)
+    return not output.exists() and any(root in output.parents for root in (ROOT / "output/kiet_wp_20261028/wp3", FIELD_EVAL_OUTPUT))
+
+
+def apply_gate_margin(section, margin):
+    """Set the reference-gate margin in a recognizer config section only when one is requested."""
+    if margin is not None:
+        if not 0.0 <= margin <= 1.0:
+            raise ValueError("Gate margin must be between zero and one")
+        section["reference_gate_margin"] = float(margin)
+    return section.get("reference_gate_margin", 0.015)
+
+
 def apply_threshold(recognizer, threshold):
     """Override a checkpoint threshold in memory only, when explicitly requested."""
     if threshold is not None:
@@ -121,16 +139,17 @@ class AuditPipeline:
 
 
 def run(source, output, starts, duration, analysis_hz, recognizer=None, reference_gate=None, threshold=None,
-        trace_raw_recognition=False):
+        trace_raw_recognition=False, source_sha256=None, gate_margin=None):
     import torch
     from src.pipeline import orchestrator
     from scripts.render_offline_video_max_20261014 import render
 
     source, output = Path(source).resolve(), Path(output).resolve()
-    if ROOT / "output/kiet_wp_20261028/wp3" not in output.parents or output.exists():
-        raise ValueError("Output must be a new directory inside WP3 output")
-    if sha256(source) != EXPECTED_VIDEO_SHA256:
-        raise ValueError("V0 SHA256 does not match registered source")
+    if not output_allowed(output):
+        raise ValueError("Output must be a new directory inside the WP3 or field-evaluation output")
+    expected_sha256 = source_sha256 or EXPECTED_VIDEO_SHA256
+    if sha256(source) != expected_sha256:
+        raise ValueError("Source SHA256 does not match the registered source")
     output.mkdir(parents=True)
     original_load = orchestrator.load_config
     perception = original_load("perception")
@@ -143,6 +162,7 @@ def run(source, output, starts, duration, analysis_hz, recognizer=None, referenc
         perception["sign_recognizer"].pop("reference_gate_path", None)
         if reference_gate:
             perception["sign_recognizer"]["reference_gate_path"] = str(Path(reference_gate).resolve())
+            apply_gate_margin(perception["sign_recognizer"], gate_margin)
     for section, expected in (("sign_detector", checkpoints["detector"]),
                               ("sign_recognizer", checkpoints["recognizer"]),
                               ("lane_detector", checkpoints["lane"])):
@@ -198,13 +218,14 @@ def run(source, output, starts, duration, analysis_hz, recognizer=None, referenc
                               "No per-render-frame overlay age is logged; stale alert count is a crop-age proxy.",
                               "TTS was disabled during temporal measurement; output preserves source audio only."],
               "provenance": {"git_head": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
-                             "source_sha256": EXPECTED_VIDEO_SHA256,
+                             "source_sha256": expected_sha256,
                              "config_sha256": {name: sha256(ROOT / f"configs/{name}.yaml")
                                                for name in ("perception", "context", "reasoning", "interaction")},
                              "model_sha256": {name: sha256(path) for name, path in checkpoints.items()},
                              "runner_sha256": sha256(Path(__file__)),
                              "recognizer_override": str(checkpoints["recognizer"]) if recognizer else None,
                              "recognizer_threshold": effective_threshold,
+                             "reference_gate_margin": perception["sign_recognizer"].get("reference_gate_margin") if reference_gate else None,
                              "trace_raw_recognition": trace_raw_recognition,
                              "reference_gate": (str(reference_gate) if reference_gate else None) if recognizer else perception["sign_recognizer"].get("reference_gate_path"),
                              "hardware": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "CPU",
@@ -225,9 +246,11 @@ def main():
     parser.add_argument("--reference-gate", type=Path, help="reference gate for the candidate; omitted means no gate")
     parser.add_argument("--threshold", type=float, help="explicit in-memory recognition threshold")
     parser.add_argument("--trace-raw-recognition", action="store_true", help="log merged crop decisions before temporal confirmation")
+    parser.add_argument("--source-sha256", help="SHA256 of a source other than the development video V0")
+    parser.add_argument("--reference-gate-margin", type=float, help="margin for --reference-gate (runtime default 0.015)")
     args = parser.parse_args()
     result = run(args.source, args.output, args.starts, args.duration, args.analysis_hz, args.recognizer, args.reference_gate,
-                 args.threshold, args.trace_raw_recognition)
+                 args.threshold, args.trace_raw_recognition, args.source_sha256, args.reference_gate_margin)
     print(json.dumps({"status": result["status"], "segments": len(result["segments"])}), flush=True)
 
 
