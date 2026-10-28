@@ -29,6 +29,44 @@
     "recognizer_v2_branch": "work/kiet-recognizer-v2",
     "ai_ontology_extension_labels_sha256": "090f17b4e1a7c3fa90adf450c4aeb5fe97acbbd3087f6e9fdb41c1c101058cd9"
   },
+  "recognizer_v2_crosscheck": {
+    "status": "BLOCKED",
+    "evidence_head": "8d04c6771078d429240944e1a17d51a2487d7171",
+    "blind_control_agreement": 0.29,
+    "blind_control_n": 100,
+    "blind_control_uncertain": 71,
+    "blind_control_stop_threshold": 0.85,
+    "alternative_threshold_val_only": {
+      "split": "VAL",
+      "min_short_side": 16,
+      "test_used": false,
+      "threshold": 0.6412901874067937,
+      "coverage": 0.950175662727563,
+      "accepted_accuracy": 0.9791596638655462,
+      "background_accepted": 0.0,
+      "criterion": "coverage_target",
+      "known_samples": 3131,
+      "background_samples": 802
+    },
+    "reference_gate_v2": "BLOCKED: every prescribed V0 harvest segment contains pilot TEST frames",
+    "video_precision": "BLOCKED: blinded reviewer control below threshold; no human event GT",
+    "video_configs_completed": {
+      "A": 5,
+      "B": 5,
+      "C": 5
+    },
+    "legal_locator_result": {
+      "repaired_codes": [
+        "I.423",
+        "P.103c",
+        "P.127c"
+      ],
+      "previously_resolved_unchanged": 84,
+      "legal_currency": "UNVERIFIED"
+    },
+    "report": "docs/RECOGNIZER_V2_CROSSCHECK_20261029.md",
+    "note": "No default model, threshold, gate, or HOLD decision was changed. AI-reviewed labels are not human ground truth."
+  },
   "gates": [
     {
       "id": "lfs_integrity",
@@ -69,7 +107,7 @@
       "id": "recognizer_v2",
       "status": "PASS_WITH_LIMITS",
       "evidence": "Owner rule met on AI-assisted TEST labels, same crops, raw argmax: 30 old codes >=32 px accuracy 0.9371 -> 0.9697 (95% image-bootstrap CI of the difference +0.0209..+0.0452), 16-32 px 0.9309 -> 0.9815, <16 px 0.5139 -> 0.7839; VAL macro-F1 over 55 main classes 0.9511 (epoch maximum). 87 codes plus background. V0 segment 0 confirms I.434a from 14.67 s to 16.17 s. pytest tests exit 0 (498 passed, 11 skipped, 38 deselected), acceptance_v2 11/11, node 7/7, frontend build pass.",
-      "limitations": "All labels are AI-assisted (extension labels: two passes by one model, 76.9% raw agreement, 976 of 1531 boxes kept); no human GT. No reference gate for the new encoder. 32 low-support classes are trained but mostly lack reliable TEST support; I.401 and W.205c have no TRAIN crop. Three codes (I.423, P.103c, P.127c) return only the generic Article 84 legal heading."
+      "limitations": "All labels are AI-assisted (extension labels: two passes by one model, 76.9% raw agreement, 976 of 1531 boxes kept); no human GT. No reference gate for the new encoder. 32 low-support classes are trained but mostly lack reliable TEST support; I.401 and W.205c have no TRAIN crop. Three codes initially returned the generic Article 84 heading; the crosscheck records the subsequent parser repair, while legal currency remains unverified."
     },
     {
       "id": "temporal_measurement",
@@ -97,7 +135,7 @@
     {
       "id": "legal_references",
       "status": "BLOCKED",
-      "evidence": "A retrieved P.130 excerpt is associated with the locator Article 84, which does not match its excerpt content.",
+      "evidence": "An earlier P.130 result carried the generic Article 84 locator. The current parser resolves its appendix item and the crosscheck records three additional locator repairs; legal currency remains unverified.",
       "gaps": ["Repair and independently verify locator attribution and legal currency before relying on references"]
     },
     {

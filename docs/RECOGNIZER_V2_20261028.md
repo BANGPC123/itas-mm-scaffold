@@ -2,7 +2,11 @@
 
 Retrained sign recognizer with the V1.2 ontology extended by AI-reviewed labels, small-crop training (16 px and up) and 87 QCVN codes plus a background class. Work package of issue #2, branch `work/kiet-recognizer-v2` (stacked on `work/kiet-pipeline-fixes`, PR #4).
 
-**Status: accepted as the default recognizer under the owner's acceptance rule, with the limits below.** `configs/perception.yaml` now points to `models/sign_recognizer/retrained_20261028.pt` (SHA256 `01d5c677af749ae14170b8008d304fb852f8c0baa7a606a3101c69e2a6b80d30`, Git LFS, listed in `docs/MODEL_WEIGHTS_LFS_MANIFEST_20261018.json`). The previous `retrained_20261009.pt` and its reference gate stay on disk for rollback.
+**Status: accepted as the default recognizer under the owner's raw-argmax acceptance rule, with the limits below.** Thresholded operating results differ from raw argmax and do not establish independent field accuracy. `configs/perception.yaml` now points to `models/sign_recognizer/retrained_20261028.pt` (SHA256 `01d5c677af749ae14170b8008d304fb852f8c0baa7a606a3101c69e2a6b80d30`, Git LFS, listed in `docs/MODEL_WEIGHTS_LFS_MANIFEST_20261018.json`). The previous `retrained_20261009.pt` and its reference gate stay on disk for rollback.
+
+## Operating point
+
+The independently rerun crop and video measurements, VAL-only alternative threshold, training provenance limits, and blocked review/gate evidence are in [RECOGNIZER_V2_CROSSCHECK_20261029.md](RECOGNIZER_V2_CROSSCHECK_20261029.md). The default model, threshold, and reference gate configuration remain unchanged.
 
 ## What these numbers are not
 
