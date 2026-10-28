@@ -1,4 +1,5 @@
 """Automated YOLO box proposals must never silently become human ground truth."""
+import pytest
 import copy,json
 from pathlib import Path
 from src.evaluation.label_review_schema import validate_review
@@ -10,6 +11,7 @@ AUTO=PACK/'autobox_20261011'
 def load(name):
     return json.loads((name).read_text(encoding='utf-8'))
 
+@pytest.mark.legacy_artifact
 def test_autobox_keeps_user_review_immutable():
     initial=load(PACK/'itasmm_human_review_uploaded_20261011.json')
     new=load(AUTO/'autobox_curated_review.json')
@@ -22,6 +24,7 @@ def test_autobox_keeps_user_review_immutable():
     assert all(a['image_sha256']==b['image_sha256'] and a['source_group']==b['source_group']
                for a,b in zip(initial['frames'],new['frames']))
 
+@pytest.mark.legacy_artifact
 def test_autobox_does_not_override_user_judgments_or_codes():
     old=load(PACK/'itasmm_human_review_uploaded_20261011.json')
     new=load(AUTO/'autobox_curated_review.json')
@@ -38,6 +41,7 @@ def test_autobox_does_not_override_user_judgments_or_codes():
     assert len([s for f in new['frames'] for s in f['signs']
                 if s.get('source')=='ai_autobox_20261011'])==4
 
+@pytest.mark.legacy_artifact
 def test_autobox_extra_signs_require_human_review():
     data=load(AUTO/'autobox_curated_review.json')
     extra=[s for f in data['frames'] for s in f['signs'] if s.get('source')=='ai_autobox_20261011']
@@ -46,6 +50,7 @@ def test_autobox_extra_signs_require_human_review():
     assert len(load(AUTO/'rejected_model_candidates.json')['items'])==6
     assert not load(AUTO/'curated_summary.json')['ground_truth']
 
+@pytest.mark.legacy_artifact
 def test_autobox_ui_can_access_source_images():
     ui=PACK/'index_AI_tu_bat_box.html'
     assert ui.is_file()

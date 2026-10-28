@@ -1,10 +1,12 @@
 """QA acceptance: latest REAL MP4, human-GT abstention, no fake accuracy."""
+import pytest
 from pathlib import Path
 import json,cv2
 from fastapi.testclient import TestClient
 from backend.main import app
 ROOT=Path(__file__).resolve().parents[2]
 
+@pytest.mark.legacy_artifact
 def test_real_user_video_final_file_playable_and_screened():
     root=ROOT/'output/video_tests/user_test_video_lane_dedup_checked_20261011'
     info=json.loads((root/'summary.json').read_text(encoding='utf-8'))
@@ -17,6 +19,7 @@ def test_real_user_video_final_file_playable_and_screened():
     assert int(capture.get(cv2.CAP_PROP_FRAME_COUNT))==1125
     capture.release()
 
+@pytest.mark.legacy_artifact
 def test_visual_qa_clearly_abstains_from_absolute_accuracy_claims():
     x=json.loads((ROOT/'output/evaluation/ITAS_MM_USER_VIDEO_VISUAL_QA_20261011.json').read_text(encoding='utf-8'))
     assert x['visually_inspected_unique_frames']==51
@@ -26,6 +29,7 @@ def test_visual_qa_clearly_abstains_from_absolute_accuracy_claims():
     assert not x['claimed_absolute_correctness']
     assert x['no_prediction_events']>0
 
+@pytest.mark.legacy_artifact
 def test_api_video_route_points_to_screened_latest_not_old_bad_export():
     response=TestClient(app).get('/pipeline/capstone-video/user-hybrid',headers={'Range':'bytes=0-1023'})
     assert response.status_code==206

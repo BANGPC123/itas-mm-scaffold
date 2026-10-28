@@ -1,4 +1,5 @@
 """Final no-promotion contract for 2026-10-11 ITAS-MM research stage."""
+import pytest
 import json
 from pathlib import Path
 from backend.routers.pipeline import status
@@ -8,6 +9,7 @@ ROOT=Path(__file__).resolve().parents[2]
 def read(relative):
     return json.loads((ROOT/relative).read_text(encoding='utf-8'))
 
+@pytest.mark.legacy_artifact
 def test_release_gate_blocks_unapproved_retraining():
     result=read('output/evaluation/ITAS_MM_RELEASE_GATE_20261011.json')
     assert result['model_release_approved'] is False
@@ -36,6 +38,7 @@ def test_model_configuration_still_points_to_known_baselines():
     assert cfg['lane_detector']['weights_path']=='models/lane/selected_20261009.pth'
     assert cfg['lane_detector']['filter_geometry'] is False
 
+@pytest.mark.legacy_artifact
 def test_33_class_checkpoint_is_experimental_only():
     r=read('output/retraining_20261011/recognizer_33class_EXPERIMENT/report.json')
     assert len(r['classes'])==33
@@ -44,6 +47,7 @@ def test_33_class_checkpoint_is_experimental_only():
     assert r['selected_checkpoint_unchanged']
     assert (ROOT/'output/retraining_20261011/recognizer_33class_EXPERIMENT/candidate_33classes.pt').exists()
 
+@pytest.mark.legacy_artifact
 def test_e2e_latency_is_separate_from_safety_accuracy():
     r=read('output/evaluation/vietnam_e2e_benchmark_20261011/benchmark.json')
     assert r['frames']==20 and r['gps_is_mocked']

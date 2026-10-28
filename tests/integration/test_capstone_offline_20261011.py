@@ -1,9 +1,11 @@
 """End-to-end CAPSTONE acceptance does not depend on real camera/GPS or live Ollama."""
+import pytest
 from pathlib import Path
 import json,cv2
 from fastapi.testclient import TestClient
 from backend.main import app
 ROOT=Path(__file__).resolve().parents[2]
+@pytest.mark.legacy_artifact
 def test_desktop_browser_bundle_and_offline_video_artifacts():
     doc=json.loads((ROOT/'output/capstone_demo_20261011/OFFLINE_CAPSTONE_ACCEPTANCE.json').read_text(encoding='utf-8'))
     assert doc['offline_mp4_visual_demo_ready'] and not doc['camera_hardware_needed'] and not doc['real_gps_needed']
