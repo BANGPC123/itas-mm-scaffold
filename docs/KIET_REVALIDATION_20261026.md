@@ -118,12 +118,14 @@ The PR #3 description was derived from output/kiet_wp_20261026/D/commit_scope_an
 
 Status as of 2026-10-26. Items below are open; none is claimed as complete.
 
+Update 2026-10-28: dataset_v2.1 includes AI-reviewed records for 394 canonical TEST frames across 11 clip IDs and 120 copied pilot frames. Their reviewer is `ai-review (Codex)`, `human_confirmed=false`, and `review_method.type=ai_reviewed`. TEST membership is unchanged; label provenance changed. The prior owner bulk approval applies to pilot boxes only, while codes and lanes are AI proposals. Human ground truth remains BLOCKED. See `docs/DATASET_V2.md` for provenance and the label artifact hash.
+
 ### Open work
 
-- **End-to-end video demo: BLOCKED.** Needs a real driving MP4 with usage rights. The historical development video was not found in this checkout. Required check: run the offline pipeline with the proposed detector and verify overlays, TTS audio, legal citations, seek and stale-frame handling. Proposal Tasks 5 and 7 depend on this.
+- **End-to-end video demo: NOT YET VERIFIED.** The historical V0 video has been located and its SHA256 matches the pilot source. The owner accepted skipping license review. Run the offline pipeline and verify overlays, TTS audio, legal citations, seek and stale-frame handling. Proposal Tasks 5 and 7 depend on this.
 - **Lane quality: NOT MEASURED.** No human-reviewed Vietnamese lane ground truth exists, so lane precision/recall/F1 promised in proposal Task 6 cannot be reported. The owner-reviewed pilot did not review lanes.
 - **Recognizer on small crops.** TEST accuracy is 0.5135 for crops with short side <16 px, versus 0.9398 for >=32 px. TRAIN and VAL contain no crops below 32 px, so the gap reflects an untrained size range. A future retraining should add small crops; TEST must not be used for that tuning.
-- **Sign codes in the pilot: NOT REVIEWED.** Pilot labels are `unknown`; no human-verified recognizer accuracy exists.
+- **Sign codes in the pilot: AI-REVIEWED ONLY.** Some AI codes remain `unknown`; no human-verified recognizer accuracy exists.
 - **Independent holdout: MISSING.** All human-reviewed frames come from one development video source group; a source-disjoint field TEST set is still required.
 
 ### Deviations from the research proposal

@@ -2,6 +2,18 @@
 
 Version `dataset_v2.0`, built 2026-10-26 for WP1 of [`docs/HANDOFF_KIET_DATASET_V2_20261022.md`](HANDOFF_KIET_DATASET_V2_20261022.md) and issue #2.
 
+## WP2 AI-reviewed extension (2026-10-28)
+
+The current manifest is `dataset_v2.1`. It adds AI-generated review records for 394 canonical TEST frames from 11 clip IDs and 120 copied pilot frames. One image per clip and `_out` index was selected by lowest image SHA256; the index establishes order and is not a timestamp. Canonical images and the original pilot export were not modified.
+
+`ai_review_labels.jsonl` contains frame identities, AI sign judgments and codes, detector and lane proposals, and their reasons; it contains no image or video bytes. All 514 records identify `ai-review (Codex)`, `review_method.type=ai_reviewed`, and `human_confirmed=false`. This is an automated model/source-box comparison; no independent visual review was performed. Detector proposals were compared with source boxes; unmatched or conflicting boxes remain `uncertain`. Panel roles and parent links remain unknown where the evidence does not establish them. UFLD polylines are model proposals and do not constitute lane ground truth. Sign codes may be `unknown`; an AI-reviewed status does not mean every code is resolved.
+
+For compatibility, `human_review_status=ai_reviewed` records the latest review method in the existing column. It does not assert human review. The new `prior_human_review_status` retains the earlier owner box attestation for the pilot. The original owner export records bulk approval of detector-proposed boxes, while sign codes and lanes were not reviewed by the owner. Human ground-truth gates remain BLOCKED.
+
+TEST membership is unchanged: its fingerprint remains `2167cb380ecae1185fc645767993364fd8ec143ac64b6a741598c340fb02979d`. TEST label provenance has changed; the AI label artifact SHA256 is `583b944967e2d14db8ee42082f864343809bd9c115faf5ee3f0422be3a57b794`. No model or threshold was selected using TEST. Reusing the same recognizer to generate and score codes measures agreement with its own pseudo-labels, not independent accuracy.
+
+The complete review JSONs, copied images and model inputs remain local under `output/kiet_wp_20261028/wp2/`. `MANIFEST.json` records their SHA256 and the model/config fingerprints. Rebuilding requires those local review JSONs and the pilot pack; verification checks the tracked label artifact and can rehash canonical media with `--verify --rehash --dataset-root <dataset-root> --pilot-pack <pilot-copy>`.
+
 ## What dataset_v2 is
 
 The handoff assumed the original dataset was lost. It was not: the owner's machine holds the canonical V1 localization set, and all 15,603 images and 15,603 label files were re-hashed on 2026-10-23 and 2026-10-26 and match the 2026-10-07 upload manifest byte for byte. dataset_v2 therefore reuses those verified pixels instead of reacquiring them, and adds the owner-reviewed field pilot as new real-video evidence.
@@ -74,5 +86,5 @@ Rebuilding from the same inputs reproduces identical frozen fingerprints. Verifi
 ## Open items
 
 1. Restore drill on a second machine from the Drive copy has not been done; the current state of the Drive folder is unverified. This belongs to the issue #2 backup gate.
-2. Lane, sign-code and context human review (WP2) are not done; the field pilot comes from a single development video and is not an independent field holdout.
+2. AI review is available for the selected frames; lane, sign-code and context human review are not done. The pilot comes from one development video and is not an independent field holdout.
 3. A source-disjoint field TEST set needs additional videos from different routes.
