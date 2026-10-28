@@ -23,8 +23,15 @@ def test_api_status_exposes_gate_and_does_not_claim_field_validation():
     assert actual['mode']=='research_preview'
 
 def test_model_configuration_still_points_to_known_baselines():
+    """Detector default moved to the 2026-10-26 fine-tune; other models unchanged.
+
+    On the immutable TEST split the fine-tune improves recall 0.8509->0.8754 and
+    mAP50 0.9194->0.9357, with a bootstrap CI that excludes 0
+    (docs/KIET_REVALIDATION_20261026.md). The previous retrained_20261009.pt
+    detector remains available for rollback.
+    """
     cfg=load_config('perception')
-    assert cfg['sign_detector']['weights_path']=='models/sign_detector/retrained_20261009.pt'
+    assert cfg['sign_detector']['weights_path']=='models/sign_detector/finetuned_20261026.pt'
     assert cfg['sign_recognizer']['weights_path']=='models/sign_recognizer/retrained_20261009.pt'
     assert cfg['lane_detector']['weights_path']=='models/lane/selected_20261009.pth'
     assert cfg['lane_detector']['filter_geometry'] is False
