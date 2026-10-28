@@ -1,7 +1,7 @@
 {
   "storage": "Git LFS (pointer files in Git, binary objects stored in LFS)",
-  "file_count": 18,
-  "total_bytes": 2595356953,
+  "file_count": 19,
+  "total_bytes": 2601914084,
   "files": [
     {
       "path": "data/raw/user_archives_20261014/yolo11_optimized/weights/best.pt",
@@ -87,6 +87,11 @@
       "path": "models/sign_recognizer/retrained_20261009.pt",
       "size_bytes": 6320907,
       "sha256": "c1dad57daf61c104d4f0b6cb2387bc2c53ff397eaf948934e4a53a63babb859b"
+    },
+    {
+      "path": "models/sign_recognizer/retrained_20261028.pt",
+      "size_bytes": 6557131,
+      "sha256": "01d5c677af749ae14170b8008d304fb852f8c0baa7a606a3101c69e2a6b80d30"
     },
     {
       "path": "models/sign_recognizer/robust_val.pt",

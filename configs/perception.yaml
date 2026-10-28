@@ -59,14 +59,15 @@ lane_detector:
   roi_top_ratio: 0.6   # fraction of image height where the region of interest starts
 
 sign_recognizer:
-  weights_path: models/sign_recognizer/retrained_20261009.pt
-  confidence_threshold: 0.63
+  # Rollback: models/sign_recognizer/retrained_20261009.pt with reference_gate_20261011_final.npz
+  # (confidence_threshold 0.63, reference_gate_margin 0.015). The old gate holds embeddings of the
+  # old encoder and cannot be used with the 2026-10-28 model, so no gate is configured.
+  weights_path: models/sign_recognizer/retrained_20261028.pt
+  confidence_threshold: 0.87   # calibrated on VAL; the checkpoint value takes precedence at load time
   min_short_side: 32
   video_min_short_side: 12
-  reference_gate_path: models/sign_recognizer/reference_gate_20261011_final.npz
-  reference_gate_margin: 0.015
   # Keep confident detector boxes that the recognizer scores as background
-  # (codes outside its 30-class list, e.g. I.434a bus stop) as unrecognised
+  # (codes outside its class list; I.434a bus stop is a class since 2026-10-28) as unrecognised
   # signs. Chosen on VAL only: 91% of such boxes at >=0.5 / >=16 px are real signs.
   keep_background_detector_confidence: 0.5
   keep_background_min_side: 16
