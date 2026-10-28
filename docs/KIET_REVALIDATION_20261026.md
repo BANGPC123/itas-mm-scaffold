@@ -145,7 +145,7 @@ Warnings include recurring status messages and are not necessarily false alarms.
 
 ### Open work
 
-- **End-to-end video demo: NOT YET VERIFIED.** The historical V0 video has been located and its SHA256 matches the pilot source. The owner accepted skipping license review. Run the offline pipeline and verify overlays, TTS audio, legal citations, seek and stale-frame handling. Proposal Tasks 5 and 7 depend on this.
+- **End-to-end video demo: PARTIAL.** A 60-second offline V0 demo contains the pipeline overlay, sampled AI-observation speech from VieNeu, and research-only reference captions. Automated audio/overlay checks and full decode pass; intelligibility has not been checked by listening. Manual inspection found overlapping original sign labels in one frame. A returned P.130 passage carries an inconsistent Article 84 locator, and legal currency is unverified. Reliable legal citations, seek handling and per-overlay stale behavior remain open. The video and full report are local ignored artifacts under `output/kiet_wp_20261028/wp4/e2e_demo/`.
 - **Lane quality: NOT MEASURED.** No human-reviewed Vietnamese lane ground truth exists, so lane precision/recall/F1 promised in proposal Task 6 cannot be reported. The owner-reviewed pilot did not review lanes.
 - **Recognizer on small crops.** TEST accuracy is 0.5135 for crops with short side <16 px, versus 0.9398 for >=32 px. TRAIN and VAL contain no crops below 32 px, so the gap reflects an untrained size range. A future retraining should add small crops; TEST must not be used for that tuning.
 - **Sign codes in the pilot: AI-REVIEWED ONLY.** Some AI codes remain `unknown`; no human-verified recognizer accuracy exists.

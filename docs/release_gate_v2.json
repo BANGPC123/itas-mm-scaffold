@@ -1,0 +1,89 @@
+{
+  "schema_version": 2,
+  "title": "ITAS-MM release gate v2",
+  "draft": true,
+  "approval_status": "NOT_APPROVED",
+  "release_decision": "HOLD",
+  "date": "2026-10-28",
+  "provenance": {
+    "branch": "work/kiet-dataset-v2",
+    "evidence_head": "ca27acb2c645e8b18712969eccb8bbc4470d5133",
+    "environment": "Windows, Python 3.12, torch 2.11.0+cu128, RTX 3050 4 GB",
+    "note": "This is a local evidence snapshot, not an approved release or a GitHub-hosted CI result. Paths under output/ are ignored local artifacts and are not included in Git.",
+    "clip_benchmark_json_sha256": "5e3597c697203d252eff59a92cef51956312badb96e2d51b7cf9bc74df41a41b",
+    "temporal_benchmark_json_sha256": "c9a3792d6a4e1de5d8b5ae82866b499f202e2583679bd9706ad4b0e53fb2d573",
+    "demo_report_json_sha256": "6c957677035e6a30e0781588b2010dd43cbd1f73c874db93c2363dfcb696b7e5",
+    "demo_video_sha256": "211c11b1e4fcfbc9b870b62f49cf9ebcc0d0c8ae6048b5ca4f90e2883b83ce8d"
+  },
+  "gates": [
+    {
+      "id": "lfs_integrity",
+      "status": "PASS",
+      "evidence": "git lfs fsck returned Git LFS fsck OK; 17 model artifacts were previously checked against their manifest hashes."
+    },
+    {
+      "id": "dataset_manifest",
+      "status": "PASS",
+      "evidence": "dataset_v2.1 verify --rehash passed for 15603 canonical images and the copied pilot; TEST membership SHA256 is unchanged.",
+      "limitations": "514 AI-reviewed records change label provenance, not image membership; no image bytes are tracked."
+    },
+    {
+      "id": "core_ci_local",
+      "status": "PASS",
+      "evidence": "The workflow's Python tests have no failures in the full local run; Node tests passed 7/7, frontend build passed, and offline retrieval evaluation exited 0.",
+      "limitations": "GitHub-hosted workflow status is separate and not established by these local checks."
+    },
+    {
+      "id": "full_test_suite",
+      "status": "FAIL",
+      "evidence": "477 passed, 41 failed in 23.74 seconds, including local acceptance tests. Local log: output/kiet_wp_20261028/wp4/full_pytest_final2.log.",
+      "gaps": ["35 legacy artifacts are unavailable", "5 failures require missing real inputs", "1 local detector config conflicts with the legacy baseline assertion"]
+    },
+    {
+      "id": "clip_detector_benchmark",
+      "status": "PASS",
+      "evidence": "394 TEST frames, 11 clip groups, 1028 canonical boxes; baseline precision/recall 0.8838/0.7772, candidate 0.8940/0.7792.",
+      "limitations": "Canonical source annotations are not independent human field GT; paired clip-bootstrap intervals for both differences include zero."
+    },
+    {
+      "id": "recognizer_ai_agreement",
+      "status": "PASS",
+      "evidence": "Baseline 353/375 and candidate 360/381 agreement with eligible matched AI labels.",
+      "limitations": "The same recognizer generated those labels, and candidate matching informed eligibility; these are circular agreement figures, not independent accuracy."
+    },
+    {
+      "id": "temporal_measurement",
+      "status": "PASS",
+      "evidence": "Three fixed 60-second V0 segments were rendered and fully decoded; inference measured 3.12-4.09 calls/s and rendering 10.36-13.18 frames/s.",
+      "limitations": "No event GT; repeated warnings include status notices; stale count is a crop-age proxy, not verification of overlay age. TTS was disabled during measurement."
+    },
+    {
+      "id": "human_ground_truth",
+      "status": "BLOCKED",
+      "gaps": ["AI-reviewed codes and lane proposals are not human GT", "The prior owner bulk approval applies only to detector-proposed pilot boxes", "No independently reviewed source-disjoint field set is available"]
+    },
+    {
+      "id": "lane_quality",
+      "status": "BLOCKED",
+      "evidence": "35 of 394 selected TEST frames have lane proposals.",
+      "gaps": ["No human lane GT exists; the proposal rate is not precision, recall, or F1"]
+    },
+    {
+      "id": "e2e_media",
+      "status": "PASS",
+      "evidence": "A 60-second local demo contains rendered overlays, two synthesized AI-observation speech events, and nine research-only reference captions; full video/audio decode and local acceptance checks passed.",
+      "limitations": "Speech intelligibility was not assessed by listening; some original sign labels overlap in one visually inspected frame."
+    },
+    {
+      "id": "legal_references",
+      "status": "BLOCKED",
+      "evidence": "A retrieved P.130 excerpt is associated with the locator Article 84, which does not match its excerpt content.",
+      "gaps": ["Repair and independently verify locator attribution and legal currency before relying on references"]
+    },
+    {
+      "id": "e2e_video_release",
+      "status": "BLOCKED",
+      "gaps": ["Legal references are unverified", "Seek behavior and age of individual rendered overlays were not verified end to end", "Independent human field GT is absent"]
+    }
+  ]
+}
