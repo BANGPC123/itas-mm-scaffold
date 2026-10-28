@@ -76,7 +76,7 @@ class AuditPipeline:
         return result
 
 
-def run(source, output, starts, duration, analysis_hz):
+def run(source, output, starts, duration, analysis_hz, recognizer=None, reference_gate=None):
     import torch
     from src.pipeline import orchestrator
     from scripts.render_offline_video_max_20261014 import render
@@ -89,9 +89,15 @@ def run(source, output, starts, duration, analysis_hz):
     output.mkdir(parents=True)
     original_load = orchestrator.load_config
     perception = original_load("perception")
+    # --recognizer evaluates a candidate without editing configs/perception.yaml; the gate is dropped unless one is given.
     checkpoints = {"detector": ROOT / "models/sign_detector/finetuned_20261026.pt",
-                   "recognizer": ROOT / "models/sign_recognizer/retrained_20261009.pt",
+                   "recognizer": Path(recognizer).resolve() if recognizer else ROOT / "models/sign_recognizer/retrained_20261009.pt",
                    "lane": ROOT / "models/lane/selected_20261009.pth"}
+    if recognizer:
+        perception["sign_recognizer"]["weights_path"] = str(checkpoints["recognizer"])
+        perception["sign_recognizer"].pop("reference_gate_path", None)
+        if reference_gate:
+            perception["sign_recognizer"]["reference_gate_path"] = str(Path(reference_gate).resolve())
     for section, expected in (("sign_detector", checkpoints["detector"]),
                               ("sign_recognizer", checkpoints["recognizer"]),
                               ("lane_detector", checkpoints["lane"])):
@@ -102,6 +108,8 @@ def run(source, output, starts, duration, analysis_hz):
 
     def load_scoped(name):
         cfg = original_load(name)
+        if name == "perception" and recognizer:
+            cfg["sign_recognizer"] = perception["sign_recognizer"]
         if name == "interaction":
             cfg["tts"]["output_dir"] = str(output / "unused_tts_cache")
         return cfg
@@ -149,6 +157,8 @@ def run(source, output, starts, duration, analysis_hz):
                                                for name in ("perception", "context", "reasoning", "interaction")},
                              "model_sha256": {name: sha256(path) for name, path in checkpoints.items()},
                              "runner_sha256": sha256(Path(__file__)),
+                             "recognizer_override": str(checkpoints["recognizer"]) if recognizer else None,
+                             "reference_gate": (str(reference_gate) if reference_gate else None) if recognizer else perception["sign_recognizer"].get("reference_gate_path"),
                              "hardware": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "CPU",
                              "torch": torch.__version__, "analysis_hz": analysis_hz, "warmup_frames": 0,
                              "command": sys.argv, "tts_output_override": "WP3 output; synthesis disabled"}}
@@ -163,8 +173,10 @@ def main():
     parser.add_argument("--starts", nargs="+", type=int, default=[0, 390, 780])
     parser.add_argument("--duration", type=float, default=60)
     parser.add_argument("--analysis-hz", type=float, default=6)
+    parser.add_argument("--recognizer", type=Path, help="candidate recognizer checkpoint (config left unchanged)")
+    parser.add_argument("--reference-gate", type=Path, help="reference gate for the candidate; omitted means no gate")
     args = parser.parse_args()
-    result = run(args.source, args.output, args.starts, args.duration, args.analysis_hz)
+    result = run(args.source, args.output, args.starts, args.duration, args.analysis_hz, args.recognizer, args.reference_gate)
     print(json.dumps({"status": result["status"], "segments": len(result["segments"])}), flush=True)
 
 
