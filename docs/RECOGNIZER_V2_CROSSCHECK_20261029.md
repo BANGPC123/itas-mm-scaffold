@@ -68,14 +68,14 @@ Every prescribed 60-second harvest segment contains six pilot TEST frames. The i
 
 ## Part 4: video measurements
 
-The selected V0 evaluation segments overlap the development pilot TEST video and are descriptive only. No event GT exists; precision and recall are BLOCKED. A and B/C use identical instrumented protocols; C uses T2. D is BLOCKED because gate v2 could not be constructed. Counts of unknown are sampled detection displays, not unique signs.
+The selected V0 evaluation segments overlap the development pilot TEST video and are descriptive only. No event GT exists; precision and recall are BLOCKED. A and B/C use identical instrumented protocols; C uses T2. D is BLOCKED because gate v2 could not be constructed. Counts of unknown are sampled detection displays, not unique signs. The blinded video review pack contains 158 track-label crops and frames; 0 best-frame extractions were unresolved. Review remains BLOCKED. Warnings include repeated status messages, not necessarily false alarms. Bus matches use IoU >=0.3 against a prior model track at the same timestamps; one prior frame was visually inspected, but this is not independent event GT.
 
-| Config | Completed segments | Tracks | Confirmed track-label pairs | Unknown samples | Alert episodes | Inference FPS | Bus matches |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| A | 5/5 | 326 | 46 | 634 | 104 | 3.014 | 0 |
-| B | 5/5 | 323 | 54 | 586 | 101 | 3.317 | 9 |
-| C | 5/5 | 303 | 58 | 507 | 102 | 3.313 | 9 |
-| D | 0/5 | BLOCKED | BLOCKED | BLOCKED | BLOCKED | BLOCKED | BLOCKED |
+| Config | Segments | Tracks | Confirmed pairs | Unknown samples | Alert samples / episodes | Warnings | Inference / render FPS | Bus matches |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| A | 5/5 | 326 | 46 | 634 | 484 / 104 | 9025 | 3.014 / 10.053 | 0 |
+| B | 5/5 | 323 | 54 | 586 | 465 / 101 | 9025 | 3.317 / 11.055 | 9 |
+| C | 5/5 | 303 | 58 | 507 | 467 / 102 | 9025 | 3.313 / 11.034 | 9 |
+| D | 0/5 | BLOCKED | BLOCKED | BLOCKED | BLOCKED | BLOCKED | BLOCKED | BLOCKED |
 
 Config B pre-temporal 12-16 px: 0 / 42 returned a code (rate 0.0000); repeated samples are not independent. The multiscale tiny-crop rule also requires agreement and confidence >=0.95. Original training crops were >=16 px, but training augmentation simulated lower resolutions, including 10 and 14 px.
 
