@@ -120,6 +120,29 @@ Status as of 2026-10-26. Items below are open; none is claimed as complete.
 
 Update 2026-10-28: dataset_v2.1 includes AI-reviewed records for 394 canonical TEST frames across 11 clip IDs and 120 copied pilot frames. Their reviewer is `ai-review (Codex)`, `human_confirmed=false`, and `review_method.type=ai_reviewed`. TEST membership is unchanged; label provenance changed. The prior owner bulk approval applies to pilot boxes only, while codes and lanes are AI proposals. Human ground truth remains BLOCKED. See `docs/DATASET_V2.md` for provenance and the label artifact hash.
 
+### TEST clip benchmark, 2026-10-28
+
+The fixed evaluation uses 394 copied TEST frames from 11 clip IDs and 1,028 canonical source boxes. Detector confidence is 0.35, NMS IoU 0.45, and matching IoU 0.5; matching maximizes the number of pairs. No threshold or model was selected on TEST.
+
+| Model | Precision | Recall | Code agreement with AI labels | Matched eligible code boxes |
+|---|---:|---:|---:|---:|
+| Baseline `retrained_20261009.pt` | 0.8838 | 0.7772 | 0.9413 | 375 / 381 |
+| Candidate `finetuned_20261026.pt` | 0.8940 | 0.7792 | 0.9449 | 381 / 381 |
+
+Paired bootstrap over 11 clip groups, 1,000 resamples: candidate-minus-baseline precision 95% CI [-0.0041, 0.0297] and recall 95% CI [-0.0125, 0.0156]. Both intervals include zero. One group has only one selected frame, and frames within groups are not independent. The source boxes are canonical annotations, not independently reviewed human field GT. Code labels were generated using the same recognizer and candidate detector; agreement is circular and is not independently measured recognition accuracy. UFLD produced proposals in 35 / 394 frames; this is not lane F1. Full provenance and per-frame data are local under `output/kiet_wp_20261028/wp3/clip_benchmark/`, which is ignored by Git.
+
+### Offline temporal measurement
+
+Three fixed 60-second V0 segments were sampled at 6 Hz and rendered at 30 FPS. The first segment starts cold, the later segments reuse the loaded models; no warmup frames were excluded. TTS was disabled during measurement.
+
+| V0 start | Warning occurrences | Consecutive repeated warnings | Alert samples | Consecutive repeated alerts | Stale alert samples | Inference FPS | Render FPS |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 0 s | 1,800 | 1,704 | 121 | 69 | 0 | 3.12 | 10.36 |
+| 390 s | 1,800 | 1,711 | 43 | 25 | 0 | 3.64 | 12.00 |
+| 780 s | 1,800 | 1,715 | 132 | 127 | 0 | 4.09 | 13.18 |
+
+Warnings include recurring status messages and are not necessarily false alarms. Alerts are verified speech if present, otherwise neutral AI observation text. Stale is a proxy: an alert sample with any sign best-crop age over 750 ms; it does not measure the age of each rendered overlay or establish that an alert is correct. Inference FPS is sampled pipeline calls divided by their total wall time; render FPS includes encoding and decode verification. No human event GT is available. The measured JSON and per-frame events are local, ignored artifacts under `output/kiet_wp_20261028/wp3/temporal_benchmark/`.
+
 ### Open work
 
 - **End-to-end video demo: NOT YET VERIFIED.** The historical V0 video has been located and its SHA256 matches the pilot source. The owner accepted skipping license review. Run the offline pipeline and verify overlays, TTS audio, legal citations, seek and stale-frame handling. Proposal Tasks 5 and 7 depend on this.
