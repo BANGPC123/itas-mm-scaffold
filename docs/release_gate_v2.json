@@ -10,6 +10,13 @@
     "sha256": "c7fc0b607d603c88d33e02fa9986a787d527f8050b74d204fce40b365149541f",
     "previous": "models/sign_detector/retrained_20261009.pt"
   },
+  "default_sign_recognizer": {
+    "weights_path": "models/sign_recognizer/retrained_20261028.pt",
+    "sha256": "01d5c677af749ae14170b8008d304fb852f8c0baa7a606a3101c69e2a6b80d30",
+    "previous": "models/sign_recognizer/retrained_20261009.pt",
+    "reference_gate": null,
+    "note": "The 2026-10-09 reference gate holds old-encoder embeddings and was not rebuilt (negative-crop manifest missing); see docs/RECOGNIZER_V2_20261028.md."
+  },
   "provenance": {
     "branch": "work/kiet-dataset-v2",
     "evidence_head": "ca27acb2c645e8b18712969eccb8bbc4470d5133",
@@ -18,7 +25,9 @@
     "clip_benchmark_json_sha256": "5e3597c697203d252eff59a92cef51956312badb96e2d51b7cf9bc74df41a41b",
     "temporal_benchmark_json_sha256": "c9a3792d6a4e1de5d8b5ae82866b499f202e2583679bd9706ad4b0e53fb2d573",
     "demo_report_json_sha256": "6c957677035e6a30e0781588b2010dd43cbd1f73c874db93c2363dfcb696b7e5",
-    "demo_video_sha256": "211c11b1e4fcfbc9b870b62f49cf9ebcc0d0c8ae6048b5ca4f90e2883b83ce8d"
+    "demo_video_sha256": "211c11b1e4fcfbc9b870b62f49cf9ebcc0d0c8ae6048b5ca4f90e2883b83ce8d",
+    "recognizer_v2_branch": "work/kiet-recognizer-v2",
+    "ai_ontology_extension_labels_sha256": "090f17b4e1a7c3fa90adf450c4aeb5fe97acbbd3087f6e9fdb41c1c101058cd9"
   },
   "gates": [
     {
@@ -55,6 +64,12 @@
       "status": "PASS",
       "evidence": "Baseline 353/375 and candidate 360/381 agreement with eligible matched AI labels.",
       "limitations": "The same recognizer generated those labels, and candidate matching informed eligibility; these are circular agreement figures, not independent accuracy."
+    },
+    {
+      "id": "recognizer_v2",
+      "status": "PASS_WITH_LIMITS",
+      "evidence": "Owner rule met on AI-assisted TEST labels, same crops, raw argmax: 30 old codes >=32 px accuracy 0.9371 -> 0.9697 (95% image-bootstrap CI of the difference +0.0209..+0.0452), 16-32 px 0.9309 -> 0.9815, <16 px 0.5139 -> 0.7839; VAL macro-F1 over 55 main classes 0.9511 (epoch maximum). 87 codes plus background. V0 segment 0 confirms I.434a from 14.67 s to 16.17 s. pytest tests exit 0 (498 passed, 11 skipped, 38 deselected), acceptance_v2 11/11, node 7/7, frontend build pass.",
+      "limitations": "All labels are AI-assisted (extension labels: two passes by one model, 76.9% raw agreement, 976 of 1531 boxes kept); no human GT. No reference gate for the new encoder. 32 low-support classes are trained but mostly lack reliable TEST support; I.401 and W.205c have no TRAIN crop. Three codes (I.423, P.103c, P.127c) return only the generic Article 84 legal heading."
     },
     {
       "id": "temporal_measurement",
