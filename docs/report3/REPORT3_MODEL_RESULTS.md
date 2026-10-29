@@ -220,6 +220,8 @@ P5 samples 60 equally spaced midpoint frames across the three Hanoi EVAL videos:
 
 Among all day frames, the fractions good/partial/fail/no_visible_lane are 0.0000/0.1000/0.5000/0.4000; at night they are 0.0000/0.3000/0.5000/0.2000. The visible-only denominator excludes no_visible_lane. Paint often vanishes at intersections or is hidden by vehicles. Failures include missing visible markings, jagged interior curves and rectangular outliers. This is AI qualitative review, not lane F1, and cannot establish that night is better than day on three videos. Vietnamese human lane GT is still absent.
 
+An exploratory lane-GT check was also run on 30 of these frames (15 day, 15 night; seed 20261030). The GT was drawn blind to the detector output by one AI model (Claude Haiku 5.5 in Claude Code; `human_gt=false`; GT file SHA256 `ac3c1523227194fd81b2aad0e2de952ea6159707a261cc26e4c5a56f23fe9090`, local output only). Under the protocol fixed beforehand (30 px polyline masks, IoU > 0.5, optimal matching) it gives TP 1, FP 37, FN 23 and F1 0.032 (day 0.000, night 0.038); the most lenient sensitivity setting (50 px, IoU 0.3) gives 0.258. **This is not reported as a lane result.** The GT comes from a single model, its pixel accuracy is unverified, it covers only the visible segments while the detector draws full-length curves, and in several frames it follows curbs, barriers or medians instead of painted markings, so it does not match the intended definition. A visual check of 20 of the 30 frames shows both effects: detector curves that follow the same edge as the GT yet fail the IoU test, and genuine failures (jagged curves crossing vehicles; no output on 5 of the 14 frames that have GT). The qualitative table above remains the only lane evidence.
+
 ## VI. Results Interpretation and Visualization
 
 ### VI.1 Small signs are the main detector weakness
@@ -373,7 +375,7 @@ The all-size consensus subset has 110/110 correct but covers only five classes. 
 
 ### VII.3 Limitations and deviations from the proposal
 
-- Lane quality is not measured: no human-reviewed Vietnamese lane ground truth exists.
+- Lane quality is not measured: no human-reviewed Vietnamese lane ground truth exists. Only the qualitative 60-frame proxy in V.8 exists; the exploratory AI-drawn GT check described there is not a lane result.
 - The end-to-end video demonstration (camera to speech) has not been re-verified on new footage.
 - Contrastive-learning feature separation proposed for small signs was not implemented; SAHI exists but is disabled and unevaluated.
 - Road-zone context uses simulated GPS only.
