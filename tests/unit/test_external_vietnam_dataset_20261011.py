@@ -1,4 +1,5 @@
 """External Vietnam dataset source evidence and no-fake-GT regression checks."""
+import pytest
 from pathlib import Path
 import json,hashlib
 from src.evaluation.label_review_schema import validate_review
@@ -42,6 +43,7 @@ def test_new_independently_sourced_vietnam_videos_have_distinct_copyright_record
         assert hashlib.sha256(file.read_bytes()).hexdigest()==row['sha256']
         assert row['status'].startswith('UNREVIEWED_')
 
+@pytest.mark.legacy_artifact
 def test_59_new_video_frames_and_five_ai_ads_are_all_unconfirmed():
     frames=ads=0
     hashes=set()
@@ -65,6 +67,7 @@ def test_59_new_video_frames_and_five_ai_ads_are_all_unconfirmed():
     assert frames==59
     assert ads==5
 
+@pytest.mark.legacy_artifact
 def test_external_pictorial_sign_images_remain_ai_quality_review_only():
     pack=REV/'external_vietspeedyolo_20261011'
     source=load(pack/'review_manifest.json')
@@ -74,6 +77,7 @@ def test_external_pictorial_sign_images_remain_ai_quality_review_only():
     assert audit['ai_rejected_obvious_augmentation']==5
     assert validate_review(source)['human_confirmed']==0
 
+@pytest.mark.legacy_artifact
 def test_lane_spotcheck_has_no_unearned_field_F1():
     summary=load(ROOT/'output/evaluation/commons_lane_spotcheck_20261011/summary.json')
     assert summary['frames_evaluated']==12

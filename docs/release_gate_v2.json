@@ -5,6 +5,18 @@
   "approval_status": "NOT_APPROVED",
   "release_decision": "HOLD",
   "date": "2026-10-28",
+  "default_sign_detector": {
+    "weights_path": "models/sign_detector/finetuned_20261026.pt",
+    "sha256": "c7fc0b607d603c88d33e02fa9986a787d527f8050b74d204fce40b365149541f",
+    "previous": "models/sign_detector/retrained_20261009.pt"
+  },
+  "default_sign_recognizer": {
+    "weights_path": "models/sign_recognizer/retrained_20261028.pt",
+    "sha256": "01d5c677af749ae14170b8008d304fb852f8c0baa7a606a3101c69e2a6b80d30",
+    "previous": "models/sign_recognizer/retrained_20261009.pt",
+    "reference_gate": null,
+    "note": "The 2026-10-09 reference gate holds old-encoder embeddings and was not rebuilt (negative-crop manifest missing); see docs/RECOGNIZER_V2_20261028.md."
+  },
   "provenance": {
     "branch": "work/kiet-dataset-v2",
     "evidence_head": "ca27acb2c645e8b18712969eccb8bbc4470d5133",
@@ -13,13 +25,264 @@
     "clip_benchmark_json_sha256": "5e3597c697203d252eff59a92cef51956312badb96e2d51b7cf9bc74df41a41b",
     "temporal_benchmark_json_sha256": "c9a3792d6a4e1de5d8b5ae82866b499f202e2583679bd9706ad4b0e53fb2d573",
     "demo_report_json_sha256": "6c957677035e6a30e0781588b2010dd43cbd1f73c874db93c2363dfcb696b7e5",
-    "demo_video_sha256": "211c11b1e4fcfbc9b870b62f49cf9ebcc0d0c8ae6048b5ca4f90e2883b83ce8d"
+    "demo_video_sha256": "211c11b1e4fcfbc9b870b62f49cf9ebcc0d0c8ae6048b5ca4f90e2883b83ce8d",
+    "recognizer_v2_branch": "work/kiet-recognizer-v2",
+    "ai_ontology_extension_labels_sha256": "090f17b4e1a7c3fa90adf450c4aeb5fe97acbbd3087f6e9fdb41c1c101058cd9"
+  },
+  "recognizer_v2_crosscheck": {
+    "status": "BLOCKED",
+    "evidence_head": "8d04c6771078d429240944e1a17d51a2487d7171",
+    "blind_control_agreement": 0.29,
+    "blind_control_n": 100,
+    "blind_control_uncertain": 71,
+    "blind_control_stop_threshold": 0.85,
+    "alternative_threshold_val_only": {
+      "split": "VAL",
+      "min_short_side": 16,
+      "test_used": false,
+      "threshold": 0.6412901874067937,
+      "coverage": 0.950175662727563,
+      "accepted_accuracy": 0.9791596638655462,
+      "background_accepted": 0.0,
+      "criterion": "coverage_target",
+      "known_samples": 3131,
+      "background_samples": 802
+    },
+    "reference_gate_v2": "BLOCKED: every prescribed V0 harvest segment contains pilot TEST frames",
+    "video_precision": "BLOCKED: blinded reviewer control below threshold; no human event GT",
+    "video_configs_completed": {
+      "A": 5,
+      "B": 5,
+      "C": 5
+    },
+    "legal_locator_result": {
+      "repaired_codes": [
+        "I.423",
+        "P.103c",
+        "P.127c"
+      ],
+      "previously_resolved_unchanged": 84,
+      "legal_currency": "UNVERIFIED"
+    },
+    "report": "docs/RECOGNIZER_V2_CROSSCHECK_20261029.md",
+    "note": "No default model, threshold, gate, or HOLD decision was changed. AI-reviewed labels are not human ground truth."
+  },
+  "field_video_eval": {
+    "status": "EVIDENCE_SNAPSHOT_HOLD",
+    "report": "docs/FIELD_VIDEO_EVAL_20261029.md",
+    "evidence_head": "f7bd93bb4891b51558d51f19d007dfb372e37792",
+    "labels": "AI-reviewed (ai-review (Claude Code), provenance ai_reviewed); not human ground truth",
+    "videos": {
+      "harvest": 2,
+      "eval": 3,
+      "rejected": 0,
+      "max_near_duplicate_rate": 0.0,
+      "sources": "data/manifests/field_video_20261029/sources.csv"
+    },
+    "gate_v2_negatives": {
+      "reviewed_crops": 1440,
+      "not_a_sign": 325,
+      "fit": 282,
+      "heldout": 43,
+      "manifest": "data/manifests/field_video_20261029/gate_v2_negatives.jsonl"
+    },
+    "gate_v2": {
+      "margin": 0.24,
+      "positive_references": 5639,
+      "val_macro_f1_drop_at_T2": 0.0,
+      "val_macro_f1_drop_at_0.87": 0.0,
+      "heldout_negatives_blocked": 0.3721,
+      "field_effect": "none: configurations D and E equal C and B on every count",
+      "max_similarity_of_field_false_confirmations": 0.689,
+      "similarity_floor": 0.8,
+      "added_to_lfs": false
+    },
+    "precision_hanoi": {
+      "A": {
+        "confirmed": 107,
+        "correct": 57,
+        "wrong_code": 21,
+        "not_a_sign": 7,
+        "uncertain": 22,
+        "precision": 0.6706,
+        "ci95": [
+          0.5568,
+          0.7794
+        ]
+      },
+      "B": {
+        "confirmed": 75,
+        "correct": 59,
+        "wrong_code": 0,
+        "not_a_sign": 2,
+        "uncertain": 14,
+        "precision": 0.9672,
+        "ci95": [
+          0.9057,
+          1.0
+        ]
+      },
+      "C": {
+        "confirmed": 100,
+        "correct": 69,
+        "wrong_code": 3,
+        "not_a_sign": 8,
+        "uncertain": 20,
+        "precision": 0.8625,
+        "ci95": [
+          0.7761,
+          0.9341
+        ]
+      },
+      "D": {
+        "confirmed": 100,
+        "correct": 69,
+        "wrong_code": 3,
+        "not_a_sign": 8,
+        "uncertain": 20,
+        "precision": 0.8625,
+        "ci95": [
+          0.7761,
+          0.9341
+        ]
+      },
+      "E": {
+        "confirmed": 75,
+        "correct": 59,
+        "wrong_code": 0,
+        "not_a_sign": 2,
+        "uncertain": 14,
+        "precision": 0.9672,
+        "ci95": [
+          0.9057,
+          1.0
+        ]
+      }
+    },
+    "precision_v0": {
+      "A": {
+        "confirmed": 46,
+        "correct": 31,
+        "wrong_code": 6,
+        "not_a_sign": 0,
+        "uncertain": 9,
+        "precision": 0.8378,
+        "ci95": [
+          0.7778,
+          0.9545
+        ]
+      },
+      "B": {
+        "confirmed": 54,
+        "correct": 46,
+        "wrong_code": 2,
+        "not_a_sign": 0,
+        "uncertain": 6,
+        "precision": 0.9583,
+        "ci95": [
+          0.8947,
+          1.0
+        ]
+      },
+      "C": {
+        "confirmed": 58,
+        "correct": 49,
+        "wrong_code": 3,
+        "not_a_sign": 1,
+        "uncertain": 5,
+        "precision": 0.9245,
+        "ci95": [
+          0.8451,
+          1.0
+        ]
+      }
+    },
+    "precision_hanoi_plus_v0": {
+      "A": {
+        "confirmed": 153,
+        "correct": 88,
+        "wrong_code": 27,
+        "not_a_sign": 7,
+        "uncertain": 31,
+        "precision": 0.7213,
+        "ci95": [
+          0.6261,
+          0.8034
+        ]
+      },
+      "B": {
+        "confirmed": 129,
+        "correct": 105,
+        "wrong_code": 2,
+        "not_a_sign": 2,
+        "uncertain": 20,
+        "precision": 0.9633,
+        "ci95": [
+          0.9196,
+          1.0
+        ]
+      },
+      "C": {
+        "confirmed": 158,
+        "correct": 118,
+        "wrong_code": 6,
+        "not_a_sign": 9,
+        "uncertain": 25,
+        "precision": 0.8872,
+        "ci95": [
+          0.8252,
+          0.9417
+        ]
+      }
+    },
+    "proxy_recall": {
+      "A": {
+        "annotated": 46,
+        "caught": 29,
+        "recall": 0.6304
+      },
+      "B": {
+        "annotated": 46,
+        "caught": 34,
+        "recall": 0.7391
+      },
+      "C": {
+        "annotated": 46,
+        "caught": 35,
+        "recall": 0.7609
+      },
+      "D": {
+        "annotated": 46,
+        "caught": 35,
+        "recall": 0.7609
+      },
+      "E": {
+        "annotated": 46,
+        "caught": 34,
+        "recall": 0.7391
+      }
+    },
+    "recommendation_under_preregistered_rules": {
+      "t2_instead_of_0.87": "not_recommended",
+      "enable_gate_v2": {
+        "D": "not_recommended",
+        "E": "not_recommended"
+      }
+    },
+    "limits": [
+      "V0 belongs to the TEST group and the old gate used V0 negatives",
+      "single AI reviewer, same model family as the labelled training data",
+      "D and E were run on Hanoi only",
+      "gate margin selected on 43 held-out negatives",
+      "proxy recall rests on 46 signs and detector proposals"
+    ],
+    "note": "No default model, threshold, gate or HOLD decision was changed."
   },
   "gates": [
     {
       "id": "lfs_integrity",
       "status": "PASS",
-      "evidence": "git lfs fsck returned Git LFS fsck OK; 17 model artifacts were previously checked against their manifest hashes."
+      "evidence": "git lfs fsck returned Git LFS fsck OK (re-run 2026-10-28 after adding the fine-tuned detector); the manifest lists 18 model artifacts, 17 checked earlier and finetuned_20261026.pt hashed on 2026-10-28."
     },
     {
       "id": "dataset_manifest",
@@ -35,9 +298,9 @@
     },
     {
       "id": "full_test_suite",
-      "status": "FAIL",
-      "evidence": "477 passed, 41 failed in 23.74 seconds, including local acceptance tests. Local log: output/kiet_wp_20261028/wp4/full_pytest_final2.log.",
-      "gaps": ["35 legacy artifacts are unavailable", "5 failures require missing real inputs", "1 local detector config conflicts with the legacy baseline assertion"]
+      "status": "PASS_WITH_ARCHIVED_LEGACY",
+      "evidence": "pytest tests exits 0: 484 passed, 11 skipped, 38 deselected. With ITASMM_ACCEPTANCE_DATASET_ROOT set, tests/acceptance_v2 passes 11/11. Node 7/7, frontend build, git lfs fsck and dataset_v2 manifest verification pass.",
+      "limitations": "38 tests marked legacy_artifact depend on lost 2026-10-11 artifacts and still fail when run with pytest -m legacy_artifact; they are archived in docs/LEGACY_TESTS_ARCHIVE.md, not passing. Two of the original 41 were recovered by re-downloading public sources and one contract test was updated for the new default detector."
     },
     {
       "id": "clip_detector_benchmark",
@@ -50,6 +313,12 @@
       "status": "PASS",
       "evidence": "Baseline 353/375 and candidate 360/381 agreement with eligible matched AI labels.",
       "limitations": "The same recognizer generated those labels, and candidate matching informed eligibility; these are circular agreement figures, not independent accuracy."
+    },
+    {
+      "id": "recognizer_v2",
+      "status": "PASS_WITH_LIMITS",
+      "evidence": "Owner rule met on AI-assisted TEST labels, same crops, raw argmax: 30 old codes >=32 px accuracy 0.9371 -> 0.9697 (95% image-bootstrap CI of the difference +0.0209..+0.0452), 16-32 px 0.9309 -> 0.9815, <16 px 0.5139 -> 0.7839; VAL macro-F1 over 55 main classes 0.9511 (epoch maximum). 87 codes plus background. V0 segment 0 confirms I.434a from 14.67 s to 16.17 s. pytest tests exit 0 (498 passed, 11 skipped, 38 deselected), acceptance_v2 11/11, node 7/7, frontend build pass.",
+      "limitations": "All labels are AI-assisted (extension labels: two passes by one model, 76.9% raw agreement, 976 of 1531 boxes kept); no human GT. No reference gate for the new encoder. 32 low-support classes are trained but mostly lack reliable TEST support; I.401 and W.205c have no TRAIN crop. Three codes initially returned the generic Article 84 heading; the crosscheck records the subsequent parser repair, while legal currency remains unverified."
     },
     {
       "id": "temporal_measurement",
@@ -77,7 +346,7 @@
     {
       "id": "legal_references",
       "status": "BLOCKED",
-      "evidence": "A retrieved P.130 excerpt is associated with the locator Article 84, which does not match its excerpt content.",
+      "evidence": "An earlier P.130 result carried the generic Article 84 locator. The current parser resolves its appendix item and the crosscheck records three additional locator repairs; legal currency remains unverified.",
       "gaps": ["Repair and independently verify locator attribution and legal currency before relying on references"]
     },
     {

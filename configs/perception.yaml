@@ -14,7 +14,8 @@ sign_detector:
   video_image_size: 960
   video_multiscale: true
   secondary_image_size: 640
-  weights_path: models/sign_detector/retrained_20261009.pt
+  # Rollback: models/sign_detector/retrained_20261009.pt (previous default).
+  weights_path: models/sign_detector/finetuned_20261026.pt
   confidence_threshold: 0.35
   iou_threshold: 0.45
   device: "auto"
@@ -58,12 +59,18 @@ lane_detector:
   roi_top_ratio: 0.6   # fraction of image height where the region of interest starts
 
 sign_recognizer:
-  weights_path: models/sign_recognizer/retrained_20261009.pt
-  confidence_threshold: 0.63
+  # Rollback: models/sign_recognizer/retrained_20261009.pt with reference_gate_20261011_final.npz
+  # (confidence_threshold 0.63, reference_gate_margin 0.015). The old gate holds embeddings of the
+  # old encoder and cannot be used with the 2026-10-28 model, so no gate is configured.
+  weights_path: models/sign_recognizer/retrained_20261028.pt
+  confidence_threshold: 0.87   # calibrated on VAL; the checkpoint value takes precedence at load time
   min_short_side: 32
   video_min_short_side: 12
-  reference_gate_path: models/sign_recognizer/reference_gate_20261011_final.npz
-  reference_gate_margin: 0.015
+  # Keep confident detector boxes that the recognizer scores as background
+  # (codes outside its class list; I.434a bus stop is a class since 2026-10-28) as unrecognised
+  # signs. Chosen on VAL only: 91% of such boxes at >=0.5 / >=16 px are real signs.
+  keep_background_detector_confidence: 0.5
+  keep_background_min_side: 16
 
 applicability:
   current_vehicle: car

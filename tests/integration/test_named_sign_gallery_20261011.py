@@ -1,4 +1,5 @@
 """Prerendered second video must contain names and speech, not generic narration."""
+import pytest
 import json
 from pathlib import Path
 from fastapi.testclient import TestClient
@@ -7,6 +8,7 @@ from backend.main import app
 ROOT=Path(__file__).resolve().parents[2]
 OUT=ROOT/'output/capstone_sign_gallery_named_tts_20261011'
 
+@pytest.mark.legacy_artifact
 def test_new_gallery_has_actual_scene_voice_and_vietnamese_sign_names():
     summary=json.loads((OUT/'summary.json').read_text(encoding='utf-8'))
     assert summary['scenes']==24
@@ -20,6 +22,7 @@ def test_new_gallery_has_actual_scene_voice_and_vietnamese_sign_names():
                for label,name in known['labels'])
     assert 'P.130' in known['speech'] and 'chưa xác minh' in known['speech']
 
+@pytest.mark.legacy_artifact
 def test_live_web_video_route_serves_named_gallery():
     c=TestClient(app)
     response=c.get('/pipeline/capstone-video/signs',headers={'Range':'bytes=0-1023'})

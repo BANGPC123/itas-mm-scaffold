@@ -1,7 +1,9 @@
 """Capstone pre-rendered video serving is explicitly source-whitelisted."""
+import pytest
 from fastapi.testclient import TestClient
 from backend.main import app
 
+@pytest.mark.legacy_artifact
 def test_capstone_status_matches_offline_only_requirements():
     r=TestClient(app).get('/pipeline/capstone-status')
     assert r.status_code==200
@@ -12,6 +14,7 @@ def test_capstone_status_matches_offline_only_requirements():
     assert not data['research_goals_fully_validated']
     assert len(data['remaining_gaps'])>=2
 
+@pytest.mark.legacy_artifact
 def test_capstone_video_stream_has_correct_mime_and_rejects_other_names():
     with TestClient(app) as client:
         for name in ('lane','signs'):
