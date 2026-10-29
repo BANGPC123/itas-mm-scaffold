@@ -5,6 +5,7 @@ docs/report3/REPORT3_MODEL_RESULTS.md for their SHA256 references.
 Usage: python scripts/make_report3_figures.py
 """
 from pathlib import Path
+import argparse
 import csv
 import json
 
@@ -148,8 +149,66 @@ def recognizer_confusion():
     save(fig, "fig6_recognizer_confusion_test_ge32.png")
 
 
+def final_evidence():
+    evidence = ROOT / "output/kiet_wp_20261030"
+    review = load(evidence / "second_review/results.json")
+    fig, axes = plt.subplots(1, 3, figsize=(12, 4), sharey=True)
+    modes = (("claude", "Claude"), ("sol", "Sol"), ("consensus", "Consensus subset"))
+    colors = ("#666666", "#2267a5", "#ba731d")
+    for ax, (population, title) in zip(axes, (("hanoi", "Hanoi"), ("v0", "V0"), ("combined", "Combined"))):
+        for offset, ((mode, label), color) in enumerate(zip(modes, colors)):
+            values = [review["field_precision"][population][mode][c] for c in "ABC"]
+            y = np.array([r["precision"] for r in values])
+            bounds = np.array([r["ci95"] for r in values]).T
+            ax.errorbar(np.arange(3) + (offset-1)*.16, y,
+                        yerr=np.maximum(0, np.vstack((y-bounds[0], bounds[1]-y))),
+                        fmt="o", capsize=3, color=color, label=label)
+        ax.set_xticks(range(3), ["A: old .63", "B: v2 .87", "C: v2 T2"], fontsize=8)
+        ax.set_title(title)
+        ax.grid(axis="y", alpha=.25)
+        ax.set_ylim(.4, 1.04)
+    axes[0].set_ylabel("Precision among decidable AI labels")
+    axes[-1].legend(fontsize=7, loc="lower right")
+    fig.suptitle("Field emitted-sign precision, 95% segment bootstrap CI; consensus is selected")
+    save(fig, "fig7_final_field_precision.png")
+
+    operating = load(evidence / "operating_points.json")["results"]
+    names = list(operating)
+    rows = [next(r for r in operating[c]["rows"] if r["category"] == "old30" and r["size"] == ">=32") for c in names]
+    fig, ax = plt.subplots(figsize=(9, 4))
+    for i, (key, label) in enumerate((("coverage", "Coverage"), ("accepted_accuracy", "Correct / accepted"), ("end_to_end", "Correct / all crops"))):
+        bars = ax.bar(np.arange(len(rows)) + (i-1)*.24, [r[key] for r in rows], .24, label=label)
+        ax.bar_label(bars, fmt="%.3f", fontsize=7, padding=2)
+    ax.set_xticks(range(len(names)), ["Old .63", "Old .63 + gate", "V2 .87", "V2 T2"])
+    ax.set_ylim(0, 1.13)
+    ax.set_title(f"Operating points: old 30 codes, TEST >=32 px, n={rows[0]['n']}")
+    ax.grid(axis="y", alpha=.25)
+    ax.legend(fontsize=8, loc="lower right")
+    save(fig, "fig8_final_operating_points.png")
+
+    sources = list("abcde")
+    rows = [review["agreement_by_source_size"][s]["all"] for s in sources]
+    fig, ax = plt.subplots(figsize=(8, 4))
+    for i, (key, label) in enumerate((("agreement", "Exact label agreement"), ("kappa", "Cohen kappa"))):
+        bars = ax.bar(np.arange(5) + (i-.5)*.36, [r[key] for r in rows], .36, label=label)
+        ax.bar_label(bars, fmt="%.3f", fontsize=8, padding=2)
+    ax.set_xticks(range(5), [f"{s}: {title}\n(n={r['n']})" for s,title,r in zip(sources, ("Hanoi", "V0", "Extension TEST", "TRAIN/VAL", "Owner pack"), rows)], fontsize=8)
+    ax.set_ylim(0, 1.08)
+    ax.set_title("Claude-Sol agreement; uncertain is a category, labels are AI review")
+    ax.grid(axis="y", alpha=.25)
+    ax.legend(fontsize=8, loc="lower right")
+    save(fig, "fig9_final_reviewer_agreement.png")
+
+
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--final-evidence", action="store_true", help="Generate only the three 2026-10-30 final-evidence figures")
+    args = parser.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
+    if args.final_evidence:
+        final_evidence()
+        print("Generated final-evidence figures 7-9 from JSON")
+        return
     detector_metrics()
     detector_recall_by_size()
     detector_ap_by_iou()
