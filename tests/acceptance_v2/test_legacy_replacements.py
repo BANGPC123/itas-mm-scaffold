@@ -34,7 +34,7 @@ def load(path):
 def test_default_detector_is_the_benchmarked_lfs_model():
     cfg = load_config("perception")
     assert cfg["sign_detector"]["weights_path"] == DETECTOR
-    assert cfg["sign_recognizer"]["weights_path"] == "models/sign_recognizer/retrained_20261009.pt"
+    assert cfg["sign_recognizer"]["weights_path"] == "models/sign_recognizer/retrained_20261028.pt"
     assert cfg["lane_detector"]["weights_path"] == "models/lane/selected_20261009.pth"
     candidate = load(OUTPUT / "wp3/clip_benchmark/benchmark.json")["provenance"]["model_sha256"]["candidate"]
     assert digest(ROOT / DETECTOR) == candidate

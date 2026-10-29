@@ -14,6 +14,12 @@ TEST membership is unchanged: its fingerprint remains `2167cb380ecae1185fc645767
 
 The complete review JSONs, copied images and model inputs remain local under `output/kiet_wp_20261028/wp2/`. `MANIFEST.json` records their SHA256 and the model/config fingerprints. Rebuilding requires those local review JSONs and the pilot pack; verification checks the tracked label artifact and can rehash canonical media with `--verify --rehash --dataset-root <dataset-root> --pilot-pack <pilot-copy>`.
 
+## Ontology extension labels (recognizer v2, 2026-10-28)
+
+`data/manifests/dataset_v2/ai_ontology_extension_labels.jsonl` (SHA256 `090f17b4e1a7c3fa90adf450c4aeb5fe97acbbd3087f6e9fdb41c1c101058cd9`) holds AI-assigned QCVN 41:2024 codes for the 1,531 canonical boxes with `semantic_final_disposition=EXCLUDED_OUT_OF_ONTOLOGY_V1_2` (TRAIN 898, VAL 142, TEST 491). Two AI passes (`ai-review (Claude Code)`; second pass in shuffled order, seed 20261028) compared each crop with reference figures cropped from the official PDF. Each record keeps both passes, `agreed`, the QCVN figure/appendix reference and `provenance=ai_reviewed`; it holds no image bytes. A code is used for training and evaluation only when both passes agree: 976 boxes (TRAIN 553, VAL 120, TEST 303); raw label agreement is 76.9% (TRAIN 76.3%, VAL 88.7%, TEST 74.5%). The other 555 boxes stay excluded (35 both `not_qcvn_sign`, 166 both `uncertain`, 354 disagreements).
+
+These are not human ground truth, and both passes come from the same model. Splits and TEST membership are unchanged (fingerprints above still hold), so the TEST label provenance changed, not its images. The 3,703 `EXCLUDED_UNREADABLE_V1_2` boxes are untouched. Method, class list and results: [`docs/RECOGNIZER_V2_20261028.md`](RECOGNIZER_V2_20261028.md).
+
 ## What dataset_v2 is
 
 The handoff assumed the original dataset was lost. It was not: the owner's machine holds the canonical V1 localization set, and all 15,603 images and 15,603 label files were re-hashed on 2026-10-23 and 2026-10-26 and match the 2026-10-07 upload manifest byte for byte. dataset_v2 therefore reuses those verified pixels instead of reacquiring them, and adds the owner-reviewed field pilot as new real-video evidence.
