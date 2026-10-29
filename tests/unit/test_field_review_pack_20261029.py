@@ -1,4 +1,7 @@
-from scripts.field_review_pack_20261029 import RUN_NAME, confirmed_items, merge_evidence, pick_context_frames
+import pytest
+
+from scripts.field_review_pack_20261029 import (
+    RUN_NAME, confirmed_items, grade_members, key_string, merge_evidence, pick_context_frames)
 
 
 def frame(t, source_frame, *signs):
@@ -60,3 +63,26 @@ def test_pick_context_frames_stay_near_best_time_and_apart():
     assert 20.0 not in times and 10.2 not in times          # too far / too close to the best crop
     assert times == sorted(times)
     assert all(b - a >= 0.45 for a, b in zip(times, times[1:]))
+
+
+def evidence(**extra):
+    base = {"video_id": "v", "start": 30, "track": 4, "best_time": 12.0, "source_frame": 720, "bbox_xyxy": [100.2, 100.4, 140.0, 140.0],
+            "members": [{"config": "A", "prediction": "P.130"}, {"config": "B", "prediction": "P.131a"}]}
+    return {**base, **extra}
+
+
+def test_key_string_rounds_boxes_and_is_stable():
+    assert key_string(evidence()) == "v|30|4|720|100,100,140,140"
+    assert key_string(evidence(bbox_xyxy=[99.6, 100.4, 140.4, 139.6])) == key_string(evidence())
+
+
+def test_grade_members_grades_each_configuration_against_one_label():
+    store = {key_string(evidence()): "P.131a"}
+    rows = grade_members([evidence()], store)
+    assert [(r["config"], r["verdict"]) for r in rows] == [("A", "wrong_code"), ("B", "correct")]
+    assert {r["blind_label"] for r in rows} == {"P.131a"}
+
+
+def test_grade_members_refuses_unlabeled_evidence():
+    with pytest.raises(KeyError, match="No blind label"):
+        grade_members([evidence()], {})

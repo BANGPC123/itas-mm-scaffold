@@ -48,6 +48,27 @@ def evidence_key(item):
     return (item["video_id"], item["start"], item["track"], item["source_frame"], tuple(round(v) for v in item["bbox_xyxy"]))
 
 
+def key_string(record):
+    """Stable text key of one piece of evidence, shared by every configuration that produced it."""
+    x1, y1, x2, y2 = (round(v) for v in record["bbox_xyxy"])
+    return f"{record['video_id']}|{record['start']}|{record['track']}|{record['source_frame']}|{x1},{y1},{x2},{y2}"
+
+
+def grade_members(records, store):
+    """One graded row per (evidence, configuration) from the blind-label store; unlabeled evidence is an error."""
+    from scripts.field_video_eval_20261029 import verdict
+    rows = []
+    for record in records:
+        key = key_string(record)
+        if key not in store:
+            raise KeyError(f"No blind label for evidence {key}")
+        for member in record["members"]:
+            rows.append({"config": member["config"], "video_id": record["video_id"], "start": record["start"],
+                         "track": record["track"], "best_time": record["best_time"], "prediction": member["prediction"],
+                         "blind_label": store[key], "verdict": verdict(member["prediction"], store[key])})
+    return rows
+
+
 def merge_evidence(runs):
     """Merge per-run items into evidence records: {evidence fields, members: [{config, prediction}]}."""
     merged = {}
@@ -84,7 +105,10 @@ def build_pack(args):
     from PIL import Image, ImageDraw, ImageFont
     runs, unresolved, names = collect_runs(args.field_eval, args.configs)
     records = merge_evidence(runs)
-    random.Random(SEED).shuffle(records)
+    known = json.loads(Path(args.known).read_text(encoding="utf-8")) if args.known else {}
+    records = [r for r in records if key_string(r) not in known]          # already reviewed: not shown again
+    records.sort(key=key_string)
+    random.Random(SEED + len(known)).shuffle(records)
     out = Path(args.out)
     if out.exists():
         raise FileExistsError(out)
@@ -115,6 +139,25 @@ def build_pack(args):
         sheet.save(out / f"sheet_{start // 20 + 1:03d}.png")
     (out / "private_mapping.json").write_text(json.dumps({"seed": SEED, "runs": names, "items": records, "unresolved": unresolved}, indent=1) + "\n", encoding="utf-8")
     print(json.dumps({"runs": len(names), "evidence_items": len(records), "member_labels": sum(len(r["members"]) for r in records), "unresolved": len(unresolved)}))
+
+
+def merge_labels(args):
+    """Fold a reviewed pack into the evidence-keyed blind-label store."""
+    mapping = json.loads((Path(args.pack) / "private_mapping.json").read_text(encoding="utf-8"))
+    labels = json.loads(Path(args.labels).read_text(encoding="utf-8"))["labels"]
+    store_path = Path(args.store)
+    store = json.loads(store_path.read_text(encoding="utf-8")) if store_path.is_file() else {}
+    added = 0
+    for record in mapping["items"]:
+        label = labels[str(record["number"])]
+        key = key_string(record)
+        if key in store and store[key] != label:
+            raise ValueError(f"Conflicting labels for {key}")
+        added += key not in store
+        store[key] = label
+    store_path.parent.mkdir(parents=True, exist_ok=True)
+    store_path.write_text(json.dumps(store, indent=1, sort_keys=True), encoding="utf-8")
+    print(json.dumps({"added": added, "store_size": len(store)}))
 
 
 def track_rows(run_dir, start, track):
@@ -210,6 +253,11 @@ def main():
     b.add_argument("--video-root", required=True)
     b.add_argument("--out", required=True)
     b.add_argument("--configs", nargs="*")
+    b.add_argument("--known", help="blind-label store; evidence already in it is left out of the pack")
+    g = sub.add_parser("merge")
+    g.add_argument("--pack", required=True)
+    g.add_argument("--labels", required=True)
+    g.add_argument("--store", required=True)
     m = sub.add_parser("montage")
     m.add_argument("--pack", required=True)
     m.add_argument("--field-eval", required=True)
@@ -217,7 +265,7 @@ def main():
     m.add_argument("--out", required=True)
     m.add_argument("--numbers", type=int, nargs="+", required=True)
     args = parser.parse_args()
-    {"build": build_pack, "montage": build_montage}[args.command](args)
+    {"build": build_pack, "montage": build_montage, "merge": merge_labels}[args.command](args)
 
 
 if __name__ == "__main__":
