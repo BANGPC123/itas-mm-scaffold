@@ -93,6 +93,10 @@ The regression comparison retained all 84 previously resolved locators. The corp
 - Do not enable a new gate: the permitted negative-harvest protocol is blocked and its effectiveness has not been measured.
 - Do not remove or merge extension classes based on the failed blinded control. Obtain a qualified independent review and source-disjoint evaluation before making class decisions.
 
+## Follow-up: independent field videos (2026-10-29)
+
+The blocked items above (the reference gate v2 and video precision) were taken up again with five independent YouTube videos that are not part of dataset_v2 and not V0: two Ho Chi Minh City videos as the harvest source of negative crops and three Hanoi videos for evaluation. The gate v2 was built without any V0 or TEST crop, and the confirmed labels of configurations A to E on 15 Hanoi segments (plus the existing V0 pack) were read blind by an AI reviewer. Result under the pre-registered rules: keep 0.87 (T2 is not recommended on precision), and do not enable gate v2 (it vetoed no confirmed label). Method, tables and limits are in [FIELD_VIDEO_EVAL_20261029.md](FIELD_VIDEO_EVAL_20261029.md); the summary block is `field_video_eval` in [release_gate_v2.json](release_gate_v2.json). The release decision stays HOLD and all labels are AI-reviewed, not human ground truth.
+
 ## Recorded execution time
 
 - Baseline full pytest: 21.61 seconds. Final full pytest: 22.69 seconds; final separate acceptance: 2.71 seconds.

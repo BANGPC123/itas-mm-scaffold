@@ -67,6 +67,217 @@
     "report": "docs/RECOGNIZER_V2_CROSSCHECK_20261029.md",
     "note": "No default model, threshold, gate, or HOLD decision was changed. AI-reviewed labels are not human ground truth."
   },
+  "field_video_eval": {
+    "status": "EVIDENCE_SNAPSHOT_HOLD",
+    "report": "docs/FIELD_VIDEO_EVAL_20261029.md",
+    "evidence_head": "f7bd93bb4891b51558d51f19d007dfb372e37792",
+    "labels": "AI-reviewed (ai-review (Claude Code), provenance ai_reviewed); not human ground truth",
+    "videos": {
+      "harvest": 2,
+      "eval": 3,
+      "rejected": 0,
+      "max_near_duplicate_rate": 0.0,
+      "sources": "data/manifests/field_video_20261029/sources.csv"
+    },
+    "gate_v2_negatives": {
+      "reviewed_crops": 1440,
+      "not_a_sign": 325,
+      "fit": 282,
+      "heldout": 43,
+      "manifest": "data/manifests/field_video_20261029/gate_v2_negatives.jsonl"
+    },
+    "gate_v2": {
+      "margin": 0.24,
+      "positive_references": 5639,
+      "val_macro_f1_drop_at_T2": 0.0,
+      "val_macro_f1_drop_at_0.87": 0.0,
+      "heldout_negatives_blocked": 0.3721,
+      "field_effect": "none: configurations D and E equal C and B on every count",
+      "max_similarity_of_field_false_confirmations": 0.689,
+      "similarity_floor": 0.8,
+      "added_to_lfs": false
+    },
+    "precision_hanoi": {
+      "A": {
+        "confirmed": 107,
+        "correct": 57,
+        "wrong_code": 21,
+        "not_a_sign": 7,
+        "uncertain": 22,
+        "precision": 0.6706,
+        "ci95": [
+          0.5568,
+          0.7794
+        ]
+      },
+      "B": {
+        "confirmed": 75,
+        "correct": 59,
+        "wrong_code": 0,
+        "not_a_sign": 2,
+        "uncertain": 14,
+        "precision": 0.9672,
+        "ci95": [
+          0.9057,
+          1.0
+        ]
+      },
+      "C": {
+        "confirmed": 100,
+        "correct": 69,
+        "wrong_code": 3,
+        "not_a_sign": 8,
+        "uncertain": 20,
+        "precision": 0.8625,
+        "ci95": [
+          0.7761,
+          0.9341
+        ]
+      },
+      "D": {
+        "confirmed": 100,
+        "correct": 69,
+        "wrong_code": 3,
+        "not_a_sign": 8,
+        "uncertain": 20,
+        "precision": 0.8625,
+        "ci95": [
+          0.7761,
+          0.9341
+        ]
+      },
+      "E": {
+        "confirmed": 75,
+        "correct": 59,
+        "wrong_code": 0,
+        "not_a_sign": 2,
+        "uncertain": 14,
+        "precision": 0.9672,
+        "ci95": [
+          0.9057,
+          1.0
+        ]
+      }
+    },
+    "precision_v0": {
+      "A": {
+        "confirmed": 46,
+        "correct": 31,
+        "wrong_code": 6,
+        "not_a_sign": 0,
+        "uncertain": 9,
+        "precision": 0.8378,
+        "ci95": [
+          0.7778,
+          0.9545
+        ]
+      },
+      "B": {
+        "confirmed": 54,
+        "correct": 46,
+        "wrong_code": 2,
+        "not_a_sign": 0,
+        "uncertain": 6,
+        "precision": 0.9583,
+        "ci95": [
+          0.8947,
+          1.0
+        ]
+      },
+      "C": {
+        "confirmed": 58,
+        "correct": 49,
+        "wrong_code": 3,
+        "not_a_sign": 1,
+        "uncertain": 5,
+        "precision": 0.9245,
+        "ci95": [
+          0.8451,
+          1.0
+        ]
+      }
+    },
+    "precision_hanoi_plus_v0": {
+      "A": {
+        "confirmed": 153,
+        "correct": 88,
+        "wrong_code": 27,
+        "not_a_sign": 7,
+        "uncertain": 31,
+        "precision": 0.7213,
+        "ci95": [
+          0.6261,
+          0.8034
+        ]
+      },
+      "B": {
+        "confirmed": 129,
+        "correct": 105,
+        "wrong_code": 2,
+        "not_a_sign": 2,
+        "uncertain": 20,
+        "precision": 0.9633,
+        "ci95": [
+          0.9196,
+          1.0
+        ]
+      },
+      "C": {
+        "confirmed": 158,
+        "correct": 118,
+        "wrong_code": 6,
+        "not_a_sign": 9,
+        "uncertain": 25,
+        "precision": 0.8872,
+        "ci95": [
+          0.8252,
+          0.9417
+        ]
+      }
+    },
+    "proxy_recall": {
+      "A": {
+        "annotated": 46,
+        "caught": 29,
+        "recall": 0.6304
+      },
+      "B": {
+        "annotated": 46,
+        "caught": 34,
+        "recall": 0.7391
+      },
+      "C": {
+        "annotated": 46,
+        "caught": 35,
+        "recall": 0.7609
+      },
+      "D": {
+        "annotated": 46,
+        "caught": 35,
+        "recall": 0.7609
+      },
+      "E": {
+        "annotated": 46,
+        "caught": 34,
+        "recall": 0.7391
+      }
+    },
+    "recommendation_under_preregistered_rules": {
+      "t2_instead_of_0.87": "not_recommended",
+      "enable_gate_v2": {
+        "D": "not_recommended",
+        "E": "not_recommended"
+      }
+    },
+    "limits": [
+      "V0 belongs to the TEST group and the old gate used V0 negatives",
+      "single AI reviewer, same model family as the labelled training data",
+      "D and E were run on Hanoi only",
+      "gate margin selected on 43 held-out negatives",
+      "proxy recall rests on 46 signs and detector proposals"
+    ],
+    "note": "No default model, threshold, gate or HOLD decision was changed."
+  },
   "gates": [
     {
       "id": "lfs_integrity",
