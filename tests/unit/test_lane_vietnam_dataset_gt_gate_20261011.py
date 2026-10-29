@@ -16,6 +16,7 @@ def load_script(name):
 validate=load_script('import_human_lane_masks_20261011').validate
 PACK=ROOT/'data/lane_vietnam_review_20261011'
 
+@pytest.mark.legacy_artifact
 def test_temporal_blocks_are_source_tagged_and_not_independent_routes():
     d=json.loads((PACK/'manifest.json').read_text(encoding='utf-8'))
     assert d['sampled_frames']==600 and d['video_sources_total']==1
@@ -28,6 +29,7 @@ def test_temporal_blocks_are_source_tagged_and_not_independent_routes():
     assert len(groups)==30 and all(len(s)==1 for s in groups.values())
     assert not d['independent_road_test'] and not d['approved_for_training']
 
+@pytest.mark.legacy_artifact
 def test_ai_source_proposals_not_human_ground_truth():
     a=[json.loads(x) for x in (PACK/'ai_drafts.jsonl').read_text(encoding='utf-8').splitlines()]
     assert len(a)==600
@@ -36,6 +38,7 @@ def test_ai_source_proposals_not_human_ground_truth():
     assert sum(r['ai_v2_lines'] for r in a)==365
     assert len(list((PACK/'ai_masks').glob('*.png')))==600
 
+@pytest.mark.legacy_artifact
 def test_train_import_cannot_promote_unreviewed_export_or_original_manifest():
     with pytest.raises(ValueError,match='human-reviewed'):
         validate(PACK/'manifest.json',require_minimum=True)
@@ -46,6 +49,7 @@ def test_second_stage_vietnam_training_requires_real_reviewed_labels():
     with pytest.raises(RuntimeError,match='Human-verified'):
         trainer.load_human('TRAIN')
 
+@pytest.mark.legacy_artifact
 def test_culane_segformer_candidate_is_not_promoted_as_vietnam_model():
     d=json.loads((ROOT/'output/retraining_20261011/segformer_culane_b0/training_report.json').read_text(encoding='utf-8'))
     assert d['status']=='EXPERIMENTAL_SEGFORMER_CULANE_GT'

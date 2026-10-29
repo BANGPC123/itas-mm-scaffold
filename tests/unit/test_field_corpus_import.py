@@ -90,3 +90,19 @@ def test_video_digest_included_in_imported_corpus(tmp_path):
     record=json.loads((tmp_path/'corpus'/'frames.jsonl').read_text().splitlines()[0])
     assert record['source_video_sha256']=='a'*64
     assert 'plate_text_verified' in record['signs'][0]
+
+
+def test_field_corpus_keeps_parent_link(tmp_path):
+    a=pack(tmp_path,'TRAIN')
+    root=Path(a['pack'])
+    data=json.loads((root/'review_manifest.json').read_text())
+    signs=data['frames'][0]['signs']
+    signs[0].update(judgment='sign',label='P.130',panel_role='primary')
+    signs.append({'id':'s2','label':'unknown','bbox_xyxy':[50,90,70,110],
+                  'panel_role':'supplementary','judgment':'sign','parent_id':'s1'})
+    signs[0]['id']='s1'
+    (root/'review_manifest.json').write_text(json.dumps(data))
+    (root/'reviewed.json').write_text(json.dumps(data))
+    module.build([a],tmp_path/'dataset')
+    row=json.loads((tmp_path/'dataset'/'frames.jsonl').read_text().splitlines()[0])
+    assert {s['id']:s['parent_id'] for s in row['signs']}=={'s1':None,'s2':'s1'}

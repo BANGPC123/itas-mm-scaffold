@@ -1,4 +1,5 @@
 """Offline Video MP4 YOLOPv2 lane fallback release checks; not field accreditation."""
+import pytest
 from pathlib import Path
 import json,torch
 from fastapi.testclient import TestClient
@@ -25,6 +26,7 @@ def test_inference_contract_exposes_temporal_display_for_web_overlay():
     assert m.model_dump(mode='json')['display_polylines']==[[[100,120],[120,170]]]
     assert m.ego_boundaries==[]
 
+@pytest.mark.legacy_artifact
 def test_real_user_video_is_sampled_and_missing_marks_are_not_faked():
     rep=json.loads((ROOT/'output/video_tests/user_test_video_yolopv2_hybrid_20261011/summary.json').read_text(encoding='utf-8'))
     assert rep['inference_events']>=200
@@ -35,6 +37,7 @@ def test_real_user_video_is_sampled_and_missing_marks_are_not_faked():
     assert not rep['model_weights_overwritten']
     assert not rep['independent_road_gt_verified']
 
+@pytest.mark.legacy_artifact
 def test_quantitative_culane_val_rejects_secondary_as_primary():
     d=json.loads((ROOT/'output/evaluation/yolopv2_culane_val_20261011/results.json').read_text(encoding='utf-8'))
     assert d['checked_frames']==70
@@ -43,6 +46,7 @@ def test_quantitative_culane_val_rejects_secondary_as_primary():
     assert d['results']['fallback']['f1']>=d['results']['ufld']['f1']-.005
     assert d['not_independent_Vietnam_gt']
 
+@pytest.mark.legacy_artifact
 def test_new_vietnam_video_route_is_whitelisted_and_partial_content():
     with TestClient(app) as client:
         out=client.get('/pipeline/capstone-video/user-hybrid',

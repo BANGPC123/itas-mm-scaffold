@@ -47,6 +47,16 @@ def validate_review(data,manifest=None):
                 s.get('panel_role')!='supplementary' or
                 not isinstance(text,str) or not text.strip()):
                 raise ValueError('Verified plate text requires a real supplementary sign with nonempty transcription')
+        by_id={x['id']:x for x in labels}
+        for s in labels:
+            parent=s.get('parent_id')
+            if parent is None:continue
+            if (not isinstance(parent,str) or parent==s['id'] or s.get('panel_role')!='supplementary'
+                    or by_id.get(parent,{}).get('panel_role')!='primary'):
+                raise ValueError('Invalid parent link: a supplementary sign must reference a primary sign in the same frame')
+            if (f.get('human_confirmed') is True and
+                    (s.get('judgment')!='sign' or by_id[parent].get('judgment')!='sign')):
+                raise ValueError('Confirmed parent link requires sign judgments on both panels')
         lanes=f.get('lanes')
         if not isinstance(lanes,list):raise ValueError('No lane list')
         for lane in lanes:
