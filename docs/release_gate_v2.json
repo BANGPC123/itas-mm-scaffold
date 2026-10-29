@@ -354,5 +354,2009 @@
       "status": "BLOCKED",
       "gaps": ["Legal references are unverified", "Seek behavior and age of individual rendered overlays were not verified end to end", "Independent human field GT is absent"]
     }
-  ]
+  ],
+  "final_evidence_date": "2026-10-29",
+  "final_evidence_task_id": "20261030",
+  "second_review": {
+    "status": "AI_SECOND_REVIEW_COMPLETE_NOT_HUMAN_GT",
+    "seed": 20261030,
+    "n": 885,
+    "manifest": "data/manifests/dataset_v2/ai_second_review_sol_20261030.jsonl",
+    "manifest_sha256": "129fbab461513510b415225c6313118619d8253c7d8ffc3f8d054f59e87c44b9",
+    "blind_seal": {
+      "sha256": "e7c88c012890fef7cc43aad1b1e8645242769c4ca3fb8741f814a42615c0ba47",
+      "n": 885,
+      "provenance": "ai_reviewed_codex_sol",
+      "label_counts": {
+        "W.205b": 9,
+        "uncertain": 221,
+        "W.203a": 35,
+        "P.105": 32,
+        "P.107a": 2,
+        "P.130": 34,
+        "R.302a": 42,
+        "P.102": 34,
+        "R.411": 8,
+        "R.420": 44,
+        "I.434a": 14,
+        "W.233": 2,
+        "R.303": 5,
+        "W.205c": 2,
+        "W.244": 4,
+        "W.203b": 21,
+        "DP.135": 12,
+        "P.128": 3,
+        "R.415a": 43,
+        "W.207b": 5,
+        "R.421": 33,
+        "P.131a": 65,
+        "I.423": 12,
+        "P.124a": 8,
+        "W.225": 3,
+        "P.110a": 1,
+        "W.205a": 6,
+        "W.239a": 3,
+        "not_a_sign": 19,
+        "P.127": 5,
+        "P.103c": 6,
+        "P.112": 6,
+        "P.107b": 4,
+        "I.401": 7,
+        "R.301c": 54,
+        "P.103b": 6,
+        "W.224": 6,
+        "W.219": 4,
+        "I.442": 9,
+        "P.124e": 7,
+        "P.106a": 5,
+        "W.245a": 9,
+        "P.124b": 3,
+        "W.201a": 3,
+        "W.239b": 2,
+        "R.412b": 4,
+        "I.409": 4,
+        "P.127c": 8,
+        "P.117": 4,
+        "I.402": 2,
+        "P.104": 3,
+        "R.301a": 1,
+        "P.107": 1
+      }
+    },
+    "agreement_by_source_size": {
+      "a": {
+        "all": {
+          "n": 234,
+          "agreement": 0.8290598290598291,
+          "kappa": 0.8051258562178594,
+          "disagreements": [
+            {
+              "claude": "I.423",
+              "sol": "uncertain",
+              "n": 8
+            },
+            {
+              "claude": "P.130",
+              "sol": "uncertain",
+              "n": 6
+            },
+            {
+              "claude": "uncertain",
+              "sol": "P.124a",
+              "n": 4
+            },
+            {
+              "claude": "P.131a",
+              "sol": "uncertain",
+              "n": 4
+            },
+            {
+              "claude": "not_a_sign",
+              "sol": "uncertain",
+              "n": 3
+            },
+            {
+              "claude": "not_a_sign",
+              "sol": "P.127",
+              "n": 3
+            },
+            {
+              "claude": "other_qcvn",
+              "sol": "P.107b",
+              "n": 3
+            },
+            {
+              "claude": "R.303",
+              "sol": "uncertain",
+              "n": 2
+            },
+            {
+              "claude": "uncertain",
+              "sol": "not_a_sign",
+              "n": 2
+            },
+            {
+              "claude": "uncertain",
+              "sol": "P.107a",
+              "n": 1
+            },
+            {
+              "claude": "W.245a",
+              "sol": "uncertain",
+              "n": 1
+            },
+            {
+              "claude": "P.112",
+              "sol": "uncertain",
+              "n": 1
+            },
+            {
+              "claude": "R.302a",
+              "sol": "uncertain",
+              "n": 1
+            },
+            {
+              "claude": "uncertain",
+              "sol": "P.107",
+              "n": 1
+            }
+          ],
+          "sol_uncertain": 67,
+          "claude_uncertain": 49,
+          "both_decidable": {
+            "n": 159,
+            "agreement": 0.9622641509433962,
+            "kappa": 0.9570946705644254,
+            "disagreements": [
+              {
+                "claude": "not_a_sign",
+                "sol": "P.127",
+                "n": 3
+              },
+              {
+                "claude": "other_qcvn",
+                "sol": "P.107b",
+                "n": 3
+              }
+            ]
+          }
+        },
+        "<16": {
+          "n": 8,
+          "agreement": 0.5,
+          "kappa": 0.2,
+          "disagreements": [
+            {
+              "claude": "I.423",
+              "sol": "uncertain",
+              "n": 2
+            },
+            {
+              "claude": "uncertain",
+              "sol": "not_a_sign",
+              "n": 2
+            }
+          ],
+          "sol_uncertain": 4,
+          "claude_uncertain": 4,
+          "both_decidable": {
+            "n": 2,
+            "agreement": 1.0,
+            "kappa": null,
+            "disagreements": []
+          }
+        },
+        "16-32": {
+          "n": 89,
+          "agreement": 0.7752808988764045,
+          "kappa": 0.668219944082013,
+          "disagreements": [
+            {
+              "claude": "uncertain",
+              "sol": "P.124a",
+              "n": 4
+            },
+            {
+              "claude": "I.423",
+              "sol": "uncertain",
+              "n": 4
+            },
+            {
+              "claude": "P.130",
+              "sol": "uncertain",
+              "n": 3
+            },
+            {
+              "claude": "R.303",
+              "sol": "uncertain",
+              "n": 2
+            },
+            {
+              "claude": "P.131a",
+              "sol": "uncertain",
+              "n": 2
+            },
+            {
+              "claude": "uncertain",
+              "sol": "P.107a",
+              "n": 1
+            },
+            {
+              "claude": "W.245a",
+              "sol": "uncertain",
+              "n": 1
+            },
+            {
+              "claude": "not_a_sign",
+              "sol": "uncertain",
+              "n": 1
+            },
+            {
+              "claude": "P.112",
+              "sol": "uncertain",
+              "n": 1
+            },
+            {
+              "claude": "R.302a",
+              "sol": "uncertain",
+              "n": 1
+            }
+          ],
+          "sol_uncertain": 52,
+          "claude_uncertain": 42,
+          "both_decidable": {
+            "n": 32,
+            "agreement": 1.0,
+            "kappa": 1.0,
+            "disagreements": []
+          }
+        },
+        "32-64": {
+          "n": 68,
+          "agreement": 0.7941176470588235,
+          "kappa": 0.7745678427658063,
+          "disagreements": [
+            {
+              "claude": "P.130",
+              "sol": "uncertain",
+              "n": 3
+            },
+            {
+              "claude": "not_a_sign",
+              "sol": "P.127",
+              "n": 3
+            },
+            {
+              "claude": "P.131a",
+              "sol": "uncertain",
+              "n": 2
+            },
+            {
+              "claude": "I.423",
+              "sol": "uncertain",
+              "n": 2
+            },
+            {
+              "claude": "not_a_sign",
+              "sol": "uncertain",
+              "n": 2
+            },
+            {
+              "claude": "other_qcvn",
+              "sol": "P.107b",
+              "n": 1
+            },
+            {
+              "claude": "uncertain",
+              "sol": "P.107",
+              "n": 1
+            }
+          ],
+          "sol_uncertain": 11,
+          "claude_uncertain": 3,
+          "both_decidable": {
+            "n": 56,
+            "agreement": 0.9285714285714286,
+            "kappa": 0.9201995012468829,
+            "disagreements": [
+              {
+                "claude": "not_a_sign",
+                "sol": "P.127",
+                "n": 3
+              },
+              {
+                "claude": "other_qcvn",
+                "sol": "P.107b",
+                "n": 1
+              }
+            ]
+          }
+        },
+        ">=64": {
+          "n": 69,
+          "agreement": 0.9710144927536232,
+          "kappa": 0.9658584858980701,
+          "disagreements": [
+            {
+              "claude": "other_qcvn",
+              "sol": "P.107b",
+              "n": 2
+            }
+          ],
+          "sol_uncertain": 0,
+          "claude_uncertain": 0,
+          "both_decidable": {
+            "n": 69,
+            "agreement": 0.9710144927536232,
+            "kappa": 0.9658584858980701,
+            "disagreements": [
+              {
+                "claude": "other_qcvn",
+                "sol": "P.107b",
+                "n": 2
+              }
+            ]
+          }
+        }
+      },
+      "b": {
+        "all": {
+          "n": 158,
+          "agreement": 0.6835443037974683,
+          "kappa": 0.6245604030035167,
+          "disagreements": [
+            {
+              "claude": "P.131a",
+              "sol": "uncertain",
+              "n": 27
+            },
+            {
+              "claude": "P.130",
+              "sol": "uncertain",
+              "n": 12
+            },
+            {
+              "claude": "W.225",
+              "sol": "W.203a",
+              "n": 9
+            },
+            {
+              "claude": "W.225",
+              "sol": "uncertain",
+              "n": 2
+            }
+          ],
+          "sol_uncertain": 61,
+          "claude_uncertain": 20,
+          "both_decidable": {
+            "n": 97,
+            "agreement": 0.9072164948453608,
+            "kappa": 0.8875869173319598,
+            "disagreements": [
+              {
+                "claude": "W.225",
+                "sol": "W.203a",
+                "n": 9
+              }
+            ]
+          }
+        },
+        "<16": {
+          "n": 3,
+          "agreement": 1.0,
+          "kappa": null,
+          "disagreements": [],
+          "sol_uncertain": 3,
+          "claude_uncertain": 3,
+          "both_decidable": {
+            "n": 0,
+            "agreement": null,
+            "kappa": null,
+            "disagreements": []
+          }
+        },
+        "16-32": {
+          "n": 56,
+          "agreement": 0.5178571428571429,
+          "kappa": 0.36947456213511265,
+          "disagreements": [
+            {
+              "claude": "P.131a",
+              "sol": "uncertain",
+              "n": 14
+            },
+            {
+              "claude": "W.225",
+              "sol": "W.203a",
+              "n": 9
+            },
+            {
+              "claude": "P.130",
+              "sol": "uncertain",
+              "n": 3
+            },
+            {
+              "claude": "W.225",
+              "sol": "uncertain",
+              "n": 1
+            }
+          ],
+          "sol_uncertain": 35,
+          "claude_uncertain": 17,
+          "both_decidable": {
+            "n": 21,
+            "agreement": 0.5714285714285714,
+            "kappa": 0.5166240409207161,
+            "disagreements": [
+              {
+                "claude": "W.225",
+                "sol": "W.203a",
+                "n": 9
+              }
+            ]
+          }
+        },
+        "32-64": {
+          "n": 63,
+          "agreement": 0.6349206349206349,
+          "kappa": 0.5670749925306243,
+          "disagreements": [
+            {
+              "claude": "P.131a",
+              "sol": "uncertain",
+              "n": 13
+            },
+            {
+              "claude": "P.130",
+              "sol": "uncertain",
+              "n": 9
+            },
+            {
+              "claude": "W.225",
+              "sol": "uncertain",
+              "n": 1
+            }
+          ],
+          "sol_uncertain": 23,
+          "claude_uncertain": 0,
+          "both_decidable": {
+            "n": 40,
+            "agreement": 1.0,
+            "kappa": 1.0,
+            "disagreements": []
+          }
+        },
+        ">=64": {
+          "n": 36,
+          "agreement": 1.0,
+          "kappa": 1.0,
+          "disagreements": [],
+          "sol_uncertain": 0,
+          "claude_uncertain": 0,
+          "both_decidable": {
+            "n": 36,
+            "agreement": 1.0,
+            "kappa": 1.0,
+            "disagreements": []
+          }
+        }
+      },
+      "c": {
+        "all": {
+          "n": 303,
+          "agreement": 0.7227722772277227,
+          "kappa": 0.6931682559583369,
+          "disagreements": [
+            {
+              "claude": "R.301c",
+              "sol": "uncertain",
+              "n": 22
+            },
+            {
+              "claude": "W.203a",
+              "sol": "W.203b",
+              "n": 21
+            },
+            {
+              "claude": "P.105",
+              "sol": "uncertain",
+              "n": 14
+            },
+            {
+              "claude": "R.412",
+              "sol": "uncertain",
+              "n": 7
+            },
+            {
+              "claude": "W.246a",
+              "sol": "uncertain",
+              "n": 7
+            },
+            {
+              "claude": "W.203a",
+              "sol": "uncertain",
+              "n": 3
+            },
+            {
+              "claude": "P.127c",
+              "sol": "R.415a",
+              "n": 3
+            },
+            {
+              "claude": "R.412",
+              "sol": "R.412b",
+              "n": 2
+            },
+            {
+              "claude": "R.415a",
+              "sol": "uncertain",
+              "n": 1
+            },
+            {
+              "claude": "W.205a",
+              "sol": "uncertain",
+              "n": 1
+            },
+            {
+              "claude": "P.127c",
+              "sol": "uncertain",
+              "n": 1
+            },
+            {
+              "claude": "W.201b",
+              "sol": "uncertain",
+              "n": 1
+            },
+            {
+              "claude": "I.423",
+              "sol": "uncertain",
+              "n": 1
+            }
+          ],
+          "sol_uncertain": 58,
+          "claude_uncertain": 0,
+          "both_decidable": {
+            "n": 245,
+            "agreement": 0.8938775510204081,
+            "kappa": 0.8793217770199867,
+            "disagreements": [
+              {
+                "claude": "W.203a",
+                "sol": "W.203b",
+                "n": 21
+              },
+              {
+                "claude": "P.127c",
+                "sol": "R.415a",
+                "n": 3
+              },
+              {
+                "claude": "R.412",
+                "sol": "R.412b",
+                "n": 2
+              }
+            ]
+          }
+        },
+        "<16": {
+          "n": 13,
+          "agreement": 0.0,
+          "kappa": 0.0,
+          "disagreements": [
+            {
+              "claude": "R.301c",
+              "sol": "uncertain",
+              "n": 12
+            },
+            {
+              "claude": "W.205a",
+              "sol": "uncertain",
+              "n": 1
+            }
+          ],
+          "sol_uncertain": 13,
+          "claude_uncertain": 0,
+          "both_decidable": {
+            "n": 0,
+            "agreement": null,
+            "kappa": null,
+            "disagreements": []
+          }
+        },
+        "16-32": {
+          "n": 66,
+          "agreement": 0.4696969696969697,
+          "kappa": 0.4290657439446367,
+          "disagreements": [
+            {
+              "claude": "R.301c",
+              "sol": "uncertain",
+              "n": 10
+            },
+            {
+              "claude": "P.105",
+              "sol": "uncertain",
+              "n": 9
+            },
+            {
+              "claude": "R.412",
+              "sol": "uncertain",
+              "n": 7
+            },
+            {
+              "claude": "W.246a",
+              "sol": "uncertain",
+              "n": 3
+            },
+            {
+              "claude": "R.412",
+              "sol": "R.412b",
+              "n": 2
+            },
+            {
+              "claude": "W.203a",
+              "sol": "uncertain",
+              "n": 1
+            },
+            {
+              "claude": "P.127c",
+              "sol": "uncertain",
+              "n": 1
+            },
+            {
+              "claude": "W.201b",
+              "sol": "uncertain",
+              "n": 1
+            },
+            {
+              "claude": "I.423",
+              "sol": "uncertain",
+              "n": 1
+            }
+          ],
+          "sol_uncertain": 33,
+          "claude_uncertain": 0,
+          "both_decidable": {
+            "n": 33,
+            "agreement": 0.9393939393939394,
+            "kappa": 0.9258426966292136,
+            "disagreements": [
+              {
+                "claude": "R.412",
+                "sol": "R.412b",
+                "n": 2
+              }
+            ]
+          }
+        },
+        "32-64": {
+          "n": 92,
+          "agreement": 0.8043478260869565,
+          "kappa": 0.7771197846567968,
+          "disagreements": [
+            {
+              "claude": "P.105",
+              "sol": "uncertain",
+              "n": 5
+            },
+            {
+              "claude": "W.246a",
+              "sol": "uncertain",
+              "n": 4
+            },
+            {
+              "claude": "W.203a",
+              "sol": "W.203b",
+              "n": 4
+            },
+            {
+              "claude": "W.203a",
+              "sol": "uncertain",
+              "n": 2
+            },
+            {
+              "claude": "P.127c",
+              "sol": "R.415a",
+              "n": 2
+            },
+            {
+              "claude": "R.415a",
+              "sol": "uncertain",
+              "n": 1
+            }
+          ],
+          "sol_uncertain": 12,
+          "claude_uncertain": 0,
+          "both_decidable": {
+            "n": 80,
+            "agreement": 0.925,
+            "kappa": 0.9122165325530359,
+            "disagreements": [
+              {
+                "claude": "W.203a",
+                "sol": "W.203b",
+                "n": 4
+              },
+              {
+                "claude": "P.127c",
+                "sol": "R.415a",
+                "n": 2
+              }
+            ]
+          }
+        },
+        ">=64": {
+          "n": 132,
+          "agreement": 0.8636363636363636,
+          "kappa": 0.8376827435442,
+          "disagreements": [
+            {
+              "claude": "W.203a",
+              "sol": "W.203b",
+              "n": 17
+            },
+            {
+              "claude": "P.127c",
+              "sol": "R.415a",
+              "n": 1
+            }
+          ],
+          "sol_uncertain": 0,
+          "claude_uncertain": 0,
+          "both_decidable": {
+            "n": 132,
+            "agreement": 0.8636363636363636,
+            "kappa": 0.8376827435442,
+            "disagreements": [
+              {
+                "claude": "W.203a",
+                "sol": "W.203b",
+                "n": 17
+              },
+              {
+                "claude": "P.127c",
+                "sol": "R.415a",
+                "n": 1
+              }
+            ]
+          }
+        }
+      },
+      "d": {
+        "all": {
+          "n": 150,
+          "agreement": 0.78,
+          "kappa": 0.7731854838709677,
+          "disagreements": [
+            {
+              "claude": "I.442",
+              "sol": "uncertain",
+              "n": 7
+            },
+            {
+              "claude": "W.246a",
+              "sol": "uncertain",
+              "n": 7
+            },
+            {
+              "claude": "R.412",
+              "sol": "uncertain",
+              "n": 5
+            },
+            {
+              "claude": "P.131a",
+              "sol": "uncertain",
+              "n": 3
+            },
+            {
+              "claude": "R.302a",
+              "sol": "uncertain",
+              "n": 2
+            },
+            {
+              "claude": "R.412",
+              "sol": "R.412b",
+              "n": 2
+            },
+            {
+              "claude": "W.239b",
+              "sol": "W.233",
+              "n": 1
+            },
+            {
+              "claude": "W.222a",
+              "sol": "W.244",
+              "n": 1
+            },
+            {
+              "claude": "W.208",
+              "sol": "uncertain",
+              "n": 1
+            },
+            {
+              "claude": "P.105",
+              "sol": "uncertain",
+              "n": 1
+            },
+            {
+              "claude": "P.110a",
+              "sol": "P.104",
+              "n": 1
+            },
+            {
+              "claude": "R.415a",
+              "sol": "uncertain",
+              "n": 1
+            },
+            {
+              "claude": "W.239b",
+              "sol": "uncertain",
+              "n": 1
+            }
+          ],
+          "sol_uncertain": 28,
+          "claude_uncertain": 0,
+          "both_decidable": {
+            "n": 122,
+            "agreement": 0.9590163934426229,
+            "kappa": 0.9571959862465791,
+            "disagreements": [
+              {
+                "claude": "R.412",
+                "sol": "R.412b",
+                "n": 2
+              },
+              {
+                "claude": "W.239b",
+                "sol": "W.233",
+                "n": 1
+              },
+              {
+                "claude": "W.222a",
+                "sol": "W.244",
+                "n": 1
+              },
+              {
+                "claude": "P.110a",
+                "sol": "P.104",
+                "n": 1
+              }
+            ]
+          }
+        },
+        "<16": {
+          "n": 4,
+          "agreement": 0.0,
+          "kappa": 0.0,
+          "disagreements": [
+            {
+              "claude": "R.302a",
+              "sol": "uncertain",
+              "n": 2
+            },
+            {
+              "claude": "R.412",
+              "sol": "uncertain",
+              "n": 2
+            }
+          ],
+          "sol_uncertain": 4,
+          "claude_uncertain": 0,
+          "both_decidable": {
+            "n": 0,
+            "agreement": null,
+            "kappa": null,
+            "disagreements": []
+          }
+        },
+        "16-32": {
+          "n": 47,
+          "agreement": 0.5106382978723404,
+          "kappa": 0.49343955014058105,
+          "disagreements": [
+            {
+              "claude": "I.442",
+              "sol": "uncertain",
+              "n": 7
+            },
+            {
+              "claude": "R.412",
+              "sol": "uncertain",
+              "n": 3
+            },
+            {
+              "claude": "W.246a",
+              "sol": "uncertain",
+              "n": 3
+            },
+            {
+              "claude": "P.131a",
+              "sol": "uncertain",
+              "n": 3
+            },
+            {
+              "claude": "R.412",
+              "sol": "R.412b",
+              "n": 2
+            },
+            {
+              "claude": "W.239b",
+              "sol": "W.233",
+              "n": 1
+            },
+            {
+              "claude": "W.222a",
+              "sol": "W.244",
+              "n": 1
+            },
+            {
+              "claude": "W.208",
+              "sol": "uncertain",
+              "n": 1
+            },
+            {
+              "claude": "P.105",
+              "sol": "uncertain",
+              "n": 1
+            },
+            {
+              "claude": "W.239b",
+              "sol": "uncertain",
+              "n": 1
+            }
+          ],
+          "sol_uncertain": 19,
+          "claude_uncertain": 0,
+          "both_decidable": {
+            "n": 28,
+            "agreement": 0.8571428571428571,
+            "kappa": 0.8457300275482095,
+            "disagreements": [
+              {
+                "claude": "R.412",
+                "sol": "R.412b",
+                "n": 2
+              },
+              {
+                "claude": "W.239b",
+                "sol": "W.233",
+                "n": 1
+              },
+              {
+                "claude": "W.222a",
+                "sol": "W.244",
+                "n": 1
+              }
+            ]
+          }
+        },
+        "32-64": {
+          "n": 54,
+          "agreement": 0.8888888888888888,
+          "kappa": 0.8832853025936599,
+          "disagreements": [
+            {
+              "claude": "W.246a",
+              "sol": "uncertain",
+              "n": 4
+            },
+            {
+              "claude": "P.110a",
+              "sol": "P.104",
+              "n": 1
+            },
+            {
+              "claude": "R.415a",
+              "sol": "uncertain",
+              "n": 1
+            }
+          ],
+          "sol_uncertain": 5,
+          "claude_uncertain": 0,
+          "both_decidable": {
+            "n": 49,
+            "agreement": 0.9795918367346939,
+            "kappa": 0.9783568904593639,
+            "disagreements": [
+              {
+                "claude": "P.110a",
+                "sol": "P.104",
+                "n": 1
+              }
+            ]
+          }
+        },
+        ">=64": {
+          "n": 45,
+          "agreement": 1.0,
+          "kappa": 1.0,
+          "disagreements": [],
+          "sol_uncertain": 0,
+          "claude_uncertain": 0,
+          "both_decidable": {
+            "n": 45,
+            "agreement": 1.0,
+            "kappa": 1.0,
+            "disagreements": []
+          }
+        }
+      },
+      "e": {
+        "all": {
+          "n": 40,
+          "agreement": 0.75,
+          "kappa": 0.7212543554006968,
+          "disagreements": [
+            {
+              "claude": "not_a_sign",
+              "sol": "uncertain",
+              "n": 3
+            },
+            {
+              "claude": "not_a_sign",
+              "sol": "P.127",
+              "n": 2
+            },
+            {
+              "claude": "P.130",
+              "sol": "uncertain",
+              "n": 2
+            },
+            {
+              "claude": "other_qcvn",
+              "sol": "P.107b",
+              "n": 1
+            },
+            {
+              "claude": "R.302a",
+              "sol": "uncertain",
+              "n": 1
+            },
+            {
+              "claude": "P.131a",
+              "sol": "uncertain",
+              "n": 1
+            }
+          ],
+          "sol_uncertain": 7,
+          "claude_uncertain": 0,
+          "both_decidable": {
+            "n": 33,
+            "agreement": 0.9090909090909091,
+            "kappa": 0.8961175236096537,
+            "disagreements": [
+              {
+                "claude": "not_a_sign",
+                "sol": "P.127",
+                "n": 2
+              },
+              {
+                "claude": "other_qcvn",
+                "sol": "P.107b",
+                "n": 1
+              }
+            ]
+          }
+        },
+        "<16": {
+          "n": 1,
+          "agreement": 1.0,
+          "kappa": null,
+          "disagreements": [],
+          "sol_uncertain": 0,
+          "claude_uncertain": 0,
+          "both_decidable": {
+            "n": 1,
+            "agreement": 1.0,
+            "kappa": null,
+            "disagreements": []
+          }
+        },
+        "16-32": {
+          "n": 8,
+          "agreement": 0.75,
+          "kappa": 0.6521739130434783,
+          "disagreements": [
+            {
+              "claude": "R.302a",
+              "sol": "uncertain",
+              "n": 1
+            },
+            {
+              "claude": "not_a_sign",
+              "sol": "uncertain",
+              "n": 1
+            }
+          ],
+          "sol_uncertain": 2,
+          "claude_uncertain": 0,
+          "both_decidable": {
+            "n": 6,
+            "agreement": 1.0,
+            "kappa": 1.0,
+            "disagreements": []
+          }
+        },
+        "32-64": {
+          "n": 18,
+          "agreement": 0.6111111111111112,
+          "kappa": 0.5625,
+          "disagreements": [
+            {
+              "claude": "not_a_sign",
+              "sol": "P.127",
+              "n": 2
+            },
+            {
+              "claude": "not_a_sign",
+              "sol": "uncertain",
+              "n": 2
+            },
+            {
+              "claude": "P.130",
+              "sol": "uncertain",
+              "n": 2
+            },
+            {
+              "claude": "P.131a",
+              "sol": "uncertain",
+              "n": 1
+            }
+          ],
+          "sol_uncertain": 5,
+          "claude_uncertain": 0,
+          "both_decidable": {
+            "n": 13,
+            "agreement": 0.8461538461538461,
+            "kappa": 0.8142857142857143,
+            "disagreements": [
+              {
+                "claude": "not_a_sign",
+                "sol": "P.127",
+                "n": 2
+              }
+            ]
+          }
+        },
+        ">=64": {
+          "n": 13,
+          "agreement": 0.9230769230769231,
+          "kappa": 0.9115646258503401,
+          "disagreements": [
+            {
+              "claude": "other_qcvn",
+              "sol": "P.107b",
+              "n": 1
+            }
+          ],
+          "sol_uncertain": 0,
+          "claude_uncertain": 0,
+          "both_decidable": {
+            "n": 13,
+            "agreement": 0.9230769230769231,
+            "kappa": 0.9115646258503401,
+            "disagreements": [
+              {
+                "claude": "other_qcvn",
+                "sol": "P.107b",
+                "n": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    "owner_spot_check": {
+      "n": 40,
+      "owner_unsure": 3,
+      "sol_uncertain": 7,
+      "both_decidable": 32,
+      "agreement_with_owner_assertion": 0.90625,
+      "note": "Owner supplies ok/not_ok/unsure, not exact corrected codes; this is assertion agreement, not code accuracy or human GT."
+    },
+    "field_precision": {
+      "hanoi": {
+        "claude": {
+          "A": {
+            "correct": 57,
+            "wrong_code": 21,
+            "not_a_sign": 7,
+            "uncertain": 22,
+            "n": 107,
+            "decidable": 85,
+            "precision": 0.6705882352941176,
+            "ci95": [
+              0.5584415584415584,
+              0.7790697674418605
+            ],
+            "clusters": 15
+          },
+          "B": {
+            "correct": 59,
+            "wrong_code": 0,
+            "not_a_sign": 2,
+            "uncertain": 14,
+            "n": 75,
+            "decidable": 61,
+            "precision": 0.9672131147540983,
+            "ci95": [
+              0.9090909090909091,
+              1.0
+            ],
+            "clusters": 14
+          },
+          "C": {
+            "correct": 69,
+            "wrong_code": 3,
+            "not_a_sign": 8,
+            "uncertain": 20,
+            "n": 100,
+            "decidable": 80,
+            "precision": 0.8625,
+            "ci95": [
+              0.7763157894736842,
+              0.9342105263157895
+            ],
+            "clusters": 14
+          }
+        },
+        "sol": {
+          "A": {
+            "correct": 52,
+            "wrong_code": 17,
+            "not_a_sign": 7,
+            "uncertain": 31,
+            "n": 107,
+            "decidable": 76,
+            "precision": 0.6842105263157895,
+            "ci95": [
+              0.5606060606060606,
+              0.7951807228915663
+            ],
+            "clusters": 15
+          },
+          "B": {
+            "correct": 56,
+            "wrong_code": 1,
+            "not_a_sign": 0,
+            "uncertain": 18,
+            "n": 75,
+            "decidable": 57,
+            "precision": 0.9824561403508771,
+            "ci95": [
+              0.9411764705882353,
+              1.0
+            ],
+            "clusters": 14
+          },
+          "C": {
+            "correct": 62,
+            "wrong_code": 5,
+            "not_a_sign": 6,
+            "uncertain": 27,
+            "n": 100,
+            "decidable": 73,
+            "precision": 0.8493150684931506,
+            "ci95": [
+              0.7638888888888888,
+              0.935064935064935
+            ],
+            "clusters": 14
+          }
+        },
+        "consensus": {
+          "A": {
+            "correct": 51,
+            "wrong_code": 13,
+            "not_a_sign": 6,
+            "uncertain": 19,
+            "n": 89,
+            "decidable": 70,
+            "precision": 0.7285714285714285,
+            "ci95": [
+              0.6086956521739131,
+              0.8421052631578947
+            ],
+            "clusters": 15
+          },
+          "B": {
+            "correct": 55,
+            "wrong_code": 0,
+            "not_a_sign": 0,
+            "uncertain": 13,
+            "n": 68,
+            "decidable": 55,
+            "precision": 1.0,
+            "ci95": [
+              1.0,
+              1.0
+            ],
+            "clusters": 14
+          },
+          "C": {
+            "correct": 60,
+            "wrong_code": 2,
+            "not_a_sign": 5,
+            "uncertain": 16,
+            "n": 83,
+            "decidable": 67,
+            "precision": 0.8955223880597015,
+            "ci95": [
+              0.8181818181818182,
+              0.9666666666666667
+            ],
+            "clusters": 14
+          }
+        }
+      },
+      "v0": {
+        "claude": {
+          "A": {
+            "correct": 31,
+            "wrong_code": 6,
+            "not_a_sign": 0,
+            "uncertain": 9,
+            "n": 46,
+            "decidable": 37,
+            "precision": 0.8378378378378378,
+            "ci95": [
+              0.7777777777777778,
+              0.9523809523809523
+            ],
+            "clusters": 5
+          },
+          "B": {
+            "correct": 46,
+            "wrong_code": 2,
+            "not_a_sign": 0,
+            "uncertain": 6,
+            "n": 54,
+            "decidable": 48,
+            "precision": 0.9583333333333334,
+            "ci95": [
+              0.8947368421052632,
+              1.0
+            ],
+            "clusters": 5
+          },
+          "C": {
+            "correct": 49,
+            "wrong_code": 3,
+            "not_a_sign": 1,
+            "uncertain": 5,
+            "n": 58,
+            "decidable": 53,
+            "precision": 0.9245283018867925,
+            "ci95": [
+              0.8461538461538461,
+              1.0
+            ],
+            "clusters": 5
+          }
+        },
+        "sol": {
+          "A": {
+            "correct": 20,
+            "wrong_code": 4,
+            "not_a_sign": 0,
+            "uncertain": 22,
+            "n": 46,
+            "decidable": 24,
+            "precision": 0.8333333333333334,
+            "ci95": [
+              0.6363636363636364,
+              1.0
+            ],
+            "clusters": 5
+          },
+          "B": {
+            "correct": 32,
+            "wrong_code": 3,
+            "not_a_sign": 0,
+            "uncertain": 19,
+            "n": 54,
+            "decidable": 35,
+            "precision": 0.9142857142857143,
+            "ci95": [
+              0.7631578947368421,
+              1.0
+            ],
+            "clusters": 5
+          },
+          "C": {
+            "correct": 32,
+            "wrong_code": 5,
+            "not_a_sign": 1,
+            "uncertain": 20,
+            "n": 58,
+            "decidable": 38,
+            "precision": 0.8421052631578947,
+            "ci95": [
+              0.7021276595744681,
+              0.96875
+            ],
+            "clusters": 5
+          }
+        },
+        "consensus": {
+          "A": {
+            "correct": 20,
+            "wrong_code": 2,
+            "not_a_sign": 0,
+            "uncertain": 9,
+            "n": 31,
+            "decidable": 22,
+            "precision": 0.9090909090909091,
+            "ci95": [
+              0.8125,
+              1.0
+            ],
+            "clusters": 5
+          },
+          "B": {
+            "correct": 32,
+            "wrong_code": 0,
+            "not_a_sign": 0,
+            "uncertain": 6,
+            "n": 38,
+            "decidable": 32,
+            "precision": 1.0,
+            "ci95": [
+              1.0,
+              1.0
+            ],
+            "clusters": 5
+          },
+          "C": {
+            "correct": 32,
+            "wrong_code": 1,
+            "not_a_sign": 1,
+            "uncertain": 5,
+            "n": 39,
+            "decidable": 34,
+            "precision": 0.9411764705882353,
+            "ci95": [
+              0.8888888888888888,
+              1.0
+            ],
+            "clusters": 5
+          }
+        }
+      },
+      "combined": {
+        "claude": {
+          "A": {
+            "correct": 88,
+            "wrong_code": 27,
+            "not_a_sign": 7,
+            "uncertain": 31,
+            "n": 153,
+            "decidable": 122,
+            "precision": 0.7213114754098361,
+            "ci95": [
+              0.6306306306306306,
+              0.8037383177570093
+            ],
+            "clusters": 20
+          },
+          "B": {
+            "correct": 105,
+            "wrong_code": 2,
+            "not_a_sign": 2,
+            "uncertain": 20,
+            "n": 129,
+            "decidable": 109,
+            "precision": 0.963302752293578,
+            "ci95": [
+              0.9207920792079208,
+              1.0
+            ],
+            "clusters": 19
+          },
+          "C": {
+            "correct": 118,
+            "wrong_code": 6,
+            "not_a_sign": 9,
+            "uncertain": 25,
+            "n": 158,
+            "decidable": 133,
+            "precision": 0.8872180451127819,
+            "ci95": [
+              0.8285714285714286,
+              0.9389312977099237
+            ],
+            "clusters": 19
+          }
+        },
+        "sol": {
+          "A": {
+            "correct": 72,
+            "wrong_code": 21,
+            "not_a_sign": 7,
+            "uncertain": 53,
+            "n": 153,
+            "decidable": 100,
+            "precision": 0.72,
+            "ci95": [
+              0.6185567010309279,
+              0.8160919540229885
+            ],
+            "clusters": 20
+          },
+          "B": {
+            "correct": 88,
+            "wrong_code": 4,
+            "not_a_sign": 0,
+            "uncertain": 37,
+            "n": 129,
+            "decidable": 92,
+            "precision": 0.9565217391304348,
+            "ci95": [
+              0.8877551020408163,
+              1.0
+            ],
+            "clusters": 19
+          },
+          "C": {
+            "correct": 94,
+            "wrong_code": 10,
+            "not_a_sign": 7,
+            "uncertain": 47,
+            "n": 158,
+            "decidable": 111,
+            "precision": 0.8468468468468469,
+            "ci95": [
+              0.7739130434782608,
+              0.9191919191919192
+            ],
+            "clusters": 19
+          }
+        },
+        "consensus": {
+          "A": {
+            "correct": 71,
+            "wrong_code": 15,
+            "not_a_sign": 6,
+            "uncertain": 28,
+            "n": 120,
+            "decidable": 92,
+            "precision": 0.7717391304347826,
+            "ci95": [
+              0.6753246753246753,
+              0.8636363636363636
+            ],
+            "clusters": 20
+          },
+          "B": {
+            "correct": 87,
+            "wrong_code": 0,
+            "not_a_sign": 0,
+            "uncertain": 19,
+            "n": 106,
+            "decidable": 87,
+            "precision": 1.0,
+            "ci95": [
+              1.0,
+              1.0
+            ],
+            "clusters": 19
+          },
+          "C": {
+            "correct": 92,
+            "wrong_code": 3,
+            "not_a_sign": 6,
+            "uncertain": 21,
+            "n": 122,
+            "decidable": 101,
+            "precision": 0.9108910891089109,
+            "ci95": [
+              0.8529411764705882,
+              0.9625
+            ],
+            "clusters": 19
+          }
+        }
+      }
+    },
+    "threshold_rules": {
+      "claude": {
+        "decision": "not_recommended",
+        "checks": {
+          "precision_within_0.02": false,
+          "errors_not_above_A": true,
+          "proxy_recall_above_B": true
+        },
+        "values": {
+          "precision_B": 0.963302752293578,
+          "precision_C": 0.8872180451127819,
+          "errors_A": 34,
+          "errors_C": 15,
+          "proxy_recall_B": 0.7391304347826086,
+          "proxy_recall_C": 0.7608695652173914
+        }
+      },
+      "sol": {
+        "decision": "not_recommended",
+        "checks": {
+          "precision_within_0.02": false,
+          "errors_not_above_A": true,
+          "proxy_recall_above_B": true
+        },
+        "values": {
+          "precision_B": 0.9565217391304348,
+          "precision_C": 0.8468468468468469,
+          "errors_A": 28,
+          "errors_C": 17,
+          "proxy_recall_B": 0.7391304347826086,
+          "proxy_recall_C": 0.7608695652173914
+        }
+      },
+      "consensus": {
+        "decision": "not_recommended",
+        "checks": {
+          "precision_within_0.02": false,
+          "errors_not_above_A": true,
+          "proxy_recall_above_B": true
+        },
+        "values": {
+          "precision_B": 1.0,
+          "precision_C": 0.9108910891089109,
+          "errors_A": 21,
+          "errors_C": 9,
+          "proxy_recall_B": 0.7391304347826086,
+          "proxy_recall_C": 0.7608695652173914
+        }
+      }
+    },
+    "new_main_consensus_test": {
+      "declared_new_main_classes": 25,
+      "groups": {
+        "<16": {
+          "n": 0,
+          "correct": 0,
+          "accuracy": null,
+          "represented_classes": 0
+        },
+        "16-32": {
+          "n": 11,
+          "correct": 11,
+          "accuracy": 1.0,
+          "represented_classes": 3
+        },
+        "32-64": {
+          "n": 36,
+          "correct": 36,
+          "accuracy": 1.0,
+          "represented_classes": 4
+        },
+        ">=64": {
+          "n": 63,
+          "correct": 63,
+          "accuracy": 1.0,
+          "represented_classes": 5
+        },
+        ">=32": {
+          "n": 99,
+          "correct": 99,
+          "accuracy": 1.0,
+          "represented_classes": 5
+        },
+        "all": {
+          "n": 110,
+          "correct": 110,
+          "accuracy": 1.0,
+          "represented_classes": 5
+        }
+      }
+    },
+    "disagreement_n": 217,
+    "gate_v2_identity": {
+      "D": {
+        "base": "C",
+        "same_emitted_evidence_and_predictions": true,
+        "gate_n": 100,
+        "base_n": 100
+      },
+      "E": {
+        "base": "B",
+        "same_emitted_evidence_and_predictions": true,
+        "gate_n": 75,
+        "base_n": 75
+      }
+    },
+    "ci_note": "2000 bootstrap draws over video-id/60-second segment clusters, seed 20261030; uncertain labels excluded from precision denominator.",
+    "selection_note": "Consensus-only accuracy/precision is a selected subset, not a full-data or human-GT estimate. TEST was not used to change defaults.",
+    "disagreement_table": "output/kiet_wp_20261030/second_review/disagreements.csv",
+    "proxy_recall_note": "Existing Claude AI proposal-conditional labels reused, not independently reviewed."
+  },
+  "repro": {
+    "reproduced_within_tolerance": true,
+    "tolerance": 0.01,
+    "original_epoch": 18,
+    "repro_epoch": 18,
+    "original_val_main_f1": 0.9511306744493385,
+    "repro_val_main_f1": 0.9500453548350951,
+    "val_main_f1_difference": -0.0010853196142434074,
+    "original_threshold": 0.87,
+    "repro_threshold": 0.87,
+    "test_old30": [
+      {
+        "group": "<16",
+        "n": 1078,
+        "original": 0.7838589981447124,
+        "repro": 0.7792207792207793,
+        "difference": -0.004638218923933124
+      },
+      {
+        "group": "16-32",
+        "n": 811,
+        "original": 0.9815043156596794,
+        "repro": 0.9778051787916153,
+        "difference": -0.0036991368680641123
+      },
+      {
+        "group": "32-64",
+        "n": 753,
+        "original": 0.9628154050464808,
+        "repro": 0.9628154050464808,
+        "difference": 0.0
+      },
+      {
+        "group": ">=64",
+        "n": 502,
+        "original": 0.9800796812749004,
+        "repro": 0.9800796812749004,
+        "difference": 0.0
+      },
+      {
+        "group": ">=32",
+        "n": 1255,
+        "original": 0.9697211155378486,
+        "repro": 0.9697211155378486,
+        "difference": 0.0
+      },
+      {
+        "group": "all",
+        "n": 3144,
+        "original": 0.9090330788804071,
+        "repro": 0.9064885496183206,
+        "difference": -0.0025445292620864812
+      }
+    ],
+    "train_seconds": 484.2830059528351,
+    "protected_inputs_unchanged": {
+      "scripts/train_recognizer_v2_20261028.py": true,
+      "scripts/evaluate_recognizer_v2_20261028.py": true,
+      "configs/perception.yaml": true,
+      "configs/sign_dataset.yaml": true,
+      "models/sign_detector/finetuned_20261026.pt": true,
+      "models/sign_recognizer/retrained_20261028.pt": true,
+      "models/sign_recognizer/retrained_20261009.pt": true,
+      "output/kiet_wp_20261028/recognizer_v2/boxes.csv": true,
+      "output/kiet_wp_20261028/recognizer_v2/background_boxes.csv": true,
+      "output/kiet_wp_20261028/recognizer_v2/class_list.json": true
+    },
+    "interpretation": "Same code and inputs, seed and parameters; not bitwise deterministic. cuDNN nondeterminism is a possible explanation, not experimentally isolated.",
+    "provenance": {
+      "started": "2026-10-29T10:21:05.542022+07:00",
+      "git_head": "15cdef5a33b0b11c1c3cc8af0c6157e225a319f5",
+      "sha256": {
+        "scripts/train_recognizer_v2_20261028.py": "0a19d0b0d9e3bfaed3d5005d6b81140e5705f075a325e6a419c1a68db0e9a42f",
+        "scripts/evaluate_recognizer_v2_20261028.py": "a5764cd0eaf7236038a44022d315b178e1c67644fa0dfff44546e12d4b4d7891",
+        "configs/perception.yaml": "8a5ef7c570a328b5b305bbab86a15485efeac65a0f0c0ce2c1607d72523c5874",
+        "configs/sign_dataset.yaml": "5c9cd289fe29b3a3fb8d039ec1e853ff4339fb77e3eb97a62f0c9dedb9160aba",
+        "models/sign_detector/finetuned_20261026.pt": "c7fc0b607d603c88d33e02fa9986a787d527f8050b74d204fce40b365149541f",
+        "models/sign_recognizer/retrained_20261028.pt": "01d5c677af749ae14170b8008d304fb852f8c0baa7a606a3101c69e2a6b80d30",
+        "models/sign_recognizer/retrained_20261009.pt": "c1dad57daf61c104d4f0b6cb2387bc2c53ff397eaf948934e4a53a63babb859b",
+        "output/kiet_wp_20261028/recognizer_v2/boxes.csv": "faa111645cc26db83f2af1be6707bfa478d11bf78f0ea0592448de1fb96405dd",
+        "output/kiet_wp_20261028/recognizer_v2/background_boxes.csv": "18c37b10570b5fcf4a1b25b7d96e071cd27ae6a82c33e474a14c893c0fff1b78",
+        "output/kiet_wp_20261028/recognizer_v2/class_list.json": "fd5efe48fb0535356e4bee9623b5b8c26a41bf5edf6fd3525ce4ddc6ce3d38f7"
+      },
+      "original_results": "output/kiet_wp_20261028/recognizer_v2/train/results.json",
+      "default_models_modified": false
+    }
+  },
+  "missing_labels": {
+    "status": "NOT_RUN_OPTIONAL",
+    "reason": "Deferred optional P4 to prioritize mandatory report, verification and PR delivery. No adjusted detector precision or consensus missing-label manifest is claimed.",
+    "canonical_labels_modified": false,
+    "detector_retrained": false
+  },
+  "lane_proxy": {
+    "status": "AI_QUALITATIVE_PROXY_NOT_LANE_F1",
+    "manifest": "data/manifests/field_video_20261029/lane_proxy_20261030.jsonl",
+    "manifest_sha256": "ab163cb53bea05a7d71026e6111ed2c554be9f5d3f152da8c0b063b287890471",
+    "protocol": {
+      "n": 60,
+      "day": 30,
+      "night": 30,
+      "sampling": "Equally spaced midpoint frames over each complete EVAL video, 15 from each day video and 30 from night video.",
+      "lane_model_sha256": "5207a4ea327cd770d5702d952a4050d3c51004e7cecdd60d8fc49933e813ab26",
+      "config_sha256": "8a5ef7c570a328b5b305bbab86a15485efeac65a0f0c0ce2c1607d72523c5874",
+      "scope": "LaneDetector(load_config('perception')).detect, the pipeline default with lane_visual_roi=False; no temporal smoothing or optional camera-aware display fallback.",
+      "provenance": "ai_reviewed_codex_sol",
+      "human_gt": false
+    },
+    "groups": {
+      "day": {
+        "n": 30,
+        "counts": {
+          "good": 0,
+          "partial": 3,
+          "fail": 15,
+          "no_visible_lane": 12
+        },
+        "fraction_all": {
+          "good": 0.0,
+          "partial": 0.1,
+          "fail": 0.5,
+          "no_visible_lane": 0.4
+        },
+        "visible_n": 18,
+        "fraction_visible": {
+          "good": 0.0,
+          "partial": 0.16666666666666666,
+          "fail": 0.8333333333333334
+        }
+      },
+      "night": {
+        "n": 30,
+        "counts": {
+          "good": 0,
+          "partial": 9,
+          "fail": 15,
+          "no_visible_lane": 6
+        },
+        "fraction_all": {
+          "good": 0.0,
+          "partial": 0.3,
+          "fail": 0.5,
+          "no_visible_lane": 0.2
+        },
+        "visible_n": 24,
+        "fraction_visible": {
+          "good": 0.0,
+          "partial": 0.375,
+          "fail": 0.625
+        }
+      },
+      "all": {
+        "n": 60,
+        "counts": {
+          "good": 0,
+          "partial": 12,
+          "fail": 30,
+          "no_visible_lane": 18
+        },
+        "fraction_all": {
+          "good": 0.0,
+          "partial": 0.2,
+          "fail": 0.5,
+          "no_visible_lane": 0.3
+        },
+        "visible_n": 42,
+        "fraction_visible": {
+          "good": 0.0,
+          "partial": 0.2857142857142857,
+          "fail": 0.7142857142857143
+        }
+      }
+    }
+  },
+  "final_evidence_sources_sha256": {
+    "output/kiet_wp_20261030/repro/provenance.json": "adbf0732bbed6d98b7d7e26cfd0ad91d93f14820ddd10a4c9e62b6579ad68947",
+    "output/kiet_wp_20261030/repro/comparison.json": "7e3adc3a2d5da7cd570758ae67c2247cb80f13aca30053249e87661258ddaae4",
+    "output/kiet_wp_20261030/second_review/results.json": "0400e41415b84e082804aa286a1c3ec6168230f89306722498e1ce091cf1b56a",
+    "output/kiet_wp_20261030/operating_points.json": "b07c985436b74e35e9bd3c1e7ca12f567c138e787260939f3a4e852a7d6e3ce1",
+    "output/kiet_wp_20261030/lane_proxy/results.json": "8590c49ade13450a57786f2250ed7c3e38b936d1d9b538d6925b5a667731508e",
+    "output/kiet_wp_20261028/recognizer_v2/eval/results.json": "4b50b5ecf8d896d4d142d1ca0639158d5b774ba9cf76f641c7854162dce18bb3",
+    "output/kiet_wp_20261029/summary_all.json": "678bca26f05223b287c1e21cfb32d7a214df439cb85ba13b48371c78a7979264"
+  },
+  "final_evidence_operating_points": {
+    "selection": {
+      "split": "VAL",
+      "min_short_side": 16,
+      "test_used": false,
+      "threshold": 0.6412901874067937,
+      "coverage": 0.950175662727563,
+      "accepted_accuracy": 0.9791596638655462,
+      "background_accepted": 0.0,
+      "criterion": "coverage_target",
+      "known_samples": 3131,
+      "background_samples": 802
+    },
+    "old30_ge32": {
+      "old_063_no_gate": {
+        "category": "old30",
+        "size": ">=32",
+        "n": 1255,
+        "accepted": 1223,
+        "correct": 1169,
+        "coverage": 0.9745019920318725,
+        "accepted_accuracy": 0.955846279640229,
+        "end_to_end": 0.9314741035856574,
+        "wrong_label_rate": 0.04302788844621514
+      },
+      "old_063_gate": {
+        "category": "old30",
+        "size": ">=32",
+        "n": 1255,
+        "accepted": 1222,
+        "correct": 1168,
+        "coverage": 0.9737051792828685,
+        "accepted_accuracy": 0.955810147299509,
+        "end_to_end": 0.9306772908366534,
+        "wrong_label_rate": 0.04302788844621514
+      },
+      "new_087_no_gate": {
+        "category": "old30",
+        "size": ">=32",
+        "n": 1255,
+        "accepted": 1134,
+        "correct": 1121,
+        "coverage": 0.9035856573705179,
+        "accepted_accuracy": 0.9885361552028219,
+        "end_to_end": 0.8932270916334661,
+        "wrong_label_rate": 0.010358565737051793
+      },
+      "new_t2_no_gate": {
+        "category": "old30",
+        "size": ">=32",
+        "n": 1255,
+        "accepted": 1207,
+        "correct": 1186,
+        "coverage": 0.9617529880478087,
+        "accepted_accuracy": 0.9826014913007457,
+        "end_to_end": 0.9450199203187251,
+        "wrong_label_rate": 0.016733067729083666
+      }
+    }
+  },
+  "final_evidence_verification": {
+    "pytest": {
+      "tests": 585,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 11,
+      "exit_code": 0,
+      "passed": 574,
+      "deselected": 38
+    },
+    "acceptance": {
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "passed": 11
+    },
+    "node": {
+      "passed": 7,
+      "failed": 0,
+      "exit_code": 0,
+      "log": "output/kiet_wp_20261030/verification/node_native.log"
+    },
+    "frontend_build": {
+      "exit_code": 0,
+      "vite": "5.4.21",
+      "log": "output/kiet_wp_20261030/verification/frontend_build_native.log"
+    },
+    "environment_note": "Windows sandbox ACL/spawn errors reproduced; native runs with separate basetemp passed. Acceptance dataset root D:/DSP391m/datasets/ITAS-MM is read-only.",
+    "hosted_ci": {
+      "status": "PENDING_PR",
+      "not_equivalent_to_local_dataset_gpu_tests": true
+    },
+    "protected_inputs_unchanged": {
+      "scripts/train_recognizer_v2_20261028.py": true,
+      "scripts/evaluate_recognizer_v2_20261028.py": true,
+      "configs/perception.yaml": true,
+      "configs/sign_dataset.yaml": true,
+      "models/sign_detector/finetuned_20261026.pt": true,
+      "models/sign_recognizer/retrained_20261028.pt": true,
+      "models/sign_recognizer/retrained_20261009.pt": true,
+      "output/kiet_wp_20261028/recognizer_v2/boxes.csv": true,
+      "output/kiet_wp_20261028/recognizer_v2/background_boxes.csv": true,
+      "output/kiet_wp_20261028/recognizer_v2/class_list.json": true
+    }
+  }
 }
