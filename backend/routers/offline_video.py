@@ -50,6 +50,14 @@ def _run_job(job_id, source, output, analysis_hz, start_sec, max_sec, auxiliary_
                 jobs[job_id]['message']='Render thất bại; xem nhật ký máy chủ. File nguồn vẫn giữ cục bộ.'
 
 
+def length_error(frames,fps):
+    """Vietnamese message when a video exceeds the frame limit, else None."""
+    if frames<=MAX_VIDEO_FRAMES or fps<=0:return None
+    minutes=frames/fps/60
+    return (f'Video dài khoảng {minutes:.0f} phút ({frames} frame), vượt giới hạn '
+            f'{MAX_VIDEO_FRAMES} frame. Hãy cắt ngắn video (ví dụ đoạn 2–5 phút) rồi tải lại.')
+
+
 def _read_job(job_id):
     with registry:
         row=jobs.get(job_id)
@@ -118,7 +126,10 @@ def start_video_job(file:UploadFile=File(...),
         n=int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         w,h=int(cap.get(3)),int(cap.get(4))
         cap.release()
-        if not (5<=fps<=120 and 0<n<=MAX_VIDEO_FRAMES and
+        too_long=length_error(n,fps)
+        if too_long:
+            raise HTTPException(422,too_long)
+        if not (5<=fps<=120 and 0<n and
                 256<=w<=3840 and 144<=h<=2160):
             raise HTTPException(422,'Video không hợp lệ hoặc vượt giới hạn 100.000 frame/4K.')
         if int(start_second*fps)>=n:
