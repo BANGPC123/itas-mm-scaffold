@@ -30,6 +30,7 @@ def recognize_views(recognizer,image,primary,secondary,*,min_short_side=16):
         if p.label=='unknown' and p.recognition_source in ('low_confidence','crop_too_small') and q:
             if q.label!='unknown' and (q.recognition_confidence or 0)>=.90 and q.confidence>=.60 and crop_side(q.bbox_xyxy,image.shape)>=16:
                 p.label=q.label;p.recognition_confidence=q.recognition_confidence
+                p.raw_label=q.raw_label;p.raw_score=q.raw_score
                 p.bbox_xyxy=q.bbox_xyxy;p.recognition_source='multiscale_rescue'
     for j,q in enumerate(other):
         if j in used or any(overlap(q.bbox_xyxy,p.bbox_xyxy)>=.30 for p in first):continue

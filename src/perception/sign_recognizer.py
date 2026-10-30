@@ -61,6 +61,8 @@ class SignRecognizer:
                 predictions = zip(confidences.cpu().tolist(), indices.cpu().tolist())
                 veto=gate.verdict(embedding,[self.classes[i] for i in indices.cpu().tolist()]) if gate is not None else [None]*len(eligible)
             for sign, (confidence, index), rejected in zip(eligible, predictions,veto):
+                sign.raw_label = self.classes[index]
+                sign.raw_score = confidence
                 sign.recognition_confidence = confidence
                 sign.label = self.classes[index] if confidence >= self.threshold else 'unknown'
                 sign.recognition_source = 'single_frame' if sign.label!='unknown' else 'low_confidence'

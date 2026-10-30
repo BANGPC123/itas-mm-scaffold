@@ -41,6 +41,8 @@ class SignDetectionResponse(BaseModel):
     applicability_reason: str = ''
     track_id: int | None = None
     recognition_source: str = 'single_frame'
+    raw_label: str | None = None
+    raw_score: float | None = None
     crop_age_ms: float | None = None
     confirmation_delay_ms: float | None = None
     name_vi: str | None = None
