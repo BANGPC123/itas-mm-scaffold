@@ -24,6 +24,8 @@ class Pipeline:
         self.video_detector_size=cfg.get('sign_detector',{}).get('video_image_size',self.still_detector_size)
         self.sign_recognizer=SignRecognizer(cfg)
         self.video_min_short_side=cfg.get('sign_recognizer',{}).get('video_min_short_side',32)
+        # Video-only acceptance threshold; overrides the checkpoint value when set.
+        self.video_confidence_threshold=cfg.get('sign_recognizer',{}).get('video_confidence_threshold')
         self.supplementary_reader=None
         self.auto_supplementary_enabled=cfg.get('supplementary_ocr',{}).get('enabled',False)
         self.lane_detector=LaneDetector(cfg)
@@ -87,9 +89,9 @@ class Pipeline:
             pass
         elif secondary_signs is not None:
             from src.perception.sign_multiscale import recognize_views
-            signs=recognize_views(self.sign_recognizer,road,signs,secondary_signs,min_short_side=self.video_min_short_side)
+            signs=recognize_views(self.sign_recognizer,road,signs,secondary_signs,min_short_side=self.video_min_short_side,threshold=self.video_confidence_threshold)
         elif stream_id is None:signs=self.sign_recognizer.recognize(road,signs)
-        else:signs=self.sign_recognizer.recognize(road,signs,min_short_side=self.video_min_short_side)
+        else:signs=self.sign_recognizer.recognize(road,signs,min_short_side=self.video_min_short_side,threshold=self.video_confidence_threshold)
         signs=[s for s in signs if s.recognition_source!='background_rejected']
         if stream_id is not None:
             if frame_timestamp is None:raise ValueError('Video frame timestamp is required')

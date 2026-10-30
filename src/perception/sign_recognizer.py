@@ -29,7 +29,7 @@ class SignRecognizer:
                 self.reference_gate=FrozenReferenceGate(reference,self.device,
                     margin=self.config.get('reference_gate_margin',.015))
 
-    def recognize(self, image, signs, *, min_short_side=None):
+    def recognize(self, image, signs, *, min_short_side=None, threshold=None):
         if self.model is None:
             for sign in signs:
                 sign.label = 'unknown'
@@ -64,9 +64,10 @@ class SignRecognizer:
                 sign.raw_label = self.classes[index]
                 sign.raw_score = confidence
                 sign.recognition_confidence = confidence
-                sign.label = self.classes[index] if confidence >= self.threshold else 'unknown'
+                accept_at = self.threshold if threshold is None else threshold
+                sign.label = self.classes[index] if confidence >= accept_at else 'unknown'
                 sign.recognition_source = 'single_frame' if sign.label!='unknown' else 'low_confidence'
-                if self.classes[index] == 'unknown' and confidence >= self.threshold:
+                if self.classes[index] == 'unknown' and confidence >= accept_at:
                     sign.recognition_source = ('out_of_vocabulary_candidate'
                         if self.keeps_confident_detection(sign) else 'background_rejected')
                 elif rejected:

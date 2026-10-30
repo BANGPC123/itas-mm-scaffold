@@ -64,6 +64,8 @@ sign_recognizer:
   # old encoder and cannot be used with the 2026-10-28 model, so no gate is configured.
   weights_path: models/sign_recognizer/retrained_20261028.pt
   confidence_threshold: 0.87   # calibrated on VAL; the checkpoint value takes precedence at load time
+  # Video only (stream_id set). Overrides the checkpoint threshold on the video path; still images keep the checkpoint value.
+  video_confidence_threshold: 0.87
   min_short_side: 32
   video_min_short_side: 12
   # Keep confident detector boxes that the recognizer scores as background

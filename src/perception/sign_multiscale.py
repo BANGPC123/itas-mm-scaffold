@@ -10,9 +10,10 @@ def crop_side(box, shape):
                min(h,math.ceil(d))-max(0,math.floor(b)))
 
 
-def recognize_views(recognizer,image,primary,secondary,*,min_short_side=16):
-    first=recognizer.recognize(image,deepcopy(primary),min_short_side=min_short_side)
-    other=recognizer.recognize(image,deepcopy(secondary),min_short_side=min_short_side)
+def recognize_views(recognizer,image,primary,secondary,*,min_short_side=16,threshold=None):
+    extra={} if threshold is None else {'threshold':threshold}
+    first=recognizer.recognize(image,deepcopy(primary),min_short_side=min_short_side,**extra)
+    other=recognizer.recognize(image,deepcopy(secondary),min_short_side=min_short_side,**extra)
     matches=[[j for j,s in enumerate(other) if overlap(p.bbox_xyxy,s.bbox_xyxy)>=.5] for p in first]
     usage=[sum(j in candidates for candidates in matches) for j in range(len(other))]
     used=set()
