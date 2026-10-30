@@ -65,7 +65,8 @@ sign_recognizer:
   weights_path: models/sign_recognizer/retrained_20261028.pt
   confidence_threshold: 0.87   # calibrated on VAL; the checkpoint value takes precedence at load time
   # Video only (stream_id set). Overrides the checkpoint threshold on the video path; still images keep the checkpoint value.
-  video_confidence_threshold: 0.87
+  # Chosen at CP2 (2026-10-30): T2 value from docs/release_gate_v2.json, precision 90.7% on decided video tracks (cp2_grading.csv).
+  video_confidence_threshold: 0.6412901874067937
   min_short_side: 32
   video_min_short_side: 12
   # Keep confident detector boxes that the recognizer scores as background
