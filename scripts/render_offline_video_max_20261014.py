@@ -15,6 +15,7 @@ from PIL import ImageFont,Image,ImageDraw
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from src.pipeline.orchestrator import Pipeline
+from src.interaction.ai_observation import video_speech_events
 from src.perception.overlay_motion import OverlayMotion
 from scripts.complete_test_video import draw_frame
 
@@ -68,6 +69,7 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
               'legal_speech_samples':0,'warnings':0,
               'temporal_ufld_candidate_lines':0}
     started=time.perf_counter();failures=[];index=0
+    speech_events=[];announced=set()
     try:
         with (out/'predictions.jsonl').open('w',encoding='utf8') as jsonl:
             for index in range(frames):
@@ -115,6 +117,8 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
                         'speech':result.reasoning.speech_text,
                         'latency_ms':result.timings_ms,
                     },ensure_ascii=False)+'\n')
+                    # Output timeline starts at 0, so the cue time is the output frame index.
+                    speech_events.extend(video_speech_events(signs,index/fps,announced))
                 else:
                     lines,boxes=motion.advance(canvas)
                     _,aux_boxes=aux_motion.advance(canvas)
@@ -180,6 +184,7 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
         'sign_mode':('960+640+1280' if highres_rescue else '960+640')+', three-frame confirmation',
         'models_finetuned_during_run':False,'highres_1280_enabled':bool(highres_rescue),'input_recording_datetime_known':recorded_at is not None,
         'auxiliary_research_enabled':include_auxiliary,'counts':counters,
+        'speech_events':speech_events,
         'elapsed_seconds':time.perf_counter()-started,'failures':failures,
         'video_sha256':file_sha256(video),'verified_full_decode':verified,
         'not_a_measured_field_accuracy':True}

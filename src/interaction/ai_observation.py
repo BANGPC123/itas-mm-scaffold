@@ -37,3 +37,19 @@ def ai_observation(signs, *, video=False, min_confidence=.74, min_detector=.55, 
     return ('AI dự đoán có thể là biển '+
             '; '.join(choices)+
             '. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng.')
+
+
+def video_speech_events(signs,t_seconds,announced):
+    """Observation cues for tracks not announced yet, at output time t_seconds.
+
+    `announced` holds track ids already cued and is updated in place, so each
+    physical track is narrated at most once per offline video.
+    """
+    events=[]
+    for s in signs:
+        if s.track_id is None or s.track_id in announced:continue
+        text=ai_observation([s],video=True)
+        if not text:continue
+        announced.add(s.track_id)
+        events.append({'t_seconds':round(t_seconds,3),'codes':[s.label],'text':text})
+    return events

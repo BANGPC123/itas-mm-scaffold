@@ -79,6 +79,7 @@ def _read_job(job_id):
            'sign_detection_passes':('960/640/1280' if report.get('highres_1280_enabled') else '960/640'),
            'temporal_confirmation':True,
            'human_labeled_accuracy_available':False}
+        state['speech_events']=report.get('speech_events',[])
     return state
 
 

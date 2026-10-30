@@ -1,6 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {analyzeLatest, freshResult} from './videoRuntime';
 import {createVideoSpeech} from './videoSpeech';
+import {takeDueEvents,handledBefore} from './speechEvents';
 const API=import.meta.env.VITE_API_BASE||(import.meta.env.DEV?'http://localhost:8000':'');
 
 export default function VideoPanel({onRun}) {
@@ -8,6 +9,7 @@ export default function VideoPanel({onRun}) {
   const url=useRef(null), generation=useRef(0), request=useRef(null), latest=useRef(null);
   const audio=useRef(null), speaker=useRef(null), maskStart=useRef(null);
   const selectedFile=useRef(null);
+  const resultSpeaker=useRef(null), handledCues=useRef(new Set());
   const [offlineJob,setOfflineJob]=useState(null);
   const [offlineBusy,setOfflineBusy]=useState(false);
   const [offlineHz,setOfflineHz]=useState(6);
@@ -137,11 +139,23 @@ export default function VideoPanel({onRun}) {
     },3500);
     return()=>{active=false;clearInterval(interval)};
   },[offlineJob?.job_id,offlineJob?.status]);
+  // Speaks the cues of the offline result video; shares the audio element with live speech.
+  const cueSpeech={
+    synthesize:async text=>{
+      const response=await fetch(`${API}/pipeline/speech`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});
+      if(!response.ok)throw new Error('TTS tạm không khả dụng; nội dung vẫn hiển thị.');
+      return `${API}${(await response.json()).audio_url}`;
+    },
+    play:url=>new Promise((resolve,reject)=>{
+      const a=audio.current;a.src=url;a.onended=resolve;a.onpause=resolve;
+      a.onerror=()=>reject(new Error('Không phát được giọng đọc.'));
+      a.play().catch(()=>reject(new Error('Trình duyệt chặn tự phát âm thanh. Nhấn phát ở thanh giọng đọc.')));
+    })};
   const startOfflineJob=async()=>{
     const file=selectedFile.current;
     if(!file){setError('Hãy chọn tệp MP4 trước.');return}
     if(!file.name.toLowerCase().endsWith('.mp4')){setError('Phân tích offline hiện chỉ hỗ trợ MP4.');return}
-    setOfflineBusy(true);setError('');
+    setOfflineBusy(true);setError('');handledCues.current=new Set();resultSpeaker.current?.reset();
     try{
       const body=new FormData();body.append('file',file);
       body.append('analysis_hz',String(offlineHz));
@@ -229,7 +243,10 @@ export default function VideoPanel({onRun}) {
       <label>Chỉ xử lý N giây đầu (để trống = toàn bộ video) <input type="number" min="1" max="7200" placeholder="Toàn bộ" value={offlineMaxSeconds} onChange={e=>setOfflineMaxSeconds(e.target.value)} disabled={offlineBusy}/></label>
       <button type="button" onClick={startOfflineJob} disabled={offlineBusy||!selectedFile.current||['queued','waiting_for_inference','running'].includes(offlineJob?.status)}>{offlineBusy?'Đang tải video...':'Bắt đầu phân tích MP4 offline chất lượng cao'}</button>
       {offlineJob&&<div role="status"><p>Job: {offlineJob.job_id} · Trạng thái: {offlineJob.status} · {offlineJob.progress?`${offlineJob.progress.encoded_source_frames}/${offlineJob.progress.expected} frame`:''}</p>
-        {offlineJob.status==='complete'&&<><video controls playsInline preload="metadata" style={{width:'100%'}} src={API+offlineJob.video_url}/><p><a href={API+offlineJob.video_url}>Lưu video kết quả</a> · <a href={API+offlineJob.report_url}>Báo cáo kiểm chứng</a></p></>}
+        {offlineJob.status==='complete'&&<><video controls playsInline preload="metadata" style={{width:'100%'}} src={API+offlineJob.video_url}
+          onPlay={()=>{if(!resultSpeaker.current)resultSpeaker.current=createVideoSpeech({maxAge:8,...cueSpeech,onError:e=>setSpeechError(e.message)})}}
+          onTimeUpdate={e=>{const v=e.currentTarget;if(!resultSpeaker.current)return;for(const cue of takeDueEvents(offlineJob.speech_events||[],v.currentTime,handledCues.current))resultSpeaker.current.update(cue.text,cue.t_seconds,()=>v.currentTime)}}
+          onSeeked={e=>{handledCues.current=handledBefore(offlineJob.speech_events||[],e.currentTarget.currentTime);resultSpeaker.current?.reset();audio.current?.pause()}}/><p><a href={API+offlineJob.video_url}>Lưu video kết quả</a> · <a href={API+offlineJob.report_url}>Báo cáo kiểm chứng</a></p></>}
         {offlineJob.status==='failed'&&<p role="alert">Phân tích gặp lỗi; kết quả chưa được công nhận. {offlineJob.message}</p>}
       </div>}
     </div>
