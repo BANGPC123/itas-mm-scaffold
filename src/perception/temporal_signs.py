@@ -11,15 +11,19 @@ def overlap(a,b):
     return area/max(1,(a[2]-a[0])*(a[3]-a[1])+(b[2]-b[0])*(b[3]-b[1])-area)
 
 
-def nearby_same_sign(sign,track,timestamp):
-    if sign.label=='unknown' or sign.recognition_confidence is None or sign.label!=track.label or timestamp-track.seen>.35:
-        return False
+def nearby_gap(sign,track,timestamp,max_age):
+    """Centre distance between a new box and a recent track box, or None if they cannot be the same sign.
+
+    Label-blind: a sign that is still unknown (or misread) can keep its track.
+    """
+    if timestamp-track.seen>max_age:
+        return None
     a,b=sign.bbox_xyxy,track.box
     aw,ah=a[2]-a[0],a[3]-a[1];bw,bh=b[2]-b[0],b[3]-b[1]
     if min(aw,ah,bw,bh)<=0 or not .5<=aw*ah/(bw*bh)<=2:
-        return False
+        return None
     distance=math.hypot((a[0]+a[2]-b[0]-b[2])/2,(a[1]+a[3]-b[1]-b[3])/2)
-    return distance<=.8*math.hypot(bw,bh)
+    return distance if distance<=math.hypot(bw,bh) else None
 
 
 @dataclass
@@ -67,9 +71,17 @@ class TemporalSigns:
             all(overlap(t.box,b)<.3 for b in background_veto_boxes)]
         matches=[[i for i,t in enumerate(old) if overlap(s.bbox_xyxy,t.box)>=.3] for s in signs]
         reserved={i for candidates in matches for i in candidates}
+        # Fallback matching is one-to-one: nearest pairs first, so one track never takes two boxes.
+        fallback=[]
         for index,sign in enumerate(signs):
             if not matches[index]:
-                matches[index]=[i for i,t in enumerate(old) if i not in reserved and nearby_same_sign(sign,t,timestamp)]
+                for i,t in enumerate(old):
+                    gap=nearby_gap(sign,t,timestamp,self.max_age) if i not in reserved else None
+                    if gap is not None:fallback.append((gap,index,i))
+        claimed_signs=set();claimed_tracks=set()
+        for _,index,i in sorted(fallback):
+            if index in claimed_signs or i in claimed_tracks:continue
+            matches[index]=[i];claimed_signs.add(index);claimed_tracks.add(i)
         use_count=[sum(i in candidates for candidates in matches) for i in range(len(old))]
         current=[]
         for index,sign in enumerate(signs):
