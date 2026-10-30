@@ -1,5 +1,6 @@
 """Bounded, per-stream sign evidence; no carry-over between video sessions."""
-from dataclasses import dataclass
+from collections import Counter
+from dataclasses import dataclass, field
 import math
 import time
 from src.perception.image_quality import crop_quality, insufficient_information
@@ -26,6 +27,15 @@ def nearby_gap(sign,track,timestamp,max_age):
     return distance if distance<=math.hypot(bw,bh) else None
 
 
+def leading_label(ballots,min_votes):
+    """Label with at least min_votes ballots that leads the runner-up by at least one."""
+    ranked=Counter(label for _,label in ballots).most_common(2)
+    if not ranked:return None
+    top,count=ranked[0]
+    second=ranked[1][1] if len(ranked)>1 else 0
+    return top if count>=min_votes and count>second else None
+
+
 @dataclass
 class Evidence:
     identifier:int
@@ -33,7 +43,7 @@ class Evidence:
     first:float
     seen:float
     label:str='unknown'
-    votes:int=0
+    ballots:list=field(default_factory=list)  # (timestamp, label) inside the max_age window
     quality:float=0.
     confidence:float|None=None
     best_time:float=0.
@@ -95,21 +105,25 @@ class TemporalSigns:
                 track=Evidence(self.next_id,sign.bbox_xyxy,timestamp,timestamp);self.next_id+=1
             track.box=sign.bbox_xyxy;track.seen=timestamp
             if hard_veto:
-                track.label='unknown';track.votes=0;track.quality=0.;track.confidence=None;track.confirmed=None
+                track.label='unknown';track.ballots=[];track.quality=0.;track.confidence=None;track.confirmed=None
             if timestamp-track.best_time>self.max_age and sign.label=='unknown':
-                track.label='unknown';track.votes=0;track.quality=0.;track.confirmed=None
+                track.label='unknown';track.ballots=[];track.quality=0.;track.confirmed=None
+            # Unknown samples cast no ballot; one misread no longer wipes the evidence.
             if sign.label!='unknown' and sign.recognition_confidence is not None:
-                if sign.label!=track.label:
-                    track.label=sign.label;track.votes=0;track.quality=0.;track.confirmed=None
-                track.votes+=1
+                track.ballots.append((timestamp,sign.label))
+            track.ballots=[(t,label) for t,label in track.ballots if timestamp-t<=self.max_age]
+            lead=leading_label(track.ballots,self.min_votes)
+            if lead is not None and lead!=track.label:
+                track.label=lead;track.quality=0.;track.confidence=None
+                if track.confirmed is None:track.confirmed=timestamp
+            if sign.label!='unknown' and sign.recognition_confidence is not None and sign.label==track.label:
                 x1,y1,x2,y2=sign.bbox_xyxy;h,w=image.shape[:2]
                 crop=image[max(0,math.floor(y1)):min(h,math.ceil(y2)),max(0,math.floor(x1)):min(w,math.ceil(x2))]
                 quality=crop_quality(crop)
                 if quality>=track.quality or timestamp-track.best_time>self.max_age:
                     track.quality=quality;track.confidence=sign.recognition_confidence;track.best_time=timestamp
-                if track.votes>=self.min_votes and track.confirmed is None:track.confirmed=timestamp
             sign.track_id=track.identifier
-            if track.confirmed is not None and timestamp-track.best_time<=self.max_age:
+            if track.confirmed is not None and track.confidence is not None and timestamp-track.best_time<=self.max_age:
                 sign.label=track.label;sign.recognition_confidence=track.confidence
                 sign.recognition_source='temporal_best_crop'
                 sign.crop_age_ms=(timestamp-track.best_time)*1000

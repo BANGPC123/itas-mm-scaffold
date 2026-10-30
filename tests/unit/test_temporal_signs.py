@@ -18,7 +18,7 @@ def test_two_independent_observations_then_short_blur_gap():
 def test_conflict_missing_seek_and_blank_reset_evidence():
     for action in ('conflict','missing','seek','blank'):
         t=TemporalSigns();t.update(IMAGE,[sign()],1);t.update(IMAGE,[sign()],1.1)
-        if action=='conflict':assert t.update(IMAGE,[sign('P.131a')],1.2)[0].label=='unknown'
+        if action=='conflict':assert t.update(IMAGE,[sign('P.131a')],1.2)[0].label=='P.130'
         if action=='missing':
             assert t.update(IMAGE,[],1.2)==[]
             assert t.update(IMAGE,[sign()],1.3)[0].label=='unknown'
