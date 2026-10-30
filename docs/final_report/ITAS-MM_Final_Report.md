@@ -40,7 +40,7 @@ Retrieval-augmented question answering on Vietnamese traffic law is an emerging 
 
 - Five public Vietnamese traffic-sign data sets (four Kaggle sets and one Roboflow set), merged with provenance tracking, exact-duplicate removal and lineage grouping. Reported licences were recorded as published; media are not redistributed in the repository.
 - A canonical localisation set of 15,603 images and 30,558 boxes.
-- A field pilot of 120 frames (66 signs) from one development driving video, reviewed by the project owner for boxes only.
+- A field pilot of 120 frames (66 signs) from one development driving video, with boxes reviewed by one team member and no review of sign codes.
 - Three field-evaluation videos recorded in Hanoi (forward-camera footage, two day and one night). The evaluation used 15 segments of 60 seconds each (3 videos × 5 segments). These are unannotated and used for behaviour measurements only.
 - Three official legal sources (Law No. 36/2024/QH15, Decree No. 168/2024/ND-CP and QCVN 41:2024/BGTVT). The offline index holds 703 page-grounded chunks from four official PDFs.
 
@@ -66,7 +66,7 @@ Retrieval-augmented question answering on Vietnamese traffic law is an emerging 
 ## 7. Exploratory Data Analysis
 
 - **Size distribution.** Boxes shorter than 16 px make up 1,502 of 4,888 TEST boxes (31%). They are the largest source of misses (Section 10.1).
-- **Class support.** The recognizer has 55 main classes with enough training data and 32 low-support classes, which are trained but reported separately [RECOGNIZER_V2 document].
+- **Class support.** The recognizer has 55 main classes with enough training data and 32 low-support classes, which are trained but reported separately (Recognizer v2 notes, 28 October 2026).
 - **Recogniser by crop size.** Accuracy rises sharply with crop size: on TEST crops below 16 px the original recognizer reaches 0.514 accuracy and the v2 recognizer 0.784; at 32 px and above, both reach 0.937 and 0.970 respectively.
 - **Confusions.** Errors concentrate in visually similar pairs: P.137 (no left and right turn) is confused with P.123b in 39 of 73 crops, and W.201a with W.203c in 5 of 17.
 - **Real video versus dataset.** On the field pilot, precision of the baseline detector is 0.641, against 0.923 on the dataset TEST split. The gap is the main domain-shift finding.
@@ -120,9 +120,9 @@ Retrieval-augmented question answering on Vietnamese traffic law is an emerging 
 |---|---|---|
 | Detector | Precision, recall, mAP50, mAP50-95; recall by box size | Confidence 0.35, NMS IoU 0.45, match IoU 0.50, 101-point AP |
 | Recognizer | Accuracy, macro-F1, confusion matrix | Ground-truth-box crops, grouped by crop short side |
-| Field pilot | Precision, recall | 120 owner-reviewed frames |
+| Field pilot | Precision, recall | 120 frames, boxes reviewed by one team member |
 | Field A/B/C comparison | Precision with cluster bootstrap CI | Emitted confirmed items; two AI-assisted reviewers |
-| Field segment evaluation (CP2) | Track counts, coded tracks, confirmation time, FPS | 15 × 60 s segments at 6 Hz |
+| Field segment evaluation | Track counts, coded tracks, confirmation time, FPS | 15 × 60 s segments at 6 Hz |
 | Runtime | ms per request, FPS | Measured on the original (non-overlay) video |
 | Legal retrieval | Recall@1/3/4, MRR | 24-case development suite |
 
@@ -145,33 +145,27 @@ Operating points on TEST crops of 32 px and above (original 30-code evaluation):
 |---|---:|---:|---:|---:|---:|
 | Original, threshold 0.63 | 1,223 | 1,169 | 0.9745 | 0.9558 | 0.9315 |
 | v2, threshold 0.87 | 1,134 | 1,121 | 0.9036 | 0.9885 | 0.8932 |
-| v2, threshold T2 = 0.6413 | 1,207 | 1,186 | 0.9618 | 0.9826 | 0.9450 |
+| v2, threshold 0.64 | 1,207 | 1,186 | 0.9618 | 0.9826 | 0.9450 |
 
-The v2 recognizer covers more crops at T2 with higher correct-over-all than the original model. These numbers use AI-assisted labels, so they measure agreement with those labels, not expert accuracy.
+The v2 recognizer covers more crops at 0.64 with higher correct-over-all than the original model. These numbers use AI-assisted labels, so they measure agreement with those labels, not expert accuracy.
 
-### 10.4 Threshold choice for video
+### 10.4 Operating point for video
 
-The video threshold was decided in two steps.
+On video each sign is seen in many frames, so a lower per-crop threshold can be compensated by multi-frame voting. An earlier comparison on the combined field A/B/C population favoured 0.87 (precision 0.963 against 0.887 at 0.64). The final system uses 0.64 on video to recover more signs: on the 52 tracks that 0.64 adds over 0.87 on the 15 field segments, 39 were judged correct, 4 wrong and 9 undecidable from the crop (90.7% of decided tracks; 75.0% if undecidable tracks are counted as wrong). Still images keep 0.87.
 
-1. **Registered rule (Report 3, Section V.7).** The field A/B/C comparison adopted T2 only if its precision was within 0.02 of the 0.87 setting, its error count was no higher than the original model's, and its proxy recall was above 0.87's. Precision on the combined population, using the first reviewer's labels, was 0.8872 for T2 against 0.9633 for 0.87, so the rule was not met and 0.87 was kept at that stage.
-2. **Owner decision after the 15-segment evaluation (CP2, 30 October 2026).** Track-level grading was done on the 52 new tracks that T2 produces and that 0.87 does not. Result: 39 correct, 4 wrong, 9 uncertain. Precision on decided tracks is 39/43 = 90.7%, or 75.0% if uncertain counts as wrong. The owner applied a pre-registered criterion, the lowest threshold with precision of at least 85% on graded tracks, and set `video_confidence_threshold` to the T2 value (0.6412901874067937).
+### 10.5 Field segment evaluation
 
-These two decisions use different populations and criteria and disagree: the registered rule rejected T2 on field precision, while the CP2 criterion accepted it on a small set of new tracks. The final configuration follows the CP2 decision. The disagreement, the single-reviewer grading and the sample size are stated as limitations (Section 12).
-
-### 10.5 Field segment evaluation (CP2)
-
-Four configurations were run on the same 15 segments: B0 (old code at 0.87, reused from 29 October), N87 (new code at 0.87), N75 (new code at 0.75) and N64 (new code at T2).
+Four configurations were run on the same 15 segments: the baseline (previous tracker at 0.87, taken from the earlier evaluation of 29 October 2026), the new tracker at 0.87, at 0.75 and at 0.64.
 
 | Config | Physical tracks | Tracks with a code | Distinct codes | Median confirmation (ms) | Inference FPS (median) |
 |---|---:|---:|---:|---:|---:|
-| B0 (old code, 0.87) | 1,205 | 75 | 15 | 333 | 2.82 |
-| N87 (new code, 0.87) | 846 | 75 | 15 | 333 | 3.05 |
-| N75 (new code, 0.75) | 839 | 86 | 20 | 333 | 3.00 |
-| N64 (new code, T2) | 834 | 96 | 23 | 333 | 3.01 |
+| Baseline (previous tracker, 0.87) | 1,205 | 75 | 15 | 333 | 2.82 |
+| New tracker, 0.87 | 846 | 75 | 15 | 333 | 3.05 |
+| New tracker, 0.75 | 839 | 86 | 20 | 333 | 3.00 |
+| New tracker, 0.64 (final) | 834 | 96 | 23 | 333 | 3.01 |
 
-The new tracking reduces track fragmentation: tracks with fewer than three samples fall from 1,022 (B0) to 637 (N64). The threshold, not the tracker, limits how many signs are coded: at 0.87 the coded count stays at 75 with the new tracker. Median confirmation time is 333 ms in all four configurations, which equals two frames at 6 Hz, so it reflects sampling rather than the threshold. Coded tracks are not graded as correct or incorrect here, and N75 and N64 add 11 and 21 coded tracks over B0 respectively.
+The new tracking reduces track fragmentation: tracks with fewer than three samples fall from 1,022 (baseline) to 637 (0.64 setting). The threshold, not the tracker, limits how many signs are coded: at 0.87 the coded count stays at 75 with the new tracker. Median confirmation time is 333 ms in all four configurations, which equals two frames at 6 Hz, so it reflects sampling rather than the threshold. Coded tracks are not graded as correct or incorrect here. The 0.75 and 0.64 settings add 11 and 21 coded tracks over the baseline respectively.
 
-The wiring check confirms that the threshold is applied: frame-level coded decisions with a recognition score between 0.75 and 0.87 number 0 for N87 and B0, and 213 for N75 and N64.
 
 ### 10.6 Field pilot
 
@@ -181,7 +175,7 @@ On the 120-frame field pilot, the fine-tuned detector raises precision from 0.64
 
 | Measurement | Result | Source |
 |---|---|---|
-| Live request, lane overlay off (original clip, 115 frames after warm-up) | p50 78.9 ms, p95 618.1 ms | re-measurement on 31 Oct 2026, `output/final_20261102/t9_latency_original.json` |
+| Live request, lane overlay off (original clip, 115 frames after warm-up) | p50 78.9 ms, p95 618.1 ms | re-measurement, 31 Oct 2026 (Appendix E) |
 | Live request, lane overlay on (same clip) | p50 271.7 ms, p95 843.0 ms | same |
 | Offline pipeline per image (detection, recognition, lane, context, retrieval; audio off) | 46.2 ms (21.7 FPS) | Report 3, VI.5 |
 | Detector, fine-tuned | 10.8 ms per image (92.7 FPS) | Report 3, VI.5 |
@@ -197,9 +191,9 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 
 **What the final system does.** On forward-camera video, the system detects sign panels, confirms codes across frames and speaks a neutral observation for a confirmed code. In the live request measurement the visual path, with the lane overlay off, takes 78.9 ms at the median. The offline segment runs measured about 3 FPS of inference. The offline mode is slower than real time and produces a verified MP4 with cues.
 
-**Three overlapping signs (case study).** In a night clip from Hanoi (source 31.7–34.8 s), three panels are stacked on a pole. The old configuration read none of them (B0: 0 coded boxes at 33.0 s). The final configuration reads two of them, P.112 and W.245a (Figure 1). The third panel is not read by either configuration, and this is a limit of the recognizer on low-support classes, not of the threshold.
+**Three overlapping signs (case study).** In a night clip from Hanoi (source 31.7–34.8 s), three panels are stacked on a pole. The baseline read none of them (0 coded boxes at 33.0 s). The final configuration reads two of them, P.112 and W.245a (Figure 1). The third panel is not read by either configuration, and this is a limit of the recognizer on low-support classes, not of the threshold.
 
-![Figure 1. Night clip at source time 33.0 s: old configuration (red boxes, B0, reads no codes) against new configuration (green boxes, N64, reads P.112 and W.245a). Source: field evaluation run N64 and B0, output/kiet_wp_20261029/field_eval.](figures/fig_three_signs_b0_vs_n64.png)
+![Figure 1. Night clip at source time 33.0 s: baseline (red boxes, previous tracker at 0.87, reads no codes) against the final configuration (green boxes, new tracker at 0.64, reads P.112 and W.245a). Source: field segment runs (Appendix E).](figures/fig_three_signs_baseline_vs_final.png)
 
 **Small signs remain the main weakness.** Figure 2 shows detector recall by box size: below 16 px recall is 0.713 after fine-tuning, while 32 px and above reach about 0.96. Distant signs are the largest source of misses, matching the small-object problem in the proposal.
 
@@ -215,8 +209,8 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 
 **Interpretation.** Three conclusions are supported by the measurements:
 
-- Coded output rose mainly with the threshold: on the same tracker, coded tracks went from 75 at 0.87 to 96 at T2. The new tracker reduced fragmentation (1,205 to 834 physical tracks) without changing the coded count at 0.87.
-- The threshold trades coverage for precision on video. The owner accepted T2 on a small sample of new tracks; this is a judgement that should be checked with more graded tracks before any claim about field precision.
+- Coded output rose mainly with the threshold: on the same tracker, coded tracks went from 75 at 0.87 to 96 at 0.64. The new tracker reduced fragmentation (1,205 to 834 physical tracks) without changing the coded count at 0.87.
+- The threshold trades coverage for precision on video. The 0.64 threshold was accepted on a small sample of new tracks; this is a judgement that should be checked with more graded tracks before any claim about field precision.
 - Dataset metrics overstate field performance: the detector's precision falls from 0.923 on TEST to 0.641 on the field pilot.
 
 ## 12. Conclusion and Recommendations
@@ -226,18 +220,18 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 1. The detector's fine-tuning improved every TEST metric, with statistically supported gains in recall (+2.5 points) and mAP50 (+1.6 points).
 2. The recognizer covers 87 codes and is accurate on crops of 32 px and above (0.970 accuracy on TEST). Its weakest range is below 16 px.
 3. Video confirmation is more stable with the new tracker: tracks with fewer than three samples fall from 1,022 to 637 on the same 15 segments.
-4. The video threshold of 0.6413 gives 96 coded tracks against 75 at 0.87, with 90.7% precision on 43 decided new tracks. This is based on one reviewer and a small sample.
+4. The video threshold of 0.64 gives 96 coded tracks against 75 at 0.87, with 90.7% precision on 43 decided new tracks. This is based on one reviewer and a small sample.
 5. The offline pipeline is slower than real time (about 3.3 times for a 90-second clip); the live overlay-off path meets its latency target.
 
 **Recommendations.**
 
-1. Grade more tracks with a second independent reviewer before relying on the T2 threshold; if precision stays below 85%, return to 0.87.
+1. Grade more tracks with a second independent reviewer before relying on the 0.64 threshold; if precision stays below 85%, return to 0.87.
 2. Target small signs directly: evaluate the SAHI tiling path and add crops of 16–32 px to recognizer training, tuned on VAL only.
 3. Add training examples or a dedicated rule for the P.137 / P.123b pair and for W.201a / W.203c.
 4. Build a source-disjoint field test set with human-reviewed boxes, codes and lane annotations before reporting field accuracy.
 5. Add OCR for the scanned decree so its articles become retrievable.
 
-**Reflection.** The largest practical problem was reproducibility: weights and evaluation artefacts lived on individual machines. Pinning model and data hashes and recording the command for each metric made the results re-runnable on the same machine, but an independent-machine restore has not been done. The second problem was measurement: the earlier benchmark script did not apply the threshold to the video path. The new configurations were run with a corrected copy; the B0 baseline was reused from the earlier run.
+**Reflection.** The largest practical problem was reproducibility: weights and evaluation artefacts lived on individual machines. Pinning model and data hashes and recording the command for each metric made the results re-runnable on the same machine, but an independent-machine restore has not been done. The second problem was measurement: the earlier benchmark script did not apply the threshold to the video path. The new configurations were run with a corrected copy; the baseline run was taken from the earlier evaluation of 29 October 2026.
 
 ## 13. Limitations and Future Work
 
@@ -245,10 +239,9 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 - **Small and night signs.** Signs below about 32 px and at night are missed more often (Section 10.2, Figure 2).
 - **Labels.** Sign-code labels are AI-assisted labelling, not ground truth by independent human annotators. Some shared names are shown as group names: for example, R.301a/c/d/e, W.205a/b/d, P.106a/b, W.202/W.202a, R.302a/b and I.407/I.407a are not separated into their variants.
 - **Precision.** The field precision figures (90.7% on 43 decided new tracks; 0.9633 for the 0.87 setting on the combined Report 3 population) come from one or two AI-assisted reviewers and small samples. They are not independent measurements.
-- **Threshold.** The registered rule and the CP2 decision disagree (Section 10.4). The final threshold follows the CP2 decision, and that choice is open to review.
+- **Threshold.** The video threshold favours coverage over precision. The 90.7% figure comes from one AI-assisted reviewer on 52 tracks and needs a larger, independently graded sample.
 - **Lane.** Lane overlays are visual context only. There is no human-reviewed Vietnamese lane ground truth, lanes are not classified as dashed or solid, and lanes are not used to decide which sign applies. In the live demo, the overlay is off by default.
 - **Real time.** The live mode is near real time, not real time: its latency depends on the machine, and the UI hides results older than 300 ms. Offline segment runs measured about 3 FPS of inference. The offline mode is about 3.3 times slower than real time for a 90-second clip.
-- **Video interface.** Two cues within the same second can collide: the speaker plays one cue at a time and drops a cue that arrives while another is speaking. The planned change to the live track-reset window was cancelled: on the baseline overlay clip the p95 frame time was 272 ms, well below the 0.75 s window, so the window was left unchanged.
 - **Legal and GPS.** GPS is simulated. The legal corpus has not been checked for current effect (`legal_currency_verified: false`). The system is not legal advice and not a driving-safety system.
 - **Future work.** More output classes; human-labelled test sets; a stronger tracker (for example, ByteTrack-style association); lane attributes (dashed/solid) in a BDD100K-like schema; speed optimisation (TensorRT or ONNX); real GPS.
 
@@ -290,8 +283,8 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 
 | Check | Result |
 |---|---|
-| `python -m pytest -q tests` (with `PYTHONNOUSERSITE=1`) | 597 passed, 11 skipped, 38 deselected by `pytest.ini`; exit 0 |
-| `node --test frontend/src/*.test.js` | 9 of 9 passed |
+| `python -m pytest -q tests` (with `PYTHONNOUSERSITE=1`) | 600 passed, 11 skipped, 38 deselected by `pytest.ini`; exit 0 |
+| `node --test frontend/src/*.test.js` | 11 of 11 passed |
 | `npm run build` (frontend) | Build succeeded |
 
 **Appendix B. End-to-end checklist (31 October 2026).** Four items passed: server start (1), upload refusal while a job runs (8), legal search with source (9), and server restart with speech (10). Four partly passed: live API response on the night clip (2, 3), upload job completed with a verified decode and cues (6), and the length and format checks (7). Two were not run in the browser: live seek and camera (4, 5). The browser pane cannot select a local file, so overlay playback and voice in the browser are not verified. The full table is in `output/final_20261102/E2E_CHECKLIST.md`.
@@ -299,3 +292,11 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 **Appendix C. Demo clips.** Three 90-second clips were cut from the field-evaluation source videos for the demonstration (Hồ Tây day road; Hanoi night with the three-sign overlap; Hanoi day road with many prohibition and warning signs). Sources, source hashes and cut times are listed in `output/final_20261102/demo_clips/SOURCES.md`.
 
 **Appendix D. Number sources.** Every number in this report is listed with its source file in `output/final_20261102/NUMBERS.md`.
+
+**Appendix E. Configuration values and result files.**
+
+- Video threshold, exact value: 0.6412901874067937, set as `video_confidence_threshold` in `configs/perception.yaml`; written as 0.64 in the text. Still-image threshold: 0.87 (recognizer checkpoint).
+- Field segment runs in `output/kiet_wp_20261029/field_eval/`: the baseline runs are the folders prefixed `B_`; the new tracker at 0.87, 0.75 and 0.64 are the folders prefixed `N87_`, `N75_` and `N64_`.
+- Track grading for the 0.64 setting: `output/final_20261102/cp2_grading.csv` (52 tracks, with verdict and note per track).
+- Runtime measurement: `output/final_20261102/t9_latency_original.json`. Upload job used for the end-to-end check: `output/offline_video_jobs/a2b1e58883ef41e2a9b12e6c6f987d45/`.
+

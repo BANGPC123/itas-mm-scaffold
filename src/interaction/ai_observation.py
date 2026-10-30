@@ -13,11 +13,10 @@ def ai_observation(signs, *, video=False, min_confidence=.74, min_detector=.55, 
     unknown labels, unverified supplementary semantics and ads are abstained.
     This is a *hypothesis*, never ground truth.
     """
-    choices=[]
-    visited=set()
+    codes=[]
     for s in signs:
         code=s.label
-        if code=='unknown' or code not in NAMES_VI or code in visited:
+        if code=='unknown' or code not in NAMES_VI or code in codes:
             continue
         if s.recognition_confidence is None or s.recognition_confidence<min_confidence:
             continue
@@ -30,10 +29,14 @@ def ai_observation(signs, *, video=False, min_confidence=.74, min_detector=.55, 
             if min(x2-x1,y2-y1)<min_video_short_side:continue
         if s.panel_role=='supplementary':
             continue
-        visited.add(code)
-        choices.append(f'{code}: {NAMES_VI[code]}')
-        if len(choices)>=2:break
-    if not choices:return ''
+        codes.append(code)
+        if len(codes)>=2:break
+    if not codes:return ''
+    return observation_text(codes)
+
+
+def observation_text(codes):
+    choices=[f'{code}: {NAMES_VI[code]}' for code in codes]
     return ('AI dự đoán có thể là biển '+
             '; '.join(choices)+
             '. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng.')
@@ -53,3 +56,25 @@ def video_speech_events(signs,t_seconds,announced):
         announced.add(s.track_id)
         events.append({'t_seconds':round(t_seconds,3),'codes':[s.label],'text':text})
     return events
+
+
+def group_speech_events(events,gap_s=1.5,per_cue=2):
+    """Merge cues that follow each other within gap_s into spoken cues of up to per_cue signs.
+
+    A burst of signs is read as one cue at its first time. Signs beyond per_cue are
+    read in the next cue, placed at the end of the burst, so no sign is left unspoken.
+    """
+    bursts=[]
+    for event in sorted(events,key=lambda e:e['t_seconds']):
+        if bursts and event['t_seconds']-bursts[-1][-1]['t_seconds']<=gap_s:
+            bursts[-1].append(event)
+        else:
+            bursts.append([event])
+    grouped=[]
+    for burst in bursts:
+        codes=list(dict.fromkeys(code for event in burst for code in event['codes']))
+        for index,start in enumerate(range(0,len(codes),per_cue)):
+            chunk=codes[start:start+per_cue]
+            when=burst[0]['t_seconds'] if index==0 else burst[-1]['t_seconds']
+            grouped.append({'t_seconds':when,'codes':chunk,'text':observation_text(chunk)})
+    return grouped

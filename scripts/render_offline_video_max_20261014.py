@@ -15,7 +15,7 @@ from PIL import ImageFont,Image,ImageDraw
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from src.pipeline.orchestrator import Pipeline
-from src.interaction.ai_observation import video_speech_events
+from src.interaction.ai_observation import group_speech_events, video_speech_events
 from src.perception.overlay_motion import OverlayMotion
 from scripts.complete_test_video import draw_frame
 
@@ -184,7 +184,7 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
         'sign_mode':('960+640+1280' if highres_rescue else '960+640')+', three-frame confirmation',
         'models_finetuned_during_run':False,'highres_1280_enabled':bool(highres_rescue),'input_recording_datetime_known':recorded_at is not None,
         'auxiliary_research_enabled':include_auxiliary,'counts':counters,
-        'speech_events':speech_events,
+        'speech_events':group_speech_events(speech_events),
         'elapsed_seconds':time.perf_counter()-started,'failures':failures,
         'video_sha256':file_sha256(video),'verified_full_decode':verified,
         'not_a_measured_field_accuracy':True}

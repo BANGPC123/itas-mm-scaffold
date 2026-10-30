@@ -244,7 +244,7 @@ export default function VideoPanel({onRun}) {
       <button type="button" onClick={startOfflineJob} disabled={offlineBusy||!selectedFile.current||['queued','waiting_for_inference','running'].includes(offlineJob?.status)}>{offlineBusy?'Đang tải video...':'Bắt đầu phân tích MP4 offline chất lượng cao'}</button>
       {offlineJob&&<div role="status"><p>Job: {offlineJob.job_id} · Trạng thái: {offlineJob.status} · {offlineJob.progress?`${offlineJob.progress.encoded_source_frames}/${offlineJob.progress.expected} frame`:''}</p>
         {offlineJob.status==='complete'&&<><video controls playsInline preload="metadata" style={{width:'100%'}} src={API+offlineJob.video_url}
-          onPlay={()=>{if(!resultSpeaker.current)resultSpeaker.current=createVideoSpeech({maxAge:8,...cueSpeech,onError:e=>setSpeechError(e.message)})}}
+          onPlay={()=>{if(!resultSpeaker.current)resultSpeaker.current=createVideoSpeech({maxAge:8,queueWait:2,...cueSpeech,onError:e=>setSpeechError(e.message)})}}
           onTimeUpdate={e=>{const v=e.currentTarget;if(!resultSpeaker.current)return;for(const cue of takeDueEvents(offlineJob.speech_events||[],v.currentTime,handledCues.current))resultSpeaker.current.update(cue.text,cue.t_seconds,()=>v.currentTime)}}
           onSeeked={e=>{handledCues.current=handledBefore(offlineJob.speech_events||[],e.currentTarget.currentTime);resultSpeaker.current?.reset();audio.current?.pause()}}/><p><a href={API+offlineJob.video_url}>Lưu video kết quả</a> · <a href={API+offlineJob.report_url}>Báo cáo kiểm chứng</a></p></>}
         {offlineJob.status==='failed'&&<p role="alert">Phân tích gặp lỗi; kết quả chưa được công nhận. {offlineJob.message}</p>}
