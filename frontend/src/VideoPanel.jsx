@@ -18,7 +18,7 @@ export default function VideoPanel({onRun}) {
   const [observation,setObservation]=useState('');
   const [running,setRunning]=useState(false), [error,setError]=useState('');
   const [roadBottom,setRoadBottom]=useState(.65), [stats,setStats]=useState(null);
-  const [laneVisualRoi,setLaneVisualRoi]=useState(true);
+  const [laneVisualRoi,setLaneVisualRoi]=useState(false);
   const [laneDisplayMode,setLaneDisplayMode]=useState('precision');
   const [reviewAuxiliary,setReviewAuxiliary]=useState(false);
   const [recordingStart,setRecordingStart]=useState('');
@@ -247,7 +247,7 @@ export default function VideoPanel({onRun}) {
     </div>
     <p>Để tránh nhận nhầm đồng hồ, bảng điều khiển và đồ vật cố định: tạm dừng video, chọn “Khoanh vùng”, kéo chuột vẽ tối đa 8 hình chữ nhật màu đỏ rồi chọn “Xong”. Biển thật trong vùng khoanh cũng bị bỏ qua. Vùng loại trừ chỉ áp dụng cho video/camera đang chọn.</p>
     <label><input type="checkbox" checked={laneVisualRoi} disabled={running} onChange={e=>setLaneVisualRoi(e.target.checked)}/>
-      Nhận diện vạch đường theo vùng mặt đường, lọc tap-lô và xe che khuất
+      Làn: hiển thị tham khảo (nhận diện vạch theo vùng mặt đường, lọc tap-lô và xe che khuất; tốn thêm thời gian xử lý)
     </label>
     <p>Hệ thống tìm vùng mặt đường theo khung hình, kết hợp mô hình làn và kiểm tra vạch sơn nhìn thấy. Vạch màu vàng là dự đoán; phần bị xe che khuất không dùng để xác định phạm vi biển báo.</p>
     <label>Hiển thị ứng viên UFLD-v2 (chỉ trực quan): <select value={laneDisplayMode} disabled={running} onChange={e=>setLaneDisplayMode(e.target.value)}><option value="precision">Ưu tiên ít nét sai</option><option value="candidate">Giữ vạch chưa chắc chắn (để rà)</option></select></label>

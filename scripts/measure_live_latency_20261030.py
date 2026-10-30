@@ -28,14 +28,14 @@ LATITUDE, LONGITUDE = 21.0285, 105.8542
 STAGE_KEYS = ("detection", "recognition", "lane", "reasoning", "tts", "total")
 
 
-def sample_frames(video_path):
-    """Return (timestamp_s, frame) pairs taken every STEP_S seconds, JPEG round-tripped."""
+def sample_frames(video_path, start_s=0.0):
+    """Return (timestamp_s, frame) pairs taken every STEP_S seconds from start_s, JPEG round-tripped."""
     capture = cv2.VideoCapture(str(video_path))
     if not capture.isOpened():
         raise RuntimeError(f"Cannot open video: {video_path}")
     samples = []
     for index in range(FRAME_COUNT):
-        timestamp = index * STEP_S
+        timestamp = start_s + index * STEP_S
         capture.set(cv2.CAP_PROP_POS_MSEC, timestamp * 1000.0)
         ok, frame = capture.read()
         if not ok:
@@ -104,15 +104,17 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--video", type=Path, default=DEFAULT_VIDEO)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--start", type=float, default=0.0, help="first sampled second of the video")
     args = parser.parse_args()
 
     from src.pipeline.orchestrator import Pipeline
 
-    samples = sample_frames(args.video)
+    samples = sample_frames(args.video, args.start)
     pipeline = Pipeline()
     report = {
         "git_head": git_head(),
         "video": str(args.video.relative_to(ROOT)),
+        "start_s": args.start,
         "sample_step_s": STEP_S,
         "frames_sampled": len(samples),
         "warmup_frames_discarded": WARMUP_FRAMES,
