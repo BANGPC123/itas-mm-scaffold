@@ -2,7 +2,7 @@
 
 DSP391m Data Science Capstone — Final Report
 
-Scope note: ITAS-MM is a research prototype. It processes forward-camera video offline and in a live browser demo. It is not a certified driver-assistance system, is not validated on the road, and its outputs must not be used to drive a vehicle. Every number below comes from the data set, protocol and date given next to it. Sign-code labels are AI-assisted labelling; no human ground truth exists for the full data set.
+Scope note: ITAS-MM is a research prototype. It processes uploaded forward-camera video and still images offline, in a web application. It is not a certified driver-assistance system, is not validated on the road, and its outputs must not be used to drive a vehicle. Every number below comes from the data set, protocol and date given next to it. Sign-code labels are AI-assisted labelling; no human ground truth exists for the full data set.
 
 ## 1. Project Title
 
@@ -24,7 +24,7 @@ Roles follow the research plan in the proposal (section 6, tasks 1, 3, 7 and 8).
 
 **Motivation.** Most driver-assistance pipelines stop at detection: they output a class name such as a sign code, but not what the sign requires at that place. Road traffic crashes still kill about 1.19 million people a year [1], and the proposal argues that much of the risk comes from drivers missing or misreading safety-critical information rather than from a lack of sensing. Spoken, legally grounded feedback is one way to reduce glance time.
 
-**Background.** The project began as a four-stage design: perception, road-zone context, retrieval-augmented reasoning and speech. The final system implements perception, a live and an offline video pipeline, offline legal retrieval over three official sources, and Vietnamese text-to-speech. Road-zone context uses simulated GPS only, and lane output is visual context only.
+**Background.** The project began as a four-stage design: perception, road-zone context, retrieval-augmented reasoning and speech. The final web application accepts an uploaded video or image, runs perception and an offline video pipeline, retrieves legal passages from three official sources, and reads sign names aloud in Vietnamese. Road-zone context uses simulated GPS only, and lane output is visual context only. A real-time streaming prototype was built during the project but is not part of the final application (Section 13).
 
 ## 4. Literature Review
 
@@ -84,7 +84,7 @@ Retrieval-augmented question answering on Vietnamese traffic law is an emerging 
 - Hard vetoes (for example, unsupported symbol shape) clear the ballots.
 - The threshold for video can be set separately from still images (`video_confidence_threshold`).
 
-**Lane.** UFLD-v2 (ResNet-18) with a road-surface veto. The live pipeline draws the lane overlay as visual context only; the offline pipeline keeps the full composite.
+**Lane.** UFLD-v2 (ResNet-18) with a road-surface veto. The lane overlay is visual context only. In the uploaded-video result, lane lines are updated on alternate analysis samples (3 Hz), while signs are analysed at 6 Hz.
 
 ## 9. Model Development
 
@@ -104,12 +104,12 @@ Retrieval-augmented question answering on Vietnamese traffic law is an emerging 
 - Recognizer v2: 30 epochs, seed 20261028, batch 128, 14,000 sampled crops per epoch, learning rate 0.0004, AdamW with OneCycleLR; selection by VAL main-class macro-F1 and threshold calibration. TEST was used for reporting only. The original checkpoint's VAL macro-F1 of 0.9511 was reproduced locally at 0.9500 (difference −0.0011), with the same selected epoch (18) and threshold (0.87).
 - The recognizer was not retrained for the final version; the final version only changes the video decision logic and the threshold configuration.
 
-**Live and offline pipeline changes in the final version.**
+**Pipeline changes in the final version.**
 
 - Raw recognition fields (`raw_label`, `raw_score`) are kept on every detection, so a rejected crop can be explained.
 - Track matching and ballot voting were replaced as described in Section 8.
-- Live lane overlay is off by default (checkbox labelled "Làn: hiển thị tham khảo"); the offline pipeline keeps it.
-- Offline result videos now carry one spoken cue per track, played when the result video reaches the cue time.
+- The result video carries spoken cues. Signs detected within 1.5 seconds of each other are read as one cue of at most two codes; further signs in the same cluster are read right after it. Each cue plays when the result video reaches its time.
+- The result video is written at 30 FPS. Together with the lane update rate above, this cut processing time for a 90-second clip from 406.3 s to 165.0 s on the same machine; sign results did not change (Section 10.7).
 - Videos longer than 100,000 frames are refused with a message asking the user to trim them.
 
 ## 10. Model Evaluation and Fine-Tuning
@@ -175,13 +175,15 @@ On the 120-frame field pilot, the fine-tuned detector raises precision from 0.64
 
 | Measurement | Result | Source |
 |---|---|---|
-| Live request, lane overlay off (original clip, 115 frames after warm-up) | p50 78.9 ms, p95 618.1 ms | re-measurement, 31 Oct 2026 (Appendix E) |
-| Live request, lane overlay on (same clip) | p50 271.7 ms, p95 843.0 ms | same |
+| Prototype, not part of the final application: live request, lane overlay off (original clip, 115 frames after warm-up) | p50 78.9 ms, p95 618.1 ms | re-measurement, 31 Oct 2026 (Appendix E) |
+| Prototype: live request, lane overlay on (same clip) | p50 271.7 ms, p95 843.0 ms | same |
 | Offline pipeline per image (detection, recognition, lane, context, retrieval; audio off) | 46.2 ms (21.7 FPS) | Report 3, VI.5 |
 | Detector, fine-tuned | 10.8 ms per image (92.7 FPS) | Report 3, VI.5 |
-| Offline result video, 90-second clip (5,400 frames at 60 FPS) | 301.2 s processing, about 3.3 times slower than real time | job status and summary, 31 Oct 2026 |
+| Uploaded video, 90-second clip, after the speed change (2,700 frames at 30 FPS) | 165.0 s processing, 1.8 times slower than real time | speed check, 1 Nov 2026 (Appendix E) |
+| Uploaded video, same clip, before the speed change (5,400 frames at 60 FPS) | 406.3 s processing, 4.5 times slower than real time; an earlier run on 31 Oct 2026 took 301.2 s (3.3 times) | speed check, 1 Nov 2026; job summary, 31 Oct 2026 |
+| Uploaded video, 20-second night clip through the web interface, after the speed change | 44.6 s processing | speed check, 1 Nov 2026 |
 
-Live p95 values include text-to-speech in the measured total (the endpoint default is audio on), so they are an upper bound for the visual path. The live target for the overlay-off mode (p50 at or below 350 ms) is met.
+The prototype's p95 values include text-to-speech in the measured total, so they are an upper bound for its visual path. The speed change did not change sign results: 540 of 540 analysis samples have the same sign boxes and labels before and after.
 
 ### 10.8 Legal retrieval
 
@@ -189,7 +191,7 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 
 ## 11. Results Interpretation and Visualization
 
-**What the final system does.** On forward-camera video, the system detects sign panels, confirms codes across frames and speaks a neutral observation for a confirmed code. In the live request measurement the visual path, with the lane overlay off, takes 78.9 ms at the median. The offline segment runs measured about 3 FPS of inference. The offline mode is slower than real time and produces a verified MP4 with cues.
+**What the final system does.** On uploaded forward-camera video, the system detects sign panels, confirms codes across frames, and produces a verified MP4 with a spoken cue for each confirmed group of signs and a timed list of the signs. On a single image, it reports each detected panel with its code and confidence, reads the result aloud, and looks up the cited legal passages. The offline segment runs measured about 3 FPS of inference, and processing is slower than real time (1.8 times for a 90-second clip, Section 10.7).
 
 **Three overlapping signs (case study).** In a night clip from Hanoi (source 31.7–34.8 s), three panels are stacked on a pole. The baseline read none of them (0 coded boxes at 33.0 s). The final configuration reads two of them, P.112 and W.245a (Figure 1). The third panel is not read by either configuration, and this is a limit of the recognizer on low-support classes, not of the threshold.
 
@@ -207,6 +209,12 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 
 ![Figure 4. Field precision of the three configurations (Report 3, Figure 7).](../report3/figures/fig7_final_field_precision.png)
 
+**Web interface.** Figures 5 and 6 are screenshots of the final upload-only interface, taken on 1 November 2026 at a 1440 px desktop width. Figure 5 shows the result for a 20-second night clip: the result video, the timed sign list and the voice toggle. Figure 6 shows the result for a daytime still image: the annotated image and the detected panel with its confidence.
+
+![Figure 5. Web interface, result for an uploaded 20-second night clip (1 November 2026).](figures/ui_video_result_desktop.png)
+
+![Figure 6. Web interface, result for a daytime still image (1 November 2026).](figures/ui_image_result_desktop.png)
+
 **Interpretation.** Three conclusions are supported by the measurements:
 
 - Coded output rose mainly with the threshold: on the same tracker, coded tracks went from 75 at 0.87 to 96 at 0.64. The new tracker reduced fragmentation (1,205 to 834 physical tracks) without changing the coded count at 0.87.
@@ -221,7 +229,7 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 2. The recognizer covers 87 codes and is accurate on crops of 32 px and above (0.970 accuracy on TEST). Its weakest range is below 16 px.
 3. Video confirmation is more stable with the new tracker: tracks with fewer than three samples fall from 1,022 to 637 on the same 15 segments.
 4. The video threshold of 0.64 gives 96 coded tracks against 75 at 0.87, with 90.7% precision on 43 decided new tracks. This is based on one reviewer and a small sample.
-5. The offline pipeline is slower than real time (about 3.3 times for a 90-second clip); the live overlay-off path meets its latency target.
+5. The upload pipeline is slower than real time: 1.8 times for a 90-second clip after the speed change (165.0 s of processing), down from 4.5 times on the same clip before it.
 
 **Recommendations.**
 
@@ -240,10 +248,11 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 - **Labels.** Sign-code labels are AI-assisted labelling, not ground truth by independent human annotators. Some shared names are shown as group names: for example, R.301a/c/d/e, W.205a/b/d, P.106a/b, W.202/W.202a, R.302a/b and I.407/I.407a are not separated into their variants.
 - **Precision.** The field precision figures (90.7% on 43 decided new tracks; 0.9633 for the 0.87 setting on the combined Report 3 population) come from one or two AI-assisted reviewers and small samples. They are not independent measurements.
 - **Threshold.** The video threshold favours coverage over precision. The 90.7% figure comes from one AI-assisted reviewer on 52 tracks and needs a larger, independently graded sample.
-- **Lane.** Lane overlays are visual context only. There is no human-reviewed Vietnamese lane ground truth, lanes are not classified as dashed or solid, and lanes are not used to decide which sign applies. In the live demo, the overlay is off by default.
-- **Real time.** The live mode is near real time, not real time: its latency depends on the machine, and the UI hides results older than 300 ms. Offline segment runs measured about 3 FPS of inference. The offline mode is about 3.3 times slower than real time for a 90-second clip.
+- **Lane.** Lane overlays are visual context only. There is no human-reviewed Vietnamese lane ground truth, lanes are not classified as dashed or solid, and lanes are not used to decide which sign applies.
+- **Real time.** Real-time streaming analysis (live camera or live playback) was prototyped but is not part of the final application; uploaded video is processed about 1.8 times slower than real time on the test machine (165 s for a 90-second clip). Offline segment runs measured about 3 FPS of inference.
+- **Legal retrieval.** Legal retrieval sometimes ranks a general article above the article for the detected sign.
 - **Legal and GPS.** GPS is simulated. The legal corpus has not been checked for current effect (`legal_currency_verified: false`). The system is not legal advice and not a driving-safety system.
-- **Future work.** More output classes; human-labelled test sets; a stronger tracker (for example, ByteTrack-style association); lane attributes (dashed/solid) in a BDD100K-like schema; speed optimisation (TensorRT or ONNX); real GPS.
+- **Future work.** More output classes; human-labelled test sets; a stronger tracker (for example, ByteTrack-style association); lane attributes (dashed/solid) in a BDD100K-like schema; real-time streaming on GPU with a lighter lane model and frame skipping; speed optimisation (TensorRT or ONNX); real GPS.
 
 ## 14. References
 
@@ -279,15 +288,15 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 
 ## 15. Appendices
 
-**Appendix A. Automated test results (31 October 2026).**
+**Appendix A. Automated test results (1 November 2026).**
 
 | Check | Result |
 |---|---|
 | `python -m pytest -q tests` (with `PYTHONNOUSERSITE=1`) | 600 passed, 11 skipped, 38 deselected by `pytest.ini`; exit 0 |
-| `node --test frontend/src/*.test.js` | 11 of 11 passed |
+| `node --test frontend/src/*.test.js` | 14 of 14 passed |
 | `npm run build` (frontend) | Build succeeded |
 
-**Appendix B. End-to-end checklist (31 October 2026).** Four items passed: server start (1), upload refusal while a job runs (8), legal search with source (9), and server restart with speech (10). Four partly passed: live API response on the night clip (2, 3), upload job completed with a verified decode and cues (6), and the length and format checks (7). Two were not run in the browser: live seek and camera (4, 5). The browser pane cannot select a local file, so overlay playback and voice in the browser are not verified. The full table is in `output/final_20261102/E2E_CHECKLIST.md`.
+**Appendix B. End-to-end checks.** On 31 October 2026, four items passed: server start (1), upload refusal while a job runs (8), legal search with source (9), and server restart with speech (10). Four were partly checked: live API response on the night clip (2, 3), upload job completed with a verified decode and cues (6), and the length and format checks (7). Items 2 to 5 (live boxes, live seek and camera) were removed from the final scope on 1 November 2026. On 1 November 2026 the upload-only interface was checked in the browser with a 20-second night clip and a daytime image: the sign list, the legal lookup and a 390 px mobile layout without horizontal scrolling. Speech playback was not listened to and is not verified by ear. The full table is in `output/final_20261102/E2E_CHECKLIST.md`.
 
 **Appendix C. Demo clips.** Three 90-second clips were cut from the field-evaluation source videos for the demonstration (Hồ Tây day road; Hanoi night with the three-sign overlap; Hanoi day road with many prohibition and warning signs). Sources, source hashes and cut times are listed in `output/final_20261102/demo_clips/SOURCES.md`.
 
@@ -297,6 +306,7 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 
 - Video threshold, exact value: 0.6412901874067937, set as `video_confidence_threshold` in `configs/perception.yaml`; written as 0.64 in the text. Still-image threshold: 0.87 (recognizer checkpoint).
 - Field segment runs in `output/kiet_wp_20261029/field_eval/`: the baseline runs are the folders prefixed `B_`; the new tracker at 0.87, 0.75 and 0.64 are the folders prefixed `N87_`, `N75_` and `N64_`.
-- Track grading for the 0.64 setting: `output/final_20261102/cp2_grading.csv` (52 tracks, with verdict and note per track).
+- Track grading for the 0.64 setting: `output/final_20261102/track_grading_064.csv` (copy of the grading sheet; 52 tracks, with verdict and note per track).
+- Upload speed check (1 November 2026): `output/final_20261102/speed_check/SPEED.md`.
 - Runtime measurement: `output/final_20261102/t9_latency_original.json`. Upload job used for the end-to-end check: `output/offline_video_jobs/a2b1e58883ef41e2a9b12e6c6f987d45/`.
 

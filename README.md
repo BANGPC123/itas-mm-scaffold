@@ -1,3 +1,32 @@
+# ITAS-MM — Bản cuối (02/11/2026)
+
+Web cuối chỉ còn hai luồng: **tải lên video MP4** hoặc **tải lên ảnh** (JPG/PNG). Hệ thống xử lý tệp rồi hiển thị kết quả. Chế độ live và camera đã bỏ khỏi giao diện cuối; phần live/camera trong các mục bên dưới là lịch sử của các bản trước.
+
+Cài đặt và chạy:
+
+```powershell
+python -m pip install -r requirements.txt
+npm --prefix frontend install
+npm --prefix frontend run build
+.\start.ps1
+```
+
+Mở http://127.0.0.1:8000.
+
+- Tab **Video**: tải tệp MP4 (nên cắt xuống vài phút), chờ xử lý, xem video kết quả, danh sách biển theo thời gian, giọng đọc và quy định liên quan.
+- Tab **Ảnh**: tải ảnh JPG/PNG chụp từ phía trước xe, xem ảnh có khung biển, danh sách biển và quy định liên quan.
+
+Báo cáo cuối: [docs/final_report/ITAS-MM_Final_Report.docx](docs/final_report/ITAS-MM_Final_Report.docx) (bản Markdown: [ITAS-MM_Final_Report.md](docs/final_report/ITAS-MM_Final_Report.md)). Số liệu và nguồn của từng số: `output/final_20261102/NUMBERS.md`.
+
+Kiểm tra:
+
+```powershell
+$env:PYTHONNOUSERSITE = "1"; python -m pytest -q tests
+node --test frontend/src/*.test.js
+```
+
+**Giới hạn chính:** video được xử lý chậm hơn thời gian thực, khoảng 1,8 lần (165 s cho clip 90 giây). Biển nhỏ dưới 32 px và cảnh ban đêm thường bị bỏ sót; nhãn mã là AI-assisted labelling, chưa có nhãn người độc lập; kết quả pháp lý chưa kiểm tra hiệu lực. Hệ thống không dùng để lái xe.
+
 # Chế độ xử lý MP4 offline — tối ưu mô phỏng (14/10/2026)
 
 ITAS-MM phục vụ **video MP4 đã quay**, không yêu cầu camera thật. Giao diện tại `http://127.0.0.1:8000` có **“Phân tích MP4 chất lượng cao”**: chọn video, tần suất AI 3/6/10 Hz, có thể nhập thời điểm bắt đầu ghi hình, chọn YOLO11 59 lớp làm khung tím cần rà; hệ thống xử lý theo thứ tự frame, xuất MP4 kết quả và chỉ cho tải khi giải mã kiểm chứng đạt. Các job lưu tại `output/offline_video_jobs/`. Có đoạn mẫu 30 giây đã giải mã đủ 900/900 frame. CLI dùng `scripts/render_offline_video_max_20261014.py`. Xem [hướng dẫn và benchmark VAL/TEST](docs/OFFLINE_VIDEO_MAX_ACCURACY_20261014.md).
@@ -127,7 +156,7 @@ UFLD-v2 dùng FP16 trên CUDA, FP32 trên CPU, giải mã tọa độ theo lô v
 ```powershell
 python scripts/benchmark_runtime.py "C:\Users\YOUR_USERNAME\Downloads\test_video.mp4" --output output/performance/recheck.json --road-bottom .65 --check-dashboard
 python scripts/test_video.py "C:\Users\YOUR_USERNAME\Downloads\test_video.mp4" --output output/video_tests/recheck --road-bottom .65
-node --test frontend/src/videoRuntime.test.js
+node --test frontend/src/*.test.js
 ```
 
 Chạy benchmark và demo lần lượt trên máy 16 GB RAM, tránh nạp hai bản mô hình cùng lúc. Báo cáo tối ưu và giới hạn: [PERFORMANCE.md](output/performance/PERFORMANCE.md). Report 3 giữ số đo baseline cũ; các thay đổi ROI/FP16 chưa được coi là một lần đánh giá accuracy mới trên TEST. Không dùng confidence nhận diện để kết luận chất lượng vật lý hoặc khả năng phản quang của biển.
@@ -178,7 +207,7 @@ python scripts/evaluate_detector_conditions.py
 python scripts/evaluate_product.py --output output/evaluation/revalidation_20261008/product --skip-benchmark
 python scripts/evaluate_culane.py --output output/evaluation/revalidation_20261008/culane_full
 python -m pytest tests -q --junitxml=output/evaluation/revalidation_20261008/software-tests.xml
-node --test --test-reporter=junit --test-reporter-destination=output/evaluation/revalidation_20261008/video-tests.xml frontend/src/videoRuntime.test.js
+node --test --test-reporter=junit --test-reporter-destination=output/evaluation/revalidation_20261008/video-tests.xml frontend/src/*.test.js
 python scripts/build_test_report.py
 ```
 
