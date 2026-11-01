@@ -16,6 +16,8 @@ Mở http://127.0.0.1:8000.
 - Tab **Video**: tải tệp MP4 (nên cắt xuống vài phút), chờ xử lý, xem video kết quả, danh sách biển theo thời gian, giọng đọc và quy định liên quan.
 - Tab **Ảnh**: tải ảnh JPG/PNG chụp từ phía trước xe, xem ảnh có khung biển, danh sách biển và quy định liên quan.
 
+Video demo: [docs/demo/itas-mm_demo_video.mp4](docs/demo/itas-mm_demo_video.mp4), đoạn video lái xe 2 phút 20 giây dùng làm đầu vào khi demo tab **Video** (nén 1280x720, 30 fps, khoảng 44 MB).
+
 Báo cáo cuối: [docs/final_report/ITAS-MM_Final_Report.docx](docs/final_report/ITAS-MM_Final_Report.docx) (bản Markdown: [ITAS-MM_Final_Report.md](docs/final_report/ITAS-MM_Final_Report.md)). Số liệu và nguồn của từng số: `output/final_20261102/NUMBERS.md`.
 
 Kiểm tra:
