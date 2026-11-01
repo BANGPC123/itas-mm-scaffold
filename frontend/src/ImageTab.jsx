@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { API, requestOrThrow, speechText } from "./api.js";
 import UploadCard from "./UploadCard.jsx";
 import LegalLookup from "./LegalLookup.jsx";
+import SignThumb from "./SignThumb.jsx";
 import { badgeStyle, imageRows } from "./logic.js";
 
 // Fixed position for the single-image request; the user does not enter coordinates.
@@ -106,13 +107,17 @@ export default function ImageTab({ names }) {
       </section>
 
       <section className="card">
-        <h2>Biển báo phát hiện</h2>
+        <div className="list-head">
+          <h2>Biển báo phát hiện</h2>
+          <span className="count">{rows.filter((r) => !r.unknown).length} nhận dạng · {rows.length} phát hiện</span>
+        </div>
         {rows.length === 0 ? (
           <p className="muted">Chưa phát hiện biển báo nào trong ảnh này.</p>
         ) : (
           <ul className="sign-list">
             {rows.map((row) => (
               <li className="sign-row" key={row.key}>
+                <SignThumb src={result.annotated_image} box={row.box} frameShape={result.frame_shape} />
                 {row.unknown ? (
                   <span className="badge badge-unknown">?</span>
                 ) : (
@@ -120,7 +125,7 @@ export default function ImageTab({ names }) {
                 )}
                 <span className="sign-name">
                   {row.name}
-                  <small className="muted"> · {row.confidence}%</small>
+                  <small className="muted">Độ tin cậy {row.confidence}%</small>
                 </span>
                 {row.canLookUp && <LegalLookup code={row.code} name={row.name} />}
               </li>

@@ -47,32 +47,43 @@ export default function App() {
   const pill = STATUS[status];
 
   return (
-    <div className="app">
-      <header className="topbar">
-        <div>
-          <h1>ITAS-MM</h1>
-          <p className="muted">Nhận diện biển báo giao thông Việt Nam</p>
+    <div className="page">
+      <header className="navbar">
+        <div className="navbar-inner">
+          <div className="brand">
+            <span className="brand-mark" aria-hidden="true" />
+            <div>
+              <span className="brand-name">ITAS-MM</span>
+              <span className="brand-sub">Nhận diện biển báo giao thông Việt Nam</span>
+            </div>
+          </div>
+          <span className={`pill ${pill.className}`} role="status"><span className="dot" aria-hidden="true" />{pill.label}</span>
         </div>
-        <span className={`pill ${pill.className}`} role="status">{pill.label}</span>
       </header>
 
-      <div className="segmented" role="tablist" aria-label="Loại tệp">
-        <button role="tab" type="button" aria-selected={tab === "video"} className={tab === "video" ? "active" : ""} onClick={() => setTab("video")}>
-          Video
-        </button>
-        <button role="tab" type="button" aria-selected={tab === "image"} className={tab === "image" ? "active" : ""} onClick={() => setTab("image")}>
-          Ảnh
-        </button>
+      <div className="app">
+        <div className="intro">
+          <h1>Phân tích biển báo từ video hoặc ảnh</h1>
+          <p className="muted">Tải lên video MP4 hoặc ảnh chụp từ phía trước xe. Hệ thống đánh dấu biển báo, đọc tên bằng giọng Việt và trích quy định liên quan.</p>
+          <div className="segmented" role="tablist" aria-label="Loại tệp">
+            <button role="tab" type="button" aria-selected={tab === "video"} className={tab === "video" ? "active" : ""} onClick={() => setTab("video")}>
+              Video
+            </button>
+            <button role="tab" type="button" aria-selected={tab === "image"} className={tab === "image" ? "active" : ""} onClick={() => setTab("image")}>
+              Ảnh
+            </button>
+          </div>
+        </div>
+
+        <main>
+          <div hidden={tab !== "video"}><VideoTab names={names} /></div>
+          <div hidden={tab !== "image"}><ImageTab names={names} /></div>
+        </main>
+
+        <footer className="fine">
+          Kết quả do AI dự đoán, chỉ mang tính tham khảo; không thay thế quan sát của người lái.
+        </footer>
       </div>
-
-      <main>
-        <div hidden={tab !== "video"}><VideoTab names={names} /></div>
-        <div hidden={tab !== "image"}><ImageTab names={names} /></div>
-      </main>
-
-      <footer className="fine">
-        Kết quả do AI dự đoán, chỉ mang tính tham khảo; không thay thế quan sát của người lái.
-      </footer>
     </div>
   );
 }

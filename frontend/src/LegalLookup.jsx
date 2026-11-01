@@ -6,6 +6,7 @@ import { hitLocator, shortExcerpt } from "./logic.js";
 export default function LegalLookup({ code, name }) {
   const [open, setOpen] = useState(false);
   const [state, setState] = useState({ loading: false, hits: null, error: "" });
+  const [all, setAll] = useState(false);
 
   const toggle = async () => {
     const next = !open;
@@ -20,8 +21,8 @@ export default function LegalLookup({ code, name }) {
   };
 
   return (
-    <div className="legal">
-      <button type="button" className="link-button" aria-expanded={open} onClick={toggle}>
+    <>
+      <button type="button" className={`chip-button ${open ? "on" : ""}`} aria-expanded={open} onClick={toggle}>
         {open ? "Ẩn quy định" : "Quy định"}
       </button>
       {open && (
@@ -29,7 +30,7 @@ export default function LegalLookup({ code, name }) {
           {state.loading && <p className="muted">Đang tra cứu…</p>}
           {state.error && <p className="error-text" role="alert">{state.error}</p>}
           {state.hits && state.hits.length === 0 && <p className="muted">Không có đoạn nguồn đủ phù hợp.</p>}
-          {state.hits?.map((hit, index) => (
+          {state.hits?.slice(0, all ? undefined : 1).map((hit, index) => (
             <article className="legal-hit" key={`${hit.source_file}-${hit.page}-${index}`}>
               <h4>{hit.document}</h4>
               <p className="muted">{hitLocator(hit)}</p>
@@ -39,9 +40,14 @@ export default function LegalLookup({ code, name }) {
               </a>
             </article>
           ))}
+          {state.hits?.length > 1 && (
+            <button type="button" className="link-button" onClick={() => setAll(!all)}>
+              {all ? "Thu gọn" : `Xem thêm ${state.hits.length - 1} đoạn`}
+            </button>
+          )}
           {state.hits?.length > 0 && <p className="fine">Chưa kiểm tra hiệu lực pháp lý.</p>}
         </div>
       )}
-    </div>
+    </>
   );
 }

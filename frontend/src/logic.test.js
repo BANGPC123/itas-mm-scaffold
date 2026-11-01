@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {formatTime,signGroup,badgeStyle,estimateRemaining,formatRemaining,videoRows,imageRows,hitLocator,shortExcerpt,errorMessage} from './logic.js';
+import {formatTime,signGroup,badgeStyle,estimateRemaining,formatRemaining,videoRows,imageRows,hitLocator,shortExcerpt,errorMessage,cropRect} from './logic.js';
 
 test('formatTime shows minutes and seconds', () => {
   assert.equal(formatTime(0), '00:00');
@@ -77,4 +77,12 @@ test('HTTP failures map to clear Vietnamese messages', () => {
   assert.match(errorMessage(429, '', 'x'), /đang bận/);
   assert.equal(errorMessage(415, 'Hiện chỉ hỗ trợ MP4.', 'x'), 'Hiện chỉ hỗ trợ MP4.');
   assert.equal(errorMessage(500, undefined, 'Lỗi chung'), 'Lỗi chung');
+});
+
+test('cropRect pads, scales and stays inside the image', () => {
+  assert.deepEqual(cropRect([100, 100, 120, 120], 200, 200, 400, 400, 0), [50, 50, 10, 10]);
+  const [x, y, w, h] = cropRect([0, 0, 40, 20], 1000, 500, 1000, 500, 0.5);
+  assert.equal(w, 80); assert.equal(h, 80); assert.equal(x, 0); assert.equal(y, 0);
+  assert.equal(cropRect(null, 10, 10, 10, 10), null);
+  assert.equal(cropRect([5, 5, 5, 9], 10, 10, 10, 10), null);
 });

@@ -31,7 +31,7 @@ function Progress({ job, runSince, now }) {
     running: "Đang phân tích video",
   }[job.status] || "Đang xử lý";
   return (
-    <section className="card">
+    <section className="card narrow">
       <h2>{label}</h2>
       <div className="progress" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}>
         <span style={{ width: `${percent}%` }} />
@@ -175,7 +175,7 @@ export default function VideoTab({ names }) {
 
   if (job.status === "failed") {
     return (
-      <section className="card">
+      <section className="card narrow">
         <h2>Không phân tích được video</h2>
         <p className="error-box" role="alert">{job.message || "Phân tích gặp lỗi; kết quả chưa được công nhận."}</p>
         <button type="button" className="btn btn-primary" onClick={reset}>Thử video khác</button>
@@ -227,7 +227,11 @@ export default function VideoTab({ names }) {
       </section>
 
       <section className="card">
-        <h2>Biển báo phát hiện</h2>
+        <div className="list-head">
+          <h2>Biển báo phát hiện</h2>
+          <span className="count">{rows.length} biển</span>
+        </div>
+        <p className="fine">Bấm mốc thời gian để tua tới biển đó.</p>
         {rows.length === 0 ? (
           <p className="muted">Không phát hiện biển báo nào được xác nhận.</p>
         ) : (

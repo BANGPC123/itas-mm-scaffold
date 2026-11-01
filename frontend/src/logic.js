@@ -67,7 +67,8 @@ export function imageRows(signs, names) {
       key: index,
       code: unknown ? "" : code,
       name: unknown ? "Chưa nhận dạng" : sign.name_vi || (names && names[sign.label]) || "",
-      confidence: Math.round((sign.confidence || 0) * 100),
+      confidence: Math.round((sign.recognition_confidence ?? sign.confidence ?? 0) * 100),
+      box: Array.isArray(sign.bbox_xyxy) ? sign.bbox_xyxy : null,
       unknown,
       canLookUp: !unknown && !sign.is_compound,
     };
@@ -92,4 +93,22 @@ export function errorMessage(status, detail, fallback) {
   if (status === 429) return "Hệ thống đang bận xử lý khung hình khác, vui lòng thử lại sau.";
   if (typeof detail === "string" && detail) return detail;
   return fallback;
+}
+
+// Square crop around a detected box, in displayed-image pixels, with padding. The box is in frame
+// coordinates; the displayed image may be scaled. Returns null for a missing or empty box.
+export function cropRect(box, imageWidth, imageHeight, frameWidth, frameHeight, pad = 0.3) {
+  if (!box || !(imageWidth > 0) || !(imageHeight > 0)) return null;
+  const sx = imageWidth / (frameWidth || imageWidth);
+  const sy = imageHeight / (frameHeight || imageHeight);
+  const [x1, y1, x2, y2] = [box[0] * sx, box[1] * sy, box[2] * sx, box[3] * sy];
+  const w = x2 - x1;
+  const h = y2 - y1;
+  if (!(w > 0) || !(h > 0)) return null;
+  const side = Math.min(Math.max(w, h) * (1 + 2 * pad), imageWidth, imageHeight);
+  const cx = (x1 + x2) / 2;
+  const cy = (y1 + y2) / 2;
+  const x = Math.min(Math.max(0, cx - side / 2), imageWidth - side);
+  const y = Math.min(Math.max(0, cy - side / 2), imageHeight - side);
+  return [x, y, side, side];
 }

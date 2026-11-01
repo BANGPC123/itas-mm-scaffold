@@ -23,6 +23,7 @@ export default function UploadCard({ accept, extensions, hint, file, onPick, onA
 
   return (
     <section className="card upload-card">
+      <span className="upload-icon" aria-hidden="true" />
       <div
         className={`dropzone ${dragging ? "dragging" : ""}`}
         onDragOver={(event) => { event.preventDefault(); setDragging(true); }}
@@ -46,6 +47,11 @@ export default function UploadCard({ accept, extensions, hint, file, onPick, onA
       <button type="button" className="btn btn-primary btn-wide" onClick={onAnalyze} disabled={!file || busy}>
         {busy ? "Đang gửi…" : actionLabel}
       </button>
+      <ul className="features">
+        <li><strong>87 mã biển</strong><span>theo QCVN 41:2024</span></li>
+        <li><strong>Giọng đọc</strong><span>tên biển bằng tiếng Việt</span></li>
+        <li><strong>Trích quy định</strong><span>kèm văn bản nguồn</span></li>
+      </ul>
     </section>
   );
 }
