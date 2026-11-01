@@ -30,7 +30,9 @@ def file_sha256(path):
 
 def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
            max_seconds=None,recorded_at=None,include_auxiliary=False,
-           pipeline=None,highres_rescue=False):
+           pipeline=None,highres_rescue=False,output_fps_cap=None,lane_every=1):
+    # output_fps_cap: write at most this many frames per second to the result video (None = all).
+    # lane_every: run the lane stage on every n-th analysis sample and reuse it in between.
     if not source.is_file():raise FileNotFoundError(source)
     if out.exists():raise FileExistsError('Output must be new: '+str(out))
     if not (1.<=analysis_hz<=12.) or start_second<0:
@@ -49,6 +51,11 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
     if skip>=total:cap.release();raise ValueError('Start is after end')
     frames=min(total-skip,int(round(max_seconds*fps)) if max_seconds is not None else total-skip)
     step=max(1,round(fps/analysis_hz))
+    if lane_every<1:raise ValueError('lane_every must be >= 1')
+    out_step=max(1,round(fps/output_fps_cap)) if output_fps_cap else 1
+    if step%out_step:out_step=1  # every analysed frame must also be written
+    out_fps=fps/out_step
+    written=0
     w=1280 if sw>=1280 else sw
     h=round(sh*w/sw)//2*2
     assert w%2==0 and h%2==0
@@ -58,8 +65,8 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
     pipeline_id='offline_simulation_'+hashlib.sha256(str(out).encode()).hexdigest()[:18]
     ffmpeg=imageio_ffmpeg.get_ffmpeg_exe()
     encoder=subprocess.Popen([ffmpeg,'-y','-loglevel','error','-f','rawvideo','-pix_fmt','bgr24',
-        '-s',f'{w}x{h}','-r',str(fps),'-i','-','-an','-c:v','libx264','-preset','veryfast',
-        '-crf','21','-threads','2','-pix_fmt','yuv420p',str(out/'silent.mp4')],
+        '-s',f'{w}x{h}','-r',str(out_fps),'-i','-','-an','-c:v','libx264','-preset','veryfast',
+        '-crf','21']+(['-threads','2'] if out_step==1 and lane_every==1 else [])+['-pix_fmt','yuv420p',str(out/'silent.mp4')],
         stdin=subprocess.PIPE)
     font=ImageFont.truetype('C:/Windows/Fonts/arial.ttf',18)
     motion=OverlayMotion();aux_motion=OverlayMotion();candidate_motion=OverlayMotion()
@@ -73,6 +80,15 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
     try:
         with (out/'predictions.jsonl').open('w',encoding='utf8') as jsonl:
             for index in range(frames):
+                if index%out_step:
+                    # Frame not written to the result video and never an analysis sample.
+                    if not cap.grab():raise RuntimeError(f'Input decode failed at {skip+index}')
+                    if (index+1)%300==0:
+                        progress={'encoded_source_frames':index+1,'expected':frames,
+                            'samples':counters['samples'],'elapsed_seconds':round(time.perf_counter()-started,1)}
+                        (out/'progress.json').write_text(json.dumps(progress))
+                        print('OFFLINE_VIDEO_PROGRESS',json.dumps(progress),flush=True)
+                    continue
                 okay,frame=cap.read()
                 if not okay:raise RuntimeError(f'Input decode failed at {skip+index}')
                 absolute=(skip+index)/fps
@@ -84,7 +100,8 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
                         frame_timestamp=absolute,observed_at=observed,
                         lane_visual_roi=True,lane_display_mode='precision',
                         offline_video_quality=True,offline_highres_rescue=highres_rescue,
-                        auxiliary_sign_review=include_auxiliary)
+                        auxiliary_sign_review=include_auxiliary,
+                        reuse_lane=lane_every>1 and counters['samples']%lane_every!=0)
                     signs=result.perception.signs;lane=result.perception.lane
                     lines=[[(round(x*w/sw),round(y*h/sh)) for x,y in p]
                             for p in (lane.display_polylines or [])]
@@ -124,7 +141,7 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
                     _,aux_boxes=aux_motion.advance(canvas)
                     candidate_lines,_=candidate_motion.advance(canvas)
                 rendered=draw_frame(canvas,last_payload,lines,boxes,
-                                    absolute,font,fps,fps/step)
+                                    absolute,font,out_fps,fps/step)
                 if candidate_lines:
                     for poly in candidate_lines:
                         if len(poly)>=2:
@@ -148,7 +165,7 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
                         painter.rectangle((bounds[0]-2,bounds[1]-2,bounds[2]+2,bounds[3]+2),fill=(35,25,50))
                         painter.text((tx,ty),text,font=font,fill=(245,200,255))
                     rendered=cv2.cvtColor(np.asarray(pil),cv2.COLOR_RGB2BGR)
-                encoder.stdin.write(rendered.tobytes())
+                encoder.stdin.write(rendered.tobytes());written+=1
                 if (index+1)%300==0:
                     progress={'encoded_source_frames':index+1,'expected':frames,
                         'samples':counters['samples'],'elapsed_seconds':round(time.perf_counter()-started,1)}
@@ -176,9 +193,10 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
         '-progress','pipe:1','-nostats','-f','null','-'],capture_output=True,text=True)
     values=[int(x.split('=',1)[1]) for x in decode.stdout.splitlines() if x.startswith('frame=')]
     decoded=values[-1] if values else 0
-    verified=(decode.returncode==0 and not decode.stderr.strip() and decoded==frames)
+    verified=(decode.returncode==0 and not decode.stderr.strip() and decoded==written)
     scan={'source_file':str(source),'source_sha256':file_sha256(source),
-        'start_sec':start_second,'source_frames':total,'output_frames':frames,
+        'start_sec':start_second,'source_frames':total,'output_frames':written,'output_fps':out_fps,
+        'lane_every_samples':lane_every,
         'decoded_frames':decoded,'output_size':[w,h],
         'fps':fps,'analysis_hz':fps/step,'source_frame_interval':step,
         'sign_mode':('960+640+1280' if highres_rescue else '960+640')+', three-frame confirmation',

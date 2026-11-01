@@ -37,7 +37,7 @@ def _run_job(job_id, source, output, analysis_hz, start_sec, max_sec, auxiliary_
                 start_second=start_sec,max_seconds=max_sec,
                 include_auxiliary=auxiliary_review,
                 recorded_at=recorded_at,highres_rescue=highres_rescue,
-                pipeline=get_pipeline())
+                pipeline=get_pipeline(),output_fps_cap=30,lane_every=2)
             with registry:
                 jobs[job_id]['status']='complete'
                 jobs[job_id]['frames']=result['output_frames']
