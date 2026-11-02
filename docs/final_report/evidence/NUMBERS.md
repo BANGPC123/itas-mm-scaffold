@@ -114,4 +114,4 @@ Paths are relative to the repo root. "Report 3" = docs/report3/REPORT3_MODEL_RES
 | Demo clip sources and hashes | docs/final_report/evidence/SOURCES.md |
 | Evaluation videos are Hanoi, two day and one night | data/manifests/field_video_20261029/sources.csv (role eval) and CP2 notes |
 | Simplified lane path, 60 s clip: 171.7 s to 77.9 s processing (script, one run each); 0 of 360 sign samples differ; lanes shown in 0 then 8 samples | docs/final_report/evidence/LANE_SIMPLE.md (section 1, 2, 3) |
-| Simple lane path, 90 s night clip: 153.3 s processing (one run, 1.7 times real time); lane shown in 178 of 540 samples (coverage, not accuracy) | docs/final_report/evidence/SPEED.md (section 3 Nov 2026) |
+| Simple lane path, 90 s night clip: 153.3 s processing (one run, 1.7 times real time); lane shown in 178 of 540 samples (coverage, not accuracy) | docs/final_report/evidence/SPEED.md (section 2 Nov 2026) |

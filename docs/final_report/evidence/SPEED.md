@@ -12,7 +12,7 @@ Same source: night_hanoi_YQl9c5gCjhg_30s_90s.mp4 (90 s, 5,400 frames at 60 fps, 
 - Lane lines drawn over the clip: 1,504 before, 1,554 after.
 - Through the web UI (server restarted with the change): 20 s night clip processed in 44.6 s (before: about 133 s end to end), output 30 fps, cues P.112 + W.245a at 3.167 s and P.117 at 13.167 s.
 
-## 3 Nov 2026: simplified lane path, same 90 s night clip (one run)
+## 2 Nov 2026: simplified lane path, same 90 s night clip (one run)
 
 Same source as above (sha256 prefix c22caa280981, 5,400 frames at 60 fps). Rendered with `render()` using the web parameters (analysis 6 Hz, `lane_every=2`, `output_fps_cap=30`, `include_auxiliary=True`, no `max_seconds`), with `offline_video_lane.display: simple`. Summary file: `output/speed_simple_20261103/night_90s/summary.json` (not committed).
 
