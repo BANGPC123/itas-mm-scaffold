@@ -10,13 +10,13 @@ ITAS-MM: traffic sign recognition, lane visualisation and retrieval-grounded spo
 
 ## 2. Team Members
 
-| Name | Role (from the research plan, Proposal section 6) |
-|---|---|
-| Phan Khanh Bang | Outline, literature review, objectives and scope; consolidation of the written report |
-| Cao Tran Tien | Detector and lane model training and evaluation; finalisation of the demo application |
-| Tran Anh Kiet | Detector and lane model training and evaluation; finalisation of the demo application |
-
-Roles follow the research plan in the proposal (section 6, tasks 1, 3, 7 and 8).
+| Name | Student ID | Role |
+|---|---|---|
+| Trần Anh Kiệt | SE182050 | Detector and lane model training and evaluation; finalisation of the demo application |
+| Phan Khánh Băng | SE180630 | Outline, literature review, objectives and scope; consolidation of the written report |
+| Huỳnh Thiên Quốc | SE181733 | Data collection and preparation; evaluation support |
+| Cao Trần Tiến | SE184692 | Detector and lane model training and evaluation; finalisation of the demo application |
+| Vũ Lương Quang Thắng | SE184739 | Legal corpus, speech output and testing support |
 
 ## 3. Introduction and Background
 
