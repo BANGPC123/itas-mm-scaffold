@@ -15,6 +15,7 @@ from PIL import ImageFont,Image,ImageDraw
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from src.pipeline.orchestrator import Pipeline
+from src.utils.config import load_config
 from src.interaction.ai_observation import group_speech_events, video_speech_events
 from src.perception.overlay_motion import OverlayMotion
 from scripts.complete_test_video import draw_frame
@@ -35,6 +36,9 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
     # lane_every: run the lane stage on every n-th analysis sample and reuse it in between.
     if not source.is_file():raise FileNotFoundError(source)
     if out.exists():raise FileExistsError('Output must be new: '+str(out))
+    display=load_config('perception').get('offline_video_lane',{}).get('display','simple')
+    if display not in ('simple','precision'):raise ValueError('offline_video_lane.display must be simple or precision')
+    lane_simple=display=='simple'
     if not (1.<=analysis_hz<=12.) or start_second<0:
         raise ValueError('analysis_hz must be 1 to 12 and start>=0')
     if max_seconds is not None and not 1.<=max_seconds<=7200:
@@ -101,7 +105,8 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
                         lane_visual_roi=True,lane_display_mode='precision',
                         offline_video_quality=True,offline_highres_rescue=highres_rescue,
                         auxiliary_sign_review=include_auxiliary,
-                        reuse_lane=lane_every>1 and counters['samples']%lane_every!=0)
+                        reuse_lane=lane_every>1 and counters['samples']%lane_every!=0,
+                        lane_simple=lane_simple)
                     signs=result.perception.signs;lane=result.perception.lane
                     lines=[[(round(x*w/sw),round(y*h/sh)) for x,y in p]
                             for p in (lane.display_polylines or [])]
@@ -196,7 +201,7 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
     verified=(decode.returncode==0 and not decode.stderr.strip() and decoded==written)
     scan={'source_file':str(source),'source_sha256':file_sha256(source),
         'start_sec':start_second,'source_frames':total,'output_frames':written,'output_fps':out_fps,
-        'lane_every_samples':lane_every,
+        'lane_every_samples':lane_every,'offline_video_lane_display':display,
         'decoded_frames':decoded,'output_size':[w,h],
         'fps':fps,'analysis_hz':fps/step,'source_frame_interval':step,
         'sign_mode':('960+640+1280' if highres_rescue else '960+640')+', three-frame confirmation',

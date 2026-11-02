@@ -42,6 +42,11 @@ lane_visual_fallback:
   mask_threshold: 0.56
   min_span_ratio: 0.20
 
+# Offline MP4 lane display. simple = UFLD-v2 polylines with light sanity filter and temporal
+# smoothing, no YOLOPv2 / surface veto / candidate overlay. precision = previous pipeline (rollback).
+offline_video_lane:
+  display: simple
+
 lane_detector:
   backend: ufld_v2
   filter_geometry: false

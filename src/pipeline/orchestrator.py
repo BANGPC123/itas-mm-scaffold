@@ -48,7 +48,7 @@ class Pipeline:
             client=OllamaClient(self.reasoning_cfg['ollama'])
             self.rag_chain=RagChain(self.reasoning_cfg,VectorStore(self.reasoning_cfg['rag'],client),client)
 
-    def run(self,image,latitude,longitude,synthesize_audio=True,*,road_bottom=1.,annotate=True,stream_id=None,frame_timestamp=None,exclude_rects=None,lane_visual_roi=False,observed_at=None,auxiliary_sign_review=False,lane_display_mode='precision',offline_video_quality=False,offline_highres_rescue=False,reuse_lane=False):
+    def run(self,image,latitude,longitude,synthesize_audio=True,*,road_bottom=1.,annotate=True,stream_id=None,frame_timestamp=None,exclude_rects=None,lane_visual_roi=False,observed_at=None,auxiliary_sign_review=False,lane_display_mode='precision',offline_video_quality=False,offline_highres_rescue=False,reuse_lane=False,lane_simple=False):
         if image is None or image.size==0:raise ValueError('Input image is empty')
         if lane_display_mode not in ('precision','candidate'):
             raise ValueError('Unsupported lane display mode')
@@ -102,25 +102,32 @@ class Pipeline:
         # Offline video may reuse the previous lane result on alternate samples (lane is the
         # slowest stage and changes slowly); signs are still analysed on every sample.
         if not hasattr(self,'_reused_lane'):self._reused_lane={}
-        lane_key=(image.shape,road_bottom,lane_visual_roi,lane_display_mode,offline_video_quality)
+        lane_key=(image.shape,road_bottom,lane_visual_roi,lane_display_mode,offline_video_quality,lane_simple)
         cached=self._reused_lane.get(stream_id) if reuse_lane and stream_id is not None and frame_timestamp is not None else None
         if cached is not None and cached[0]==lane_key and 0<frame_timestamp-cached[1]<=.4:
             import copy
             lane=copy.deepcopy(cached[2])
         else:
             lane=self.lane_detector.detect(image)
+            # Simple mode keeps the UFLD geometry: no YOLOPv2, screening, candidate overlay or surface veto.
+            simple=lane_simple and lane.backend=='ufld_v2'
             raw_ufld_hypotheses=list(lane.polylines) if offline_video_quality and lane.backend=='ufld_v2' else []
             if lane_visual_roi and lane.backend=='ufld_v2' and load_config('perception').get('lane_visual_fallback',{}).get('camera_aware',False):
                 from src.perception.camera_lane import CameraLaneVisual
                 if not hasattr(self,'camera_lane_visual'):
                     self.camera_lane_visual=CameraLaneVisual(self.lane_detector.learned,
                         device='cuda:0' if __import__('torch').cuda.is_available() else 'cpu')
-                lane=self.camera_lane_visual.detect(image,lane)
-                warnings.append('Vạch sơn theo vùng mặt đường và kiểm tra che khuất; chưa xác minh phạm vi làn áp dụng.')
-            if lane_visual_roi and lane.backend=='ufld_v2':
+                camera=self.camera_lane_visual.detect(image,lane)
+                if simple:
+                    # Only the camera-view verdict is used; the polylines stay UFLD.
+                    lane.camera_view=camera.camera_view
+                else:
+                    lane=camera
+                    warnings.append('Vạch sơn theo vùng mặt đường và kiểm tra che khuất; chưa xác minh phạm vi làn áp dụng.')
+            if lane_visual_roi and lane.backend=='ufld_v2' and not simple:
                 from src.perception.ufld_display_screen import screen_ufld_for_demo
                 lane,_=screen_ufld_for_demo(image,lane)
-            if lane_visual_roi and lane.backend=='ufld_v2' and not lane.polylines:
+            if lane_visual_roi and lane.backend=='ufld_v2' and not lane.polylines and not simple:
                 from src.perception.lane_multimodel import SecondaryLaneVisual
                 if not hasattr(self,'secondary_lane_visual'):
                     cfg_visual=load_config('perception').get('lane_visual_fallback',{})
@@ -131,7 +138,11 @@ class Pipeline:
                         min_span_ratio=cfg_visual.get('min_span_ratio',.20))
                 lane,used=self.secondary_lane_visual.detect_if_needed(image,lane)
                 if used:warnings.append('YOLOPv2: gợi ý đường làn chỉ để hiển thị, không dùng xác định phạm vi biển báo.')
-            if offline_video_quality and stream_id is not None:
+            if simple:
+                lane.candidate_polylines=[]
+                lane.ego_boundaries=[]
+                lane.lane_center_offset_px=None
+            if offline_video_quality and stream_id is not None and not simple:
                 # Separate high-recall, two-frame UFLD hypotheses from the
                 # verified/paint-backed display. Never use for car legal scope.
                 from src.perception.lane_temporal import OfflineLaneEvidence
@@ -154,12 +165,13 @@ class Pipeline:
                 lane.ego_boundaries=[]
                 lane.lane_center_offset_px=None
             from src.perception.lane_display_quality import visual_polylines
-            lane.display_polylines=lane.polylines if lane.backend=='camera_road_paint_visual' else visual_polylines(lane,image.shape,mode=lane_display_mode)
+            display_mode='candidate' if simple else lane_display_mode
+            lane.display_polylines=lane.polylines if lane.backend=='camera_road_paint_visual' else visual_polylines(lane,image.shape,mode=display_mode)
             if stream_id is not None and lane.backend!='camera_road_paint_visual':
                 from src.perception.lane_temporal import LaneStreamPool
                 if not hasattr(self,'lane_stream_pool'):self.lane_stream_pool=LaneStreamPool()
                 from src.perception.lane_display_quality import visual_polylines
-                safe_display=lane.polylines if lane.backend=='camera_road_paint_visual' else visual_polylines(lane,image.shape,mode=lane_display_mode)
+                safe_display=lane.polylines if lane.backend=='camera_road_paint_visual' else visual_polylines(lane,image.shape,mode=display_mode)
                 lane.display_polylines=self.lane_stream_pool.get(stream_id,image.shape,(road_bottom,lane.backend)).update(safe_display,frame_timestamp,image.shape,image=image)
             if lane_display_mode=='candidate' and lane.backend=='ufld_v2':
                 # High-recall visual mode is not trusted lane geometry.
