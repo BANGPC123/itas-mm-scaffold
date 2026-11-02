@@ -1,516 +1,295 @@
-\documentclass[11pt,a4paper]{article}
+\documentclass[conference,a4paper]{IEEEtran}
+\IEEEoverridecommandlockouts
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{lmodern}
-\usepackage[margin=2.3cm]{geometry}
+\usepackage{cite}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{tabularx}
-\usepackage{multirow}
-\usepackage{float}
-\usepackage[font=small,labelfont=bf]{caption}
-\usepackage{enumitem}
 \usepackage{xcolor}
 \usepackage{tikz}
-\usetikzlibrary{positioning,arrows.meta,fit}
-\usepackage[hidelinks]{hyperref}
-\setlist{nosep,leftmargin=1.4em}
+\usetikzlibrary{positioning,arrows.meta}
+\usepackage{url}
 \renewcommand{\arraystretch}{1.12}
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
-\setlength{\emergencystretch}{1.5em}
-
-\title{\textbf{ITAS-MM: An Intelligent Multimodal Traffic Assistance System for Real-Time Traffic Sign Recognition, Lane Detection, and Legally Grounded Driving Guidance}\\[4pt]
-\large DSP391m Data Science Capstone --- Final Report}
-\author{Phan Khanh Bang \and Cao Tran Tien \and Tran Anh Kiet}
-\date{November 2026}
 
 \begin{document}
+
+\title{ITAS-MM: An Intelligent Multimodal Traffic Assistance System for Real-Time Traffic Sign Recognition, Lane Detection, and Legally Grounded Driving Guidance}
+
+\author{\IEEEauthorblockN{Phan Khanh Bang}
+\IEEEauthorblockA{FPT University\\Vietnam}
+\and
+\IEEEauthorblockN{Cao Tran Tien}
+\IEEEauthorblockA{FPT University\\Vietnam}
+\and
+\IEEEauthorblockN{Tran Anh Kiet}
+\IEEEauthorblockA{FPT University\\Vietnam}}
+
 \maketitle
 
 \begin{abstract}
-Most driver-assistance pipelines stop at detection: they output a sign code but not what the sign requires. ITAS-MM is a research prototype that reads Vietnamese traffic signs from forward-camera video or images, links each confirmed sign to passages of the governing regulations, and reads the result aloud in Vietnamese. Detection and classification are separated: a single-class YOLO11n detector finds sign panels, and a MobileNetV3-small classifier assigns one of 87 QCVN~41:2024 codes or rejects the crop. On video, codes are confirmed by one-to-one track matching and per-track ballot voting across frames. Fine-tuning the detector raised TEST recall from 0.851 to 0.875 and mAP50 from 0.919 to 0.936, with paired-bootstrap 95\% intervals that exclude zero. The recognizer reaches 0.970 accuracy on TEST crops of 32~px and above. On 15 one-minute field segments, the new tracker cut tracks with fewer than three samples from 1,022 to 637, and a video threshold of 0.64 raised coded tracks from 75 to 96. Uploaded video is processed 1.8 times slower than real time. The main weaknesses are small and night signs, AI-assisted (not human) labels, a visual-only lane overlay, and the domain gap between curated data and real driving video: detector precision falls from 0.923 on TEST to 0.641 on a field pilot.
+Driver assistance systems that recognise traffic signs usually stop at a class label and leave the driver to work out what the sign requires. This paper presents ITAS-MM, a research prototype that reads Vietnamese traffic signs from forward camera video or still images, links each confirmed sign to passages of the governing regulations, and reads the result aloud in Vietnamese. The system separates localisation from classification: a single class YOLO11n detector finds sign panels, and a MobileNetV3-small classifier assigns one of 87 codes of the national standard QCVN 41:2024 or rejects the crop. On video, codes are confirmed only after consistent evidence over several frames, using a label independent track association and a per track voting rule. The models were trained on 15,603 images merged from five public data sets with lineage grouped splits. Fine tuning raised detector recall on the test split from 0.851 to 0.875 and mAP50 from 0.919 to 0.936, with paired bootstrap intervals that exclude zero, and the recognizer reaches 0.970 accuracy on crops of 32 pixels and above. On fifteen one minute field segments, the temporal module reduced fragmented tracks by 38\% and, together with a lower video threshold, raised the number of coded tracks from 75 to 96. The results also show the limits of the prototype: detector precision falls from 0.923 on curated data to 0.641 on real driving video, and small or night time signs remain the main source of error.
 \end{abstract}
 
-\noindent\textbf{Keywords:} traffic sign recognition, YOLO, MobileNetV3, multi-frame voting, retrieval, Vietnamese text-to-speech, QCVN 41:2024.
+\begin{IEEEkeywords}
+traffic sign recognition, object detection, temporal voting, legal information retrieval, Vietnamese text to speech
+\end{IEEEkeywords}
 
-\paragraph{Scope.} ITAS-MM is a research prototype. It processes uploaded video and still images offline in a web application. It is not a certified driver-assistance system, is not validated on the road, and must not be used to drive a vehicle. Sign-code labels come from AI-assisted labelling; no human ground truth exists for the full data set.
+\section{Introduction}
 
-%=====================================================================
-\section{Project Title and Team Members}
+Road traffic crashes kill about 1.19 million people every year \cite{who2023}. A large part of this risk comes from drivers who miss or misread information that is already present on the road, such as a prohibition sign partly hidden by a truck or a warning sign seen too late at night. Camera based driver assistance can help, and traffic sign recognition is one of its most studied components. However, most recognition pipelines end with a class name. A label such as P.106a is of little use to a driver who does not remember that it prohibits trucks, and it says nothing about the legal rule behind the sign.
 
-\textbf{Title.} ITAS-MM: traffic sign recognition, lane visualisation and retrieval-grounded spoken guidance from a single forward camera, with a Vietnamese QCVN~41:2024 sign catalogue of 87 codes.
+Vietnam is a demanding setting for this problem. Its sign catalogue, defined in the national technical regulation QCVN 41:2024 \cite{qcvn41}, contains many visually similar codes, and urban roads are dense with motorcycles, advertising boards and signs mounted at varied heights. Recent work on Vietnamese roads reports that small and distant signs are the main weakness of single pass detectors \cite{nguyen2025}. At the same time, research on Vietnamese legal question answering has shown that traffic regulations can be retrieved and cited automatically \cite{lexisign,graphsign,vlsp2025}, but these systems work from typed questions rather than from what a camera sees.
 
-\begin{table}[H]
+This paper describes ITAS-MM, a prototype that connects these two lines of work. Given an uploaded video or image, it detects sign panels, assigns QCVN codes, confirms them across frames, retrieves the relevant passages from official legal documents and produces a short spoken observation in Vietnamese. The system is deliberately cautious. It does not claim that a sign legally applies to the driver, and it reports uncertain cases as unrecognised rather than guessing.
+
+The paper makes three contributions. First, it describes a two stage sign pipeline in which a class agnostic detector is followed by an 87 code classifier with an explicit background class, so that localisation does not depend on the size of the code vocabulary and uncertain crops can be rejected. Second, it introduces a simple temporal evidence module that associates detections across frames without relying on their labels and confirms a code only when it clearly leads the other candidates. Third, it reports an evaluation that pairs standard data set metrics with measurements on real driving video, which exposes a domain gap that data set metrics alone would hide.
+
+The rest of the paper is organised as follows. Section~\ref{sec:related} reviews related work. Section~\ref{sec:data} describes the data. Section~\ref{sec:method} presents the system and its temporal module. Section~\ref{sec:exp} reports the experiments, Section~\ref{sec:discussion} discusses the findings and limitations, and Section~\ref{sec:conclusion} concludes.
+
+\section{Related Work}\label{sec:related}
+
+\textit{Traffic sign detection.} Traffic sign detection has moved from hand crafted colour and shape features to end to end deep learning, and YOLO family detectors are now the usual choice for real time use. Their accuracy drops sharply for small objects, which is critical for signs seen from a distance. Slicing aided hyper inference (SAHI) addresses this by running the detector on overlapping tiles of a high resolution image and merging the results \cite{sahi}. Nguyen et al. \cite{nguyen2025} confirm the small sign problem on Vietnamese urban data. Unlike approaches that train one detector for all codes, ITAS-MM detects panels with a single class model and leaves the code to a separate classifier, which allows codes to be added without retraining the detector.
+
+\textit{Lane detection.} Lane detection shifted from pixel wise segmentation to row wise classification, which is faster and handles occlusion better. Ultra Fast Lane Detection and its successor formulate lanes as selections over predefined row anchors \cite{ufld,ufldv2}. ITAS-MM uses UFLD-v2 for a visual lane overlay only, because no Vietnamese lane ground truth was available to validate lane geometry for legal use.
+
+\textit{Legal question answering.} The VLSP 2025 shared task on multimodal legal question answering over traffic sign regulation \cite{vlsp2025} has produced training free multi stage pipelines \cite{lexisign} and graph based retrieval systems \cite{graphsign}. These systems answer questions about images and regulations, but they are evaluated as standalone question answering tasks. ITAS-MM uses a lighter lexical retriever and drives it from the codes confirmed by the vision pipeline.
+
+\textit{Spoken and multimodal assistance.} Vietnamese neural text to speech is available as open software \cite{vieneu}, and multimodal assistants that combine vision and speech have been built for visually impaired users \cite{naviblind} and for driver warnings based on large language models \cite{xu2024}. Studies of driver response show that auditory and multimodal warnings can reduce cognitive load compared with visual alerts alone \cite{politis}. ITAS-MM follows this direction with short, neutral spoken observations rather than commands.
+
+\section{Data}\label{sec:data}
+
+The sign data set merges five public Vietnamese traffic sign collections, four from Kaggle and one from Roboflow. Each image keeps its provenance, exact duplicates were removed, and images derived from the same source sequence were grouped by lineage so that near duplicate frames never appear in more than one split. The resulting localisation set contains 15,603 images and 30,558 boxes, split into 10,952 training, 2,325 validation and 2,326 test images. The split fingerprints are frozen, and the test split was never used for model selection or threshold tuning.
+
+The recognition data were built in two steps. A first manifest covers 30 codes with 10,003 crops. The ontology was then extended to 87 QCVN codes. Boxes outside the original 30 codes were labelled by two independent passes of an AI assisted labelling procedure that compared each crop with the official figure of the regulation. A box was kept only when both passes agreed, which retained 976 boxes (raw agreement 76.9\%) and excluded 555. The final recognizer was trained on 17,445 training and 3,933 validation crops whose native short side is at least 16 pixels, while the test split keeps all sizes. Because these labels were not reviewed by independent human annotators, accuracies measured on them describe agreement with the labelling procedure rather than expert accuracy.
+
+Table~\ref{tab:data} summarises the data. Small objects dominate the difficulty: boxes shorter than 16 pixels make up 1,502 of the 4,888 test boxes (31\%). Class support is also uneven. Of the 87 codes, 55 have enough training data to be treated as main classes, and 32 low support classes are trained but reported separately.
+
+Two further sources were used for evaluation on real video. A field pilot of 120 frames with 66 signs from one development driving video provides human reviewed boxes, although sign codes were not reviewed. Three field evaluation videos recorded in Hanoi, two by day and one at night, were cut into fifteen segments of 60 seconds. These segments carry no annotation and are used to measure behaviour such as track counts and speed. Finally, the legal corpus consists of Law No.~36/2024/QH15 \cite{law36}, Decree No.~168/2024/ND-CP \cite{decree168} and QCVN 41:2024 \cite{qcvn41}, indexed as 703 page grounded passages from four official PDF files.
+
+\begin{table}[t]
 \centering
-\caption{Team members and roles (from the research plan, proposal section 6).}
-\begin{tabularx}{0.9\linewidth}{lY}
+\caption{Data used in this work}
+\label{tab:data}
+\begin{tabularx}{\columnwidth}{lY}
 \toprule
-Name & Role \\
+Item & Size \\
 \midrule
-Phan Khanh Bang & Outline, literature review, objectives and scope; consolidation of the written report \\
-Cao Tran Tien & Detector and lane model training and evaluation; finalisation of the demo application \\
-Tran Anh Kiet & Detector and lane model training and evaluation; finalisation of the demo application \\
+Localisation set & 15,603 images, 30,558 boxes; 10,952 / 2,325 / 2,326 images (train / val / test) \\
+Recognition, 30 codes & 10,003 crops \\
+Recognition, 87 codes & 17,445 train and 3,933 val crops, plus background \\
+Field pilot & 120 frames, 66 signs, one video \\
+Field segments & 15 segments of 60 s, Hanoi, day and night \\
+Legal corpus & 703 passages from 3 official sources \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-%=====================================================================
-\section{Introduction and Background}
-
-\textbf{Objective.} Build a system that reads traffic signs from a forward camera, relates each detected sign to the Vietnamese rules that govern it, and gives short spoken guidance, with a lane overlay as visual context.
-
-\textbf{Motivation.} Road traffic crashes kill about 1.19 million people a year~\cite{who2023}. Much of the risk comes from drivers missing or misreading safety-critical information rather than from a lack of sensing. Detectors output a class name, not what the sign requires at that place; spoken, legally grounded feedback is one way to reduce glance time.
-
-\textbf{Background.} The project began as a four-stage design: perception, road-zone context, retrieval-augmented reasoning and speech. The final web application accepts an uploaded video or image, runs perception and an offline video pipeline, retrieves passages from three official legal sources and reads sign names aloud. Road-zone context uses simulated GPS only, and the lane output is visual context only. A real-time streaming prototype was built but is not part of the final application (Section~\ref{sec:limits}).
-
-\textbf{Contributions.}
-\begin{itemize}
-\item A two-stage sign pipeline (class-agnostic detector + 87-code classifier with a background class) with explicit rejection of uncertain crops.
-\item A label-blind, one-to-one track matcher and a per-track ballot rule that confirm codes across frames (Section~\ref{sec:temporal}).
-\item An end-to-end offline web application: upload, verified result video with timed spoken cues, timed sign list and legal passages with source links.
-\item An evaluation that reports every number with its protocol, including paired bootstrap intervals, field measurements and runtime.
-\end{itemize}
-
-%=====================================================================
-\section{Literature Review}
-
-Traffic sign detection and recognition has moved to end-to-end deep learning, with YOLO-family detectors widely used. Lane detection has shifted from pixel segmentation to row-wise, structure-aware classification; Ultra-Fast Lane Detection is the reference point~\cite{ufld,ufldv2}. Small and distant objects remain the weak spot of single-pass detectors. Slicing-aided inference (SAHI) recovers some of that recall without retraining~\cite{sahi}, and recent Vietnamese work reports the same small-sign problem in dense urban traffic~\cite{nguyen2025}.
-
-Retrieval-augmented question answering on Vietnamese traffic law is an emerging line of work: a training-free multi-stage pipeline~\cite{lexisign}, a graph-based retrieval system~\cite{graphsign} and a shared task on multimodal legal QA over traffic-sign regulation~\cite{vlsp2025}. These works evaluate retrieval as a standalone QA task. Vietnamese neural text-to-speech such as VieNeu is open~\cite{vieneu}, and voice-plus-vision assistive systems exist~\cite{naviblind,xu2024}.
-
-\textbf{Gap addressed.} Detection systems output labels without the governing rule; legal-QA systems answer questions without a detector; few systems combine a sign detector, a grounded rule lookup and spoken output. Cognitive load is a further concern for purely visual alerts~\cite{politis}. ITAS-MM combines the three parts in one pipeline, with neutral observation wording and explicit labels for what is unverified. It does not claim legal applicability.
-
-%=====================================================================
-\section{Data Description}
-
-\textbf{Sources.}
-\begin{itemize}
-\item Five public Vietnamese traffic-sign data sets (four Kaggle, one Roboflow), merged with provenance tracking, exact-duplicate removal and lineage grouping.
-\item A field pilot of 120 frames (66 signs) from one development driving video; boxes reviewed by one team member, sign codes not reviewed.
-\item Three field-evaluation videos recorded in Hanoi (two day, one night): 15 segments of 60~s (3 videos $\times$ 5 segments), unannotated, used for behaviour measurements.
-\item Three official legal sources: Law No.~36/2024/QH15~\cite{law36}, Decree No.~168/2024/ND-CP~\cite{decree168} and QCVN~41:2024/BGTVT~\cite{qcvn41}. The offline index holds 703 page-grounded chunks from four official PDFs.
-\end{itemize}
-
-\begin{table}[H]
-\centering
-\caption{Size and format of the data.}
-\begin{tabularx}{\linewidth}{lYl}
-\toprule
-Item & Size & Format \\
-\midrule
-Canonical localisation set & 15,603 images, 30,558 boxes; TRAIN 10,952 / VAL 2,325 / TEST 2,326 images & images, YOLO labels \\
-Recognition manifest V1.1 & 10,003 crops over 30 codes; TRAIN 5,673 / VAL 1,272 / TEST 3,058 & crops + CSV \\
-Recognizer v2 training crops & 17,445 TRAIN and 3,933 VAL crops over 87 codes (+ background) & crops + JSON \\
-Field evaluation & 15 segments $\times$ 60~s at 6~Hz & MP4 + JSONL \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-\textbf{Features.} Each detection carries a bounding box $(x_1,y_1,x_2,y_2)$, detector confidence, sign code, recognition confidence, the raw top-1 label and score, a track identifier and a panel role. Each frame carries a timestamp and lane polylines.
-
-%=====================================================================
-\section{Data Cleaning and Preprocessing}
-
-\begin{itemize}
-\item \textbf{Duplicates and leakage.} Exact duplicates were removed. Splits were made by lineage group, so near-duplicate frames never cross TRAIN, VAL and TEST. Split fingerprints are frozen in the dataset manifest; TEST was not used for tuning.
-\item \textbf{Size filters.} TRAIN and VAL recognition crops use a native short side of at least 16~px; TEST keeps all sizes. Runtime applies a minimum crop side of 32~px on images and 12~px on video.
-\item \textbf{Ontology extension.} Boxes outside the original 30-code ontology were coded with 87 QCVN codes by two independent AI passes against official figure crops. A box is kept only if both passes agree: 976 boxes (TRAIN 553, VAL 120, TEST 303); raw agreement 76.9\%. The other 555 boxes are excluded.
-\item \textbf{Name coverage.} All 87 codes have a Vietnamese display name; some variants share a group name where the source gives no distinct wording (e.g.\ R.302a/R.302b).
-\item \textbf{Challenges.} Small crops (below 16~px), label noise from AI-assisted labelling, and the domain gap between curated images and driving video; each is quantified in Section~\ref{sec:eval}.
-\end{itemize}
-
-%=====================================================================
-\section{Exploratory Data Analysis}
-
-\begin{itemize}
-\item \textbf{Size distribution.} Boxes shorter than 16~px make up 1,502 of 4,888 TEST boxes (31\%) and are the largest source of misses.
-\item \textbf{Class support.} 55 main classes have enough training data; 32 low-support classes are trained but reported separately.
-\item \textbf{Recognizer by crop size.} Accuracy rises sharply with crop size: below 16~px the original recognizer reaches 0.514 and v2 0.784; at 32~px and above, 0.937 and 0.970.
-\item \textbf{Confusions.} Errors concentrate in visually similar pairs: P.137 is confused with P.123b in 39 of 73 crops, and W.201a with W.203c in 5 of 17 (Figure~\ref{fig:confusion}).
-\item \textbf{Real video versus data set.} Baseline detector precision is 0.923 on TEST but 0.641 on the field pilot: the main domain-shift finding.
-\end{itemize}
-
-%=====================================================================
-\section{Methodology}
+\section{Methodology}\label{sec:method}
 
 \subsection{System overview}
 
-\begin{figure}[H]
+Fig.~\ref{fig:arch} shows the pipeline. An uploaded video is decoded frame by frame and analysed at 6 Hz. For each analysed frame, the detector proposes sign panels, the recognizer assigns a code to each panel, and the temporal module decides which codes are confirmed. Confirmed codes are used to retrieve legal passages and to produce spoken cues, and the system writes a result video with the overlays and a timed list of signs. A still image follows the same path without the temporal step. The lane model runs in parallel and provides visual context only.
+
+\begin{figure*}[t]
 \centering
-\begin{tikzpicture}[node distance=0.55cm and 0.5cm,
-  box/.style={draw,rounded corners=3pt,align=center,minimum height=1.0cm,text width=2.15cm,font=\small,fill=blue!6},
-  io/.style={draw,rounded corners=3pt,align=center,minimum height=1.0cm,text width=1.9cm,font=\small,fill=gray!12},
+\begin{tikzpicture}[node distance=0.45cm and 0.55cm,
+  box/.style={draw,rounded corners=3pt,align=center,minimum height=1.05cm,text width=2.5cm,font=\small,fill=blue!6},
+  io/.style={draw,rounded corners=3pt,align=center,minimum height=1.05cm,text width=2.2cm,font=\small,fill=gray!12},
   arr/.style={-{Stealth[length=2.2mm]},thick}]
-\node[io] (in) {Upload\\video / image};
-\node[box,right=of in] (det) {Sign detector\\YOLO11n\\(1 class)};
-\node[box,right=of det] (rec) {Recognizer\\MobileNetV3-S\\(87 + bg)};
-\node[box,right=of rec] (tmp) {Track matching\\+ ballot voting};
-\node[io,right=of tmp] (out) {Result video,\\sign list, cues};
-\node[box,below=of det] (lane) {Lane (UFLD-v2\\+ surface veto)};
-\node[box,below=of tmp] (law) {Legal retrieval\\BM25, 703 chunks};
+\node[io] (in) {Uploaded video or image};
+\node[box,right=of in] (det) {Sign detector\\YOLO11n, 1 class};
+\node[box,right=of det] (rec) {Recognizer\\MobileNetV3-small\\87 codes + background};
+\node[box,right=of rec] (tmp) {Temporal module\\association + voting};
+\node[io,right=of tmp] (out) {Result video, sign list, spoken cues};
+\node[box,below=of det] (lane) {Lane overlay\\UFLD-v2 + surface veto};
+\node[box,below=of tmp] (law) {Legal retrieval\\BM25, 703 passages};
 \node[box,below=of rec] (tts) {Vietnamese TTS\\VieNeu};
 \draw[arr] (in) -- (det);
 \draw[arr] (det) -- (rec);
 \draw[arr] (rec) -- (tmp);
 \draw[arr] (tmp) -- (out);
 \draw[arr] (in.south) |- (lane.west);
-\draw[arr] (lane.east) -- ++(0.25,0) |- ([yshift=-3mm]out.south west);
 \draw[arr] (tmp.south) -- (law.north);
 \draw[arr] (law.west) -- (tts.east);
-\draw[arr] (tts.south) -- ++(0,-0.35) -| ([xshift=4mm]out.south);
+\draw[arr] (lane.south) |- ([yshift=-4.5mm]tts.south) -| ([xshift=4mm]out.south);
+\draw[arr] (tts.south) -- ([yshift=-1.8mm]tts.south) -| ([xshift=-4mm]out.south);
 \end{tikzpicture}
-\caption{ITAS-MM pipeline. Signs are analysed at 6~Hz; the lane overlay is visual context only.}
+\caption{Overview of ITAS-MM. Signs are analysed at 6 Hz on video; the lane overlay is used for display only and does not influence sign decisions.}
 \label{fig:arch}
-\end{figure}
+\end{figure*}
 
-\textbf{Model selection.} Localisation and classification are separated: the detector finds every panel, and a classifier assigns the code. This keeps localisation independent of the class vocabulary, and the classifier can reject uncertain crops through a background class and a threshold. MobileNetV3-small (1.56~M parameters) keeps classification cheap on the 4~GB development GPU.
+\subsection{Detection and recognition}
 
-\textbf{Data splitting.} A fixed, lineage-grouped TRAIN/VAL/TEST split is used. $K$-fold cross-validation was not used: one detector fold takes about 25 minutes on the available GPU, and random folds would break the lineage grouping. Uncertainty is quantified with a paired bootstrap (Section~\ref{sec:metrics}).
-
-\subsection{Recognition and acceptance rule}
-For a crop $x$, the classifier outputs probabilities $p(c\mid x)$ over the 87 codes and a background class $\varnothing$. The predicted code and its acceptance are
+The detector is YOLO11n with 2.59 million parameters, trained with a single class so that it learns what a sign panel looks like regardless of its code. It runs at 640 pixels on images and at 960 pixels with an additional 640 pixel view on video, which helps with small signs. Each detected panel is cropped, resized to 128 pixels and passed to a MobileNetV3-small classifier with 1.56 million parameters. The classifier outputs a probability $p(c \mid x)$ for each of the 87 codes and for a background class $\varnothing$ that absorbs crops that are not signs or not in the vocabulary. A crop is assigned a code only when
 \begin{equation}
-\hat c=\arg\max_c p(c\mid x),\qquad \text{accept}\iff \hat c\neq\varnothing\ \wedge\ p(\hat c\mid x)\ge\tau ,
+\hat{c} = \arg\max_{c}\, p(c \mid x) \neq \varnothing \quad \text{and} \quad p(\hat{c} \mid x) \geq \tau ,
+\label{eq:accept}
 \end{equation}
-with $\tau=0.87$ for still images and $\tau_{\text{video}}=0.64$ for video, where multi-frame voting compensates for the lower per-crop threshold. The raw top-1 label and score are kept even when a crop is rejected, so each rejection can be explained.
+otherwise it is reported as unrecognised. The threshold $\tau$ is 0.87 for still images, calibrated on the validation split, and 0.64 for video, where the temporal module provides additional evidence. The raw top one label and its score are kept for every crop, so a rejection can always be explained.
 
-\subsection{Temporal evidence on video}\label{sec:temporal}
-\textbf{Track matching.} A detection $s$ at time $t$ is matched to an existing track $k$ if $\mathrm{IoU}(b_s,b_k)\ge 0.3$. Otherwise a label-blind fallback accepts the pair when
-\begin{equation}
-t-t_k\le T,\qquad \tfrac12\le \frac{A(b_s)}{A(b_k)}\le 2,\qquad d_{sk}=\lVert \mathbf c(b_s)-\mathbf c(b_k)\rVert_2\le \sqrt{w_k^2+h_k^2},
-\end{equation}
-where $A$ is box area, $\mathbf c$ the box centre, $(w_k,h_k)$ the size of the track box and $T=0.75$~s. Fallback pairs are assigned one-to-one in increasing order of $d_{sk}$, so one track never absorbs two boxes.
+\subsection{Temporal evidence on video}
 
-\textbf{Ballot voting.} Each track keeps the accepted codes it received inside the window $T$:
+A single frame can misread a sign because of blur, occlusion or distance, so video decisions are made per physical sign rather than per frame. The module first associates each detection with an existing track. A detection $s$ joins track $k$ if their boxes overlap with an intersection over union of at least 0.3. When the overlap is too small, which is common for fast moving signs at 6 Hz, a label independent fallback accepts the pair if
 \begin{equation}
-n_k(c)=\bigl|\{(t',c')\in\mathcal B_k : c'=c,\ t-t'\le T\}\bigr| .
+\Delta t \leq T, \qquad \frac{1}{2} \leq \frac{A_s}{A_k} \leq 2, \qquad \lVert \mathbf{c}_s - \mathbf{c}_k \rVert \leq d_k ,
+\label{eq:assoc}
 \end{equation}
-A code $c^\ast=\arg\max_c n_k(c)$ is confirmed when
-\begin{equation}
-n_k(c^\ast)\ge m \quad\text{and}\quad n_k(c^\ast)-\max_{c\neq c^\ast} n_k(c)\ge 1 ,
-\end{equation}
-with $m=3$ for uploaded video. Unknown samples cast no ballot, so one misread no longer cancels a confirmed code; hard vetoes (unsupported symbol shape) clear the ballots.
+where $\Delta t$ is the time since the track was last seen, $T = 0.75$ s, $A$ denotes box area, $\mathbf{c}$ the box centre and $d_k$ the diagonal of the track box. Fallback pairs are assigned one to one in order of increasing distance, so that one track never absorbs two neighbouring signs. Because the fallback ignores labels, a sign that is still unrecognised keeps its identity while it approaches the camera.
 
-\textbf{Spoken cues.} Each confirmed track produces one cue at its confirmation time. Cues closer than 1.5~s are merged into one sentence of at most two codes; a further code is read right after. The speaker queues at most one cue and drops it after 2~s.
-
-\subsection{Legal retrieval}
-Passages are ranked with BM25 over 703 chunks, plus half-weighted bigram and trigram phrase evidence:
-\begin{align}
-\mathrm{score}(q,d)&=\sum_{g\in G_1(q)} w(g,d)+\tfrac12\sum_{g\in G_2(q)\cup G_3(q)} w(g,d),\\
-w(g,d)&=\mathrm{IDF}(g)\,\frac{f(g,d)\,(k_1+1)}{f(g,d)+k_1\bigl(1-b+b\,\frac{|d|}{\overline{|d|}}\bigr)},
-\end{align}
-with $k_1=1.2$, $b=0.75$, $\mathrm{IDF}(g)=\ln\!\bigl(1+\frac{N-n_g+0.5}{n_g+0.5}\bigr)$, and $G_n(q)$ the word $n$-grams of the query. No text is generated: results are page-grounded quotations with source links.
-
-\subsection{Evaluation metrics}\label{sec:metrics}
-A prediction matches a ground-truth box when
+Each track then collects the codes accepted by \eqref{eq:accept} within the last $T$ seconds. Let $n_k(c)$ be the number of such votes for code $c$. The leading code $c^{*}$ is confirmed when
 \begin{equation}
-\mathrm{IoU}(B,G)=\frac{|B\cap G|}{|B\cup G|}\ge 0.5 .
+n_k(c^{*}) \geq m \quad \text{and} \quad n_k(c^{*}) > \max_{c \neq c^{*}} n_k(c),
+\label{eq:vote}
 \end{equation}
-With true positives TP, false positives FP and false negatives FN,
-\begin{equation}
-P=\frac{TP}{TP+FP},\qquad R=\frac{TP}{TP+FN},\qquad F_1=\frac{2PR}{P+R},\qquad \text{macro-}F_1=\frac1C\sum_{c=1}^{C}F_{1,c}.
-\end{equation}
-Average precision uses 101-point interpolation, and mAP50-95 averages AP over ten IoU thresholds:
-\begin{equation}
-\mathrm{AP}=\frac1{101}\sum_{r\in\{0,0.01,\dots,1\}}\max_{\tilde r\ge r}P(\tilde r),\qquad
-\mathrm{mAP}_{50\text{-}95}=\frac1{10}\sum_{\theta\in\{0.50,0.55,\dots,0.95\}}\mathrm{AP}_\theta .
-\end{equation}
-For retrieval over $N$ queries, with $r_i$ the rank of the first relevant passage,
-\begin{equation}
-\mathrm{Recall@}k=\frac1N\sum_{i=1}^{N}\mathbb 1[r_i\le k],\qquad \mathrm{MRR}=\frac1N\sum_{i=1}^{N}\frac1{r_i}.
-\end{equation}
-The detector comparison uses a paired image-level bootstrap with $B=1000$ resamples of the TEST images: $\Delta^{(b)}=M_{\text{fine-tuned}}^{(b)}-M_{\text{baseline}}^{(b)}$, and the 95\% interval is $[Q_{0.025}(\Delta),\,Q_{0.975}(\Delta)]$. Processing speed is reported as the ratio of processing time to video duration.
+with $m = 3$ for uploaded video. Unrecognised samples cast no vote, so a single misread no longer cancels a confirmed code, while hard vetoes such as an unsupported symbol shape clear the votes of a track. This design replaces an earlier rule that reset the vote count whenever a new label appeared, which made confirmation fragile for small signs.
 
-%=====================================================================
-\section{Model Development}
+\subsection{Legal retrieval and speech}
 
-\begin{table}[H]
+For each confirmed code, the system queries the legal corpus with the code and its Vietnamese name. Passages are ranked with BM25 \cite{robertson2009} using $k_1 = 1.2$ and $b = 0.75$, complemented by half weighted bigram and trigram matches that favour passages quoting the exact sign name. Retrieval returns page grounded quotations with links to the source document and never generates legal text. Spoken output uses the open VieNeu model \cite{vieneu}. Each confirmed sign produces one cue at the moment of confirmation, and cues closer than 1.5 s are merged into one sentence of at most two signs so that stacked signs are not dropped. The wording is a neutral observation, for example that the system believes it has seen a given sign, and it does not instruct the driver.
+
+\subsection{Training}
+
+The detector was fine tuned in three successive stages from a baseline model. The final stage used AdamW with a learning rate of $10^{-3}$ decayed to one hundredth, a batch of 16 images at 640 pixels, mixed precision and 10 epochs, and took 23 minutes on a laptop GPU with 4 GB of memory. Horizontal flipping was disabled because it would turn left turn signs into right turn signs. The recognizer was trained for 30 epochs with AdamW and a one cycle schedule at a peak learning rate of $4\times10^{-4}$, a batch of 128 and 14,000 crops sampled per epoch. The checkpoint was selected by the main class macro F1 score on the validation split, and its validation result was reproduced locally to within 0.0011.
+
+\section{Experiments}\label{sec:exp}
+
+\subsection{Setup and metrics}
+
+Detection is evaluated on the test split at a confidence of 0.35, a non maximum suppression threshold of 0.45 and a matching threshold of 0.5 intersection over union, using precision, recall, mAP50 and mAP50-95 with 101 point interpolation. The difference between two detectors is assessed with a paired bootstrap over test images with 1,000 resamples, and an improvement is accepted when its 95\% interval excludes zero. Recognition is evaluated on crops of ground truth boxes, grouped by crop size, using accuracy and macro F1. On the field segments, where no ground truth exists, we report the number of tracks, the number of tracks that received a code, the number of distinct codes and the processing speed. Retrieval is evaluated on 24 development queries with Recall@k and mean reciprocal rank. All experiments ran on a laptop with an NVIDIA RTX 3050 GPU with 4 GB of memory.
+
+\subsection{Detection}
+
+Table~\ref{tab:det} compares the baseline and the fine tuned detector. Fine tuning improved every metric. The paired bootstrap gives a recall gain of 0.0245 (95\% interval 0.0170 to 0.0317) and a mAP50 gain of 0.0163 (0.0122 to 0.0198), so both improvements are statistically supported. As Fig.~\ref{fig:size}a shows, the gain is concentrated where it matters most: recall for boxes below 16 pixels rose from 0.651 to 0.713, while boxes of 32 pixels and above were already detected with a recall of about 0.96.
+
+\begin{table}[t]
 \centering
-\caption{Components of the final system.}
-\begin{tabularx}{\linewidth}{lYlY}
-\toprule
-Component & Architecture & Size & Notes \\
-\midrule
-Sign detector & YOLO11n & 2.59~M param. & 640~px (960~px multi-scale on video), 1 class \\
-Sign recognizer & MobileNetV3-small & 1.56~M param. & 128~px crop, 87 codes + background \\
-Lane & UFLD-v2 (ResNet-18) + SegFormer veto & CULane weights & visual context only; 3~Hz on uploaded video \\
-Legal retrieval & BM25 + phrase evidence & 703 chunks & no text generation \\
-Speech & VieNeu v3 (ONNX) & -- & Vietnamese audio, cached by text \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-\begin{table}[H]
-\centering
-\caption{Training hyperparameters.}
-\begin{tabularx}{\linewidth}{lY}
-\toprule
-Model & Setting \\
-\midrule
-Detector (fine-tuning stage) & AdamW, lr $10^{-3}$, final lr factor 0.01, 10 epochs, batch 16, 640~px, AMP, horizontal flip off (it would swap left/right-turn signs); 23~min 10~s on an RTX 3050 Laptop GPU (4~GB) \\
-Recognizer v2 & AdamW + OneCycleLR, lr $4\times10^{-4}$, 30 epochs, batch 128, 14,000 sampled crops per epoch, seed 20261028; selection by VAL main-class macro-$F_1$; threshold calibrated on VAL \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-The detector was trained in three successive stages (baseline, a short retraining at AdamW $10^{-4}$, then the fine-tuning above). The recognizer's VAL macro-$F_1$ of 0.9511 was reproduced locally at 0.9500 with the same selected epoch (18) and threshold (0.87). For the final version the models were not retrained; only the video decision logic and its threshold changed. Uploaded video is analysed at 6~Hz for signs and 3~Hz for lanes, and the result video is written at 30~FPS.
-
-%=====================================================================
-\section{Model Evaluation and Fine-Tuning}\label{sec:eval}
-
-\begin{table}[H]
-\centering
-\caption{Evaluation protocol per module.}
-\begin{tabularx}{\linewidth}{lYY}
-\toprule
-Module & Metrics & Protocol \\
-\midrule
-Detector & $P$, $R$, mAP50, mAP50-95; recall by box size & conf.\ 0.35, NMS IoU 0.45, match IoU 0.50 \\
-Recognizer & accuracy, macro-$F_1$, confusion matrix & ground-truth-box crops by short side \\
-Field pilot & $P$, $R$ & 120 frames, boxes reviewed by one member \\
-Field segments & tracks, coded tracks, confirmation time, FPS & 15 $\times$ 60~s at 6~Hz \\
-Legal retrieval & Recall@$k$, MRR & 24-case development suite \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-\subsection{Detector fine-tuning}
-\begin{table}[H]
-\centering
-\caption{Detector on TEST.}
+\caption{Detector results on the test split}
+\label{tab:det}
 \begin{tabular}{lcccc}
 \toprule
 Model & Precision & Recall & mAP50 & mAP50-95 \\
 \midrule
-Baseline & 0.9232 & 0.8509 & 0.9194 & 0.7168 \\
-Fine-tuned & \textbf{0.9361} & \textbf{0.8754} & \textbf{0.9357} & \textbf{0.7360} \\
-\bottomrule
-\end{tabular}
-\end{table}
-The paired bootstrap gives recall $+0.0245$ (95\% CI $[0.0170,0.0317]$) and mAP50 $+0.0163$ (95\% CI $[0.0122,0.0198]$); both intervals exclude zero. Recall for boxes below 16~px rose from 0.651 to 0.713; for 32~px and above it is about 0.96.
-
-\subsection{Recognizer}
-On TEST crops of 32~px and above, v2 reaches accuracy 0.9697 (original 0.9371) and macro-$F_1$ 0.9594 (original 0.9056). Over all TEST crops, accuracy rises from 0.7904 to 0.9090.
-
-\begin{table}[H]
-\centering
-\caption{Operating points on TEST crops $\ge$32~px (original 30-code evaluation).}
-\begin{tabular}{lrrrrr}
-\toprule
-Setting & Accepted & Correct & Coverage & Correct/accepted & Correct/all \\
-\midrule
-Original, $\tau=0.63$ & 1,223 & 1,169 & 0.9745 & 0.9558 & 0.9315 \\
-v2, $\tau=0.87$ & 1,134 & 1,121 & 0.9036 & 0.9885 & 0.8932 \\
-v2, $\tau=0.64$ & 1,207 & 1,186 & 0.9618 & 0.9826 & 0.9450 \\
+Baseline & 0.923 & 0.851 & 0.919 & 0.717 \\
+Fine tuned & \textbf{0.936} & \textbf{0.875} & \textbf{0.936} & \textbf{0.736} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{table}[H]
+\begin{figure*}[t]
 \centering
-\caption{Per-class TEST accuracy of recognizer v2 (all crop sizes, classes with at least 20 TEST crops; 41 classes, median 0.911, 23 at 0.90 or above). Weakest six and four of the strongest.}
-\begin{tabular}{llrr}
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{fig2_detector_recall_by_size.png}\\
+\small (a) Detector recall by box size
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{fig5_recognizer_by_crop_size.png}\\
+\small (b) Recognizer accuracy and macro F1 by crop size
+\end{minipage}
+\caption{Performance by object size on the test split. Both models are reliable for signs of 32 pixels and above and degrade for small signs.}
+\label{fig:size}
+\end{figure*}
+
+\subsection{Recognition}
+
+On test crops of 32 pixels and above, the 87 code recognizer reaches an accuracy of 0.970 and a macro F1 of 0.959, compared with 0.937 and 0.906 for the earlier 30 code model on the same crops. Over all crop sizes its accuracy is 0.909, against 0.790 for the earlier model, and the largest improvement occurs below 16 pixels, where accuracy rose from 0.514 to 0.784 (Fig.~\ref{fig:size}b). Table~\ref{tab:op} shows the effect of the acceptance threshold. Lowering $\tau$ from 0.87 to 0.64 increases coverage from 90.4\% to 96.2\% of crops while the share of correct answers among accepted crops only drops from 98.9\% to 98.3\%, which motivated the lower threshold on video.
+
+\begin{table}[t]
+\centering
+\caption{Recognizer operating points on test crops of 32 pixels and above (30 code subset)}
+\label{tab:op}
+\begin{tabular}{lccc}
 \toprule
-Code & Support group & TEST crops & Accuracy \\
+Setting & Coverage & Correct/acc. & Correct/all \\
 \midrule
-W.205a & main & 35 & 0.143 \\
-R.301c & low-support & 75 & 0.280 \\
-W.203a & main & 43 & 0.442 \\
-P.106b & low-support & 44 & 0.523 \\
-R.301e & low-support & 42 & 0.571 \\
-W.227 & low-support & 26 & 0.577 \\
-\midrule
-P.103c & low-support & 119 & 1.000 \\
-P.105 & main & 40 & 1.000 \\
-R.420 & main & 37 & 1.000 \\
-R.421 & main & 26 & 1.000 \\
+Earlier model, $\tau = 0.63$ & 0.975 & 0.956 & 0.932 \\
+87 code model, $\tau = 0.87$ & 0.904 & 0.989 & 0.893 \\
+87 code model, $\tau = 0.64$ & 0.962 & 0.983 & 0.945 \\
 \bottomrule
 \end{tabular}
 \end{table}
-W.203a and W.205a are codes added by the ontology extension, so both their training and TEST labels are AI-reviewed and part of the error may be label noise.
 
-\subsection{Operating point for video}
-On video each sign is seen in many frames, so a lower per-crop threshold can be compensated by voting. An earlier comparison on the combined field population favoured 0.87 (precision 0.963 against 0.887 at 0.64). The final system uses 0.64 on video to recover more signs: on the 52 tracks that 0.64 adds over 0.87 on the 15 field segments, 39 were judged correct, 4 wrong and 9 undecidable from the crop (90.7\% of decided tracks; 75.0\% if undecidable tracks count as wrong). Still images keep 0.87.
+Performance is uneven across classes. Among the 41 classes with at least 20 test crops, the median accuracy is 0.911 and 23 classes reach 0.90 or more. The weakest classes are W.205a (0.143), R.301c (0.280) and W.203a (0.442), all of which belong to families of visually similar variants. Errors concentrate in such pairs: P.137 is confused with P.123b in 39 of 73 crops. Several of the weakest codes were added by the ontology extension, so part of their error may come from label noise rather than from the model.
 
-\subsection{Field segment evaluation}
-\begin{table}[H]
+\subsection{Temporal evidence on field video}
+
+Table~\ref{tab:field} reports four configurations on the same fifteen field segments. Comparing the first two rows isolates the effect of the new association and voting rule at the original threshold of 0.87. The number of tracks fell from 1,205 to 846, and tracks with fewer than three samples fell from 1,022 to 637, a reduction of 38\%. Fewer fragments mean that the evidence for one physical sign is no longer split across several short tracks. The number of coded tracks, however, did not change at this threshold. The remaining rows show that the threshold, not the tracker, limited how many signs were coded: lowering $\tau$ to 0.75 and then to 0.64 raised the coded tracks to 86 and 96 and the distinct codes to 20 and 23.
+
+\begin{table}[t]
 \centering
-\caption{Fifteen 60~s field segments at 6~Hz. Coded tracks are not graded here.}
-\small
-\begin{tabular}{lrrrrr}
+\caption{Behaviour on fifteen 60 s field segments at 6 Hz}
+\label{tab:field}
+\begin{tabular}{lcccc}
 \toprule
-Configuration & Tracks & Coded & Codes & Confirm. (ms) & FPS \\
+Configuration & Tracks & Coded & Codes & FPS \\
 \midrule
-Baseline (previous tracker, 0.87) & 1,205 & 75 & 15 & 333 & 2.82 \\
-New tracker, 0.87 & 846 & 75 & 15 & 333 & 3.05 \\
-New tracker, 0.75 & 839 & 86 & 20 & 333 & 3.00 \\
-New tracker, 0.64 (final) & 834 & \textbf{96} & \textbf{23} & 333 & 3.01 \\
+Previous tracker, $\tau=0.87$ & 1,205 & 75 & 15 & 2.82 \\
+New tracker, $\tau=0.87$ & 846 & 75 & 15 & 3.05 \\
+New tracker, $\tau=0.75$ & 839 & 86 & 20 & 3.00 \\
+New tracker, $\tau=0.64$ & 834 & 96 & 23 & 3.01 \\
 \bottomrule
 \end{tabular}
 \end{table}
-The new tracker reduces fragmentation: tracks with fewer than three samples fall from 1,022 to 637. The threshold, not the tracker, limits how many signs are coded: at 0.87 the coded count stays at 75. The median confirmation time of 333~ms equals two frames at 6~Hz, so it reflects sampling.
 
-\subsection{Field pilot}
-On the 120-frame field pilot the fine-tuned detector raises precision from 0.641 to 0.729 and recall from 0.758 to 0.773. The pilot is small (66 signs, one video) and sign codes were not reviewed.
+Because the field segments have no ground truth, the 52 tracks that the 0.64 setting adds over 0.87 were graded by inspecting their best crop. Of these, 39 were correct, 4 were wrong and 9 could not be decided from the crop, which gives a precision of 90.7\% on the decided tracks, or 75.0\% if every undecided track is counted as wrong. The wrong cases include a blue map pin on an advertisement read as a roundabout sign and a taxi prohibition read as a general car prohibition. An earlier comparison on a different field population had favoured the stricter threshold (precision 0.963 against 0.887), so the choice of 0.64 is a deliberate trade of precision for coverage that should be revisited with more graded data.
 
-\subsection{Runtime}
-\begin{table}[H]
+Fig.~\ref{fig:three} illustrates the effect on a difficult night scene with three signs stacked on one pole. The previous configuration read none of them. The final configuration reads the pedestrian prohibition P.112 and the slow down warning W.245a. The third sign receives top one scores between 0.13 and 0.51 and remains unread under either threshold, which points to the recognizer rather than the decision rule.
+
+\begin{figure}[t]
 \centering
-\caption{Runtime on the development machine (RTX 3050 Laptop GPU, 4~GB).}
-\begin{tabularx}{\linewidth}{Yr}
-\toprule
-Measurement & Result \\
-\midrule
-Detector, fine-tuned & 10.8~ms per image (92.7 FPS) \\
-Offline pipeline per image (detection, recognition, lane, context, retrieval) & 46.2~ms (21.7 FPS) \\
-Uploaded video, 90~s clip, final settings (30~FPS output, lane at 3~Hz) & 165.0~s; 1.8$\times$ slower than real time \\
-Same clip, previous settings (60~FPS output, lane at 6~Hz) & 406.3~s; 4.5$\times$ (earlier run: 301.2~s, 3.3$\times$) \\
-Uploaded 20~s night clip through the web interface & 44.6~s \\
-\bottomrule
-\end{tabularx}
-\end{table}
-The speed change did not change sign results: all 540 analysis samples of the 90~s clip have identical sign boxes and labels before and after.
-
-\subsection{Legal retrieval}
-On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and MRR 0.684. The corpus has not been checked for legal currency; each result is flagged as not verified for legal currency.
-
-%=====================================================================
-\section{Results Interpretation and Visualization}
-
-\textbf{What the final system does.} On uploaded video, the system detects sign panels, confirms codes across frames, and produces a verified MP4 with a spoken cue per confirmed group of signs and a timed sign list. On a single image, it reports each panel with its code and confidence, reads the result aloud and looks up the legal passages.
-
-\textbf{Three overlapping signs.} In a Hanoi night clip, three panels are stacked on one pole. The baseline read none of them; the final configuration reads P.112 and W.245a (Figure~\ref{fig:three}). The third panel scores only 0.13--0.51 for its top-1 class and is not read by either configuration: a limit of the recognizer on low-support classes, not of the threshold.
-
-\begin{figure}[!htb]
-\centering
-\includegraphics[width=0.92\linewidth]{fig_three_signs_baseline_vs_final.png}
-\caption{Night clip at 33.0~s: baseline (red, previous tracker at 0.87, no codes) against the final configuration (green, new tracker at 0.64, reads P.112 and W.245a).}
+\includegraphics[width=\columnwidth]{fig_three_signs_baseline_vs_final.png}
+\caption{Night scene with three stacked signs. Red boxes: previous configuration, no code read. Green boxes: final configuration, which reads P.112 and W.245a.}
 \label{fig:three}
 \end{figure}
 
-\begin{figure}[!htb]
+\subsection{Domain gap}
+
+On the field pilot, the fine tuned detector reaches a precision of 0.729 and a recall of 0.773, against 0.641 and 0.758 for the baseline. The improvement is consistent with the test split, but the absolute numbers are far lower: the same baseline detector has a precision of 0.923 on the curated test data and 0.641 on real driving video. The pilot is small, with 66 signs from a single video, so these figures indicate the size of the gap rather than measure it precisely.
+
+\subsection{Speed and retrieval}
+
+The fine tuned detector needs 10.8 ms per image and the complete per image pipeline 46.2 ms on the development GPU. Video processing is slower because each analysed frame also runs the lane models and every output frame must be drawn and encoded. Writing the result video at 30 frames per second and updating the lane overlay at 3 Hz instead of 6 Hz reduced the processing time of a 90 s clip from 406 s to 165 s, that is from 4.5 to 1.8 times the clip duration. The sign results were identical before and after this change in all 540 analysed frames. For legal retrieval, the development queries give a Recall@1 of 0.542, a Recall@3 of 0.833 and a mean reciprocal rank of 0.684, so the correct passage is usually among the first three results but not always first.
+
+Fig.~\ref{fig:ui} shows the resulting web application. A user uploads a video, follows the progress and then plays the result video, in which spoken cues are synchronised with the timed list of signs. Each sign in the list can be expanded to show the cited legal passage and a link to the source document.
+
+\begin{figure}[t]
 \centering
-\begin{minipage}{0.49\linewidth}\centering
-\includegraphics[width=\linewidth]{fig2_detector_recall_by_size.png}
-\caption{TEST recall by box short side.}
-\label{fig:recall}
-\end{minipage}\hfill
-\begin{minipage}{0.49\linewidth}\centering
-\includegraphics[width=\linewidth]{fig5_recognizer_by_crop_size.png}
-\caption{Recognizer accuracy and macro-$F_1$ by crop short side.}
-\label{fig:recsize}
-\end{minipage}
+\includegraphics[width=\columnwidth]{ui_video_result_desktop.png}
+\caption{Web application after processing an uploaded night clip: result video with overlays, voice toggle and timed list of confirmed signs.}
+\label{fig:ui}
 \end{figure}
 
-\textbf{Small signs remain the main weakness.} Below 16~px detector recall is 0.713 after fine-tuning, against about 0.96 at 32~px and above (Figure~\ref{fig:recall}); recognizer accuracy follows the same pattern (Figure~\ref{fig:recsize}).
+\section{Discussion}\label{sec:discussion}
 
-\begin{figure}[!htb]
-\centering
-\begin{minipage}{0.49\linewidth}\centering
-\includegraphics[width=\linewidth]{fig6_recognizer_confusion_test_ge32.png}
-\caption{Recognizer confusion matrix, TEST crops $\ge$32~px.}
-\label{fig:confusion}
-\end{minipage}\hfill
-\begin{minipage}{0.49\linewidth}\centering
-\includegraphics[width=\linewidth]{fig7_final_field_precision.png}
-\caption{Field precision of three configurations with cluster bootstrap intervals.}
-\label{fig:field}
-\end{minipage}
-\end{figure}
+The experiments support three observations. First, separating detection from classification worked well on curated data. The detector reaches high recall for medium and large signs, the classifier is accurate above 32 pixels, and the background class gives a natural way to reject crops that do not belong to the vocabulary. Second, the temporal module is most useful as a way to keep evidence together. It cut fragmented tracks by more than a third, but it could not create codes that the recognizer did not propose, so coverage on video is ultimately bounded by recognition quality on small, blurred and dark crops. Third, data set metrics overstate field performance. The drop from 0.923 to 0.641 precision between curated test images and real driving video is the most important result for anyone who would deploy such a system.
 
-\begin{figure}[!htb]
-\centering
-\begin{minipage}{0.49\linewidth}\centering
-\includegraphics[width=\linewidth]{ui_video_result_desktop.png}
-\caption{Web interface: result for an uploaded night clip (result video, timed sign list, voice toggle).}
-\end{minipage}\hfill
-\begin{minipage}{0.49\linewidth}\centering
-\includegraphics[width=\linewidth]{ui_image_result_desktop.png}
-\caption{Web interface: result for a daytime still image with the legal passage opened.}
-\end{minipage}
-\end{figure}
+The work has several limitations that follow from these observations. The recognizer covers 87 codes, which is only part of the QCVN 41:2024 catalogue, and 32 of them have little training data. The labels for the extended codes and the precision figures on field video come from AI assisted review rather than independent human annotation, and the field samples are small. The lane overlay has no Vietnamese ground truth, does not distinguish dashed from solid markings and is never used to decide which sign applies to the vehicle. Supplementary panels that restrict a sign by time, vehicle type or distance are not interpreted in the final version: an optical character recognition component read a distance panel correctly in a test, but its parser covered only time windows and vehicle types and night panels were unreadable, so it was disabled and sign applicability is reported as uncertain. Uploaded video is processed about 1.8 times slower than real time, a real time streaming mode was prototyped but not retained, and the position input is simulated rather than taken from GPS. Finally, retrieval sometimes ranks a general article above the article that defines the detected sign, and the legal corpus has not been checked for current legal effect. For these reasons ITAS-MM must be understood as a research prototype and not as a driving safety system or a source of legal advice.
 
-\textbf{Interpretation.}
-\begin{itemize}
-\item Coded output rose mainly with the threshold (75 to 96 coded tracks); the new tracker reduced fragmentation (1,205 to 834 tracks) without changing the coded count at 0.87.
-\item The video threshold trades coverage for precision; the 0.64 setting was accepted on a small sample and needs a larger graded sample.
-\item Data-set metrics overstate field performance: detector precision falls from 0.923 on TEST to 0.641 on the field pilot.
-\end{itemize}
+\section{Conclusion}\label{sec:conclusion}
 
-%=====================================================================
-\section{Conclusion and Recommendations}
+This paper presented ITAS-MM, a prototype that turns forward camera video into confirmed Vietnamese traffic sign codes, cited legal passages and short spoken observations. A single class detector, an 87 code classifier with a background class and a label independent temporal module together achieve strong results on curated data and a measurable improvement in the stability of video decisions. The evaluation also shows clearly where the approach falls short: small and night time signs, a sizeable gap between curated and real video, and the absence of human ground truth for field accuracy.
 
-\textbf{Key findings.}
-\begin{enumerate}
-\item Detector fine-tuning improved every TEST metric, with statistically supported gains in recall (+2.5 points) and mAP50 (+1.6 points).
-\item The recognizer covers 87 codes and is accurate on crops of 32~px and above (0.970); its weakest range is below 16~px.
-\item The new tracker makes confirmation more stable: tracks with fewer than three samples fall from 1,022 to 637.
-\item The video threshold of 0.64 gives 96 coded tracks against 75 at 0.87, with 90.7\% precision on 43 decided new tracks (one reviewer, small sample).
-\item Uploaded video is processed 1.8 times slower than real time (165.0~s for 90~s), down from 4.5 times, with identical sign results.
-\end{enumerate}
+Future work should first build a source disjoint field test set with human reviewed boxes, codes and lanes, so that field precision and recall can be measured rather than estimated. Recognition of small signs could be improved with tiled inference and additional training crops between 16 and 32 pixels, and the most confused pairs need targeted data. Beyond recognition, the system would benefit from more output classes, a stronger multi object tracker, lane markings classified as dashed or solid, supplementary panel reading with its own test set, real GPS input and an optimised runtime that allows real time streaming on embedded hardware.
 
-\textbf{Recommendations.}
-\begin{enumerate}
-\item Grade more tracks with a second independent reviewer before relying on the 0.64 threshold; if precision stays below 85\%, return to 0.87.
-\item Target small signs directly: evaluate SAHI tiling and add 16--32~px crops to recognizer training, tuned on VAL only.
-\item Add training examples or a dedicated rule for the P.137/P.123b and W.201a/W.203c pairs.
-\item Build a source-disjoint field test set with human-reviewed boxes, codes and lane annotations before reporting field accuracy.
-\item Add OCR for the scanned decree so its articles become retrievable.
-\end{enumerate}
-
-\textbf{Reflection.} The largest practical problem was reproducibility: weights and evaluation artefacts lived on individual machines. Pinning model and data hashes and recording the command for each metric made results re-runnable on the same machine, but an independent-machine restore has not been done. The second problem was measurement: an earlier benchmark script did not apply the threshold to the video path; the new configurations were run with a corrected copy.
-
-%=====================================================================
-\section{Limitations and Future Work}\label{sec:limits}
-\begin{itemize}
-\item \textbf{Scope of signs.} 87 codes (55 main, 32 low-support); the QCVN~41:2024 catalogue is not fully covered. Some variants share a group name (R.301a/c/d/e, W.205a/b/d, P.106a/b, W.202/W.202a, R.302a/b, I.407/I.407a).
-\item \textbf{Small and night signs} are missed more often.
-\item \textbf{Labels} are AI-assisted, not independent human ground truth; field precision comes from one or two AI-assisted reviewers on small samples.
-\item \textbf{Lane} overlays are visual context only: no human-reviewed Vietnamese lane ground truth, no dashed/solid classification, and lanes are not used to decide which sign applies.
-\item \textbf{Supplementary panels} (time windows, vehicle types, distances) are not read in the final build. The OCR component works in isolation (it read a ``100m'' distance panel correctly) but is disabled: its parser covers only time windows and vehicle types, results are not shown, and night panels were unreadable. Sign applicability is therefore reported as uncertain.
-\item \textbf{Real time.} A real-time streaming prototype was built but is not part of the final application; uploaded video is processed 1.8 times slower than real time.
-\item \textbf{Legal retrieval} sometimes ranks a general article above the article for the detected sign; the corpus is not checked for current legal effect.
-\item \textbf{GPS} is simulated. The system is not legal advice and not a driving-safety system.
-\end{itemize}
-
-\textbf{Future work.} More output classes; human-labelled test sets; a stronger tracker (e.g.\ ByteTrack-style association); lane attributes (dashed/solid) in a BDD100K-like schema; supplementary-panel OCR with a dedicated test set; real-time streaming on GPU with a lighter lane model and frame skipping; TensorRT/ONNX optimisation; real GPS.
-
-%=====================================================================
 \begin{thebibliography}{99}
-\bibitem{who2023} World Health Organization, \emph{Global Status Report on Road Safety 2023}, Geneva: WHO, 2023.
-\bibitem{ufld} Z.~Qin, H.~Wang and X.~Li, ``Ultra Fast Structure-aware Deep Lane Detection,'' in \emph{ECCV}, 2020.
-\bibitem{ufldv2} Z.~Qin, P.~Zhang and X.~Li, ``Ultra Fast Deep Lane Detection With Hybrid Anchor Driven Ordinal Classification,'' \emph{IEEE TPAMI}, 2022.
-\bibitem{sahi} F.~C.~Akyon, S.~O.~Altinuc and A.~Temizel, ``Slicing Aided Hyper Inference and Fine-tuning for Small Object Detection,'' in \emph{IEEE ICIP}, 2022, pp.~966--970.
-\bibitem{nguyen2025} D.~Nguyen, H.~V.~Dung, V.-T.-L.~Le and T.~Doan, ``Traffic Sign Detection in Vietnam: An Experimental Study,'' in \emph{18th National Conference on Fundamental and Applied IT Research}, 2025.
-\bibitem{lexisign} P.~X.~Pham, D.~Q.~Le, T.~H.~Tran and T.~N.-T.~Huynh, ``LexiSignVQA: A Unified Training-free Multi-stage Approach to Multimodal Legal Question Answering on Traffic Sign Rules,'' \emph{VLSP 2024}, 2025.
-\bibitem{graphsign} H.~M.~Huynh, A.~N.~T.~Khuong, D.~P.~Trong and T.~V.~Huynh, ``Reading the Signs: A Graph-Based System for Multimodal Information Retrieval on Vietnamese Traffic Law,'' \emph{VLSP 2024}, 2025.
-\bibitem{vlsp2025} S.~T.~Luu \emph{et al.}, ``VLSP 2025 MLQA-TSR Challenge: Vietnamese Multimodal Legal Question Answering on Traffic Sign Regulation,'' 2025.
-\bibitem{vieneu} pnnbao97, ``VieNeu-TTS: A Vietnamese Neural Text-to-Speech System,'' GitHub, 2024.
-\bibitem{law36} National Assembly of Vietnam, \emph{Law on Road Traffic Order and Safety}, Law No.~36/2024/QH15, effective 1 January 2025.
-\bibitem{decree168} Government of Vietnam, \emph{Decree No.~168/2024/ND-CP} on administrative penalties for traffic order and safety violations, effective 1 January 2025.
-\bibitem{qcvn41} Ministry of Transport, \emph{QCVN 41:2024/BGTVT, National Technical Regulation on Road Signs and Markings}, 2024.
-\bibitem{naviblind} M.-Q.~Tran, D.~Truong, D.-T.~Pham and M.-A.~Nguyen, ``NaviBlind: A Multimodal AI Assistant for Visually Impaired Users to Identify Product Information from Images and Speech,'' 2025.
-\bibitem{politis} I.~Politis, S.~Brewster and F.~Pollick, ``Age, Cognitive Load, and Multimodal Effects on Driver Response to Directional Warning,'' 2017.
-\bibitem{xu2024} Z.~Xu, T.~Chen and S.~Chen, ``A LLM-based Multimodal Warning System for Driver Assistance,'' 2024.
+\bibitem{who2023} World Health Organization, \emph{Global Status Report on Road Safety 2023}. Geneva, Switzerland: WHO, 2023.
+\bibitem{qcvn41} Ministry of Transport of Vietnam, \emph{QCVN 41:2024/BGTVT, National Technical Regulation on Road Signs and Markings}, 2024.
+\bibitem{nguyen2025} D. Nguyen, H. V. Dung, V.-T.-L. Le, and T. Doan, ``Traffic sign detection in Vietnam: An experimental study,'' in \emph{Proc. 18th National Conf. on Fundamental and Applied Information Technology Research}, 2025.
+\bibitem{lexisign} P. X. Pham, D. Q. Le, T. H. Tran, and T. N.-T. Huynh, ``LexiSignVQA: A unified training-free multi-stage approach to multimodal legal question answering on traffic sign rules,'' in \emph{Proc. VLSP}, 2025.
+\bibitem{graphsign} H. M. Huynh, A. N. T. Khuong, D. P. Trong, and T. V. Huynh, ``Reading the signs: A graph-based system for multimodal information retrieval on Vietnamese traffic law,'' in \emph{Proc. VLSP}, 2025.
+\bibitem{vlsp2025} S. T. Luu \emph{et al.}, ``VLSP 2025 MLQA-TSR challenge: Vietnamese multimodal legal question answering on traffic sign regulation,'' 2025.
+\bibitem{sahi} F. C. Akyon, S. O. Altinuc, and A. Temizel, ``Slicing aided hyper inference and fine-tuning for small object detection,'' in \emph{Proc. IEEE Int. Conf. Image Processing (ICIP)}, 2022, pp. 966-970.
+\bibitem{ufld} Z. Qin, H. Wang, and X. Li, ``Ultra fast structure-aware deep lane detection,'' in \emph{Proc. European Conf. Computer Vision (ECCV)}, 2020.
+\bibitem{ufldv2} Z. Qin, P. Zhang, and X. Li, ``Ultra fast deep lane detection with hybrid anchor driven ordinal classification,'' \emph{IEEE Trans. Pattern Anal. Mach. Intell.}, 2022.
+\bibitem{vieneu} pnnbao97, ``VieNeu-TTS: A Vietnamese neural text-to-speech system,'' GitHub repository, 2024.
+\bibitem{naviblind} M.-Q. Tran, D. Truong, D.-T. Pham, and M.-A. Nguyen, ``NaviBlind: A multimodal AI assistant for visually impaired users to identify product information from images and speech,'' 2025.
+\bibitem{xu2024} Z. Xu, T. Chen, and S. Chen, ``A LLM-based multimodal warning system for driver assistance,'' 2024.
+\bibitem{politis} I. Politis, S. Brewster, and F. Pollick, ``Age, cognitive load, and multimodal effects on driver response to directional warning,'' 2017.
+\bibitem{law36} National Assembly of Vietnam, \emph{Law on Road Traffic Order and Safety}, Law No. 36/2024/QH15, 2024.
+\bibitem{decree168} Government of Vietnam, \emph{Decree No. 168/2024/ND-CP on Administrative Penalties for Road Traffic Order and Safety Violations}, 2024.
+\bibitem{robertson2009} S. Robertson and H. Zaragoza, ``The probabilistic relevance framework: BM25 and beyond,'' \emph{Foundations and Trends in Information Retrieval}, vol. 3, no. 4, pp. 333-389, 2009.
 \end{thebibliography}
-
-%=====================================================================
-\appendix
-\section{Automated Tests and Configuration}
-\begin{table}[H]
-\centering
-\caption{Automated checks on the final version (1 November 2026).}
-\begin{tabular}{ll}
-\toprule
-Check & Result \\
-\midrule
-\texttt{pytest -q tests} & 600 passed, 11 skipped \\
-\texttt{node --test frontend/src/*.test.js} & 14 of 14 passed \\
-\texttt{npm run build} (frontend) & succeeded \\
-\bottomrule
-\end{tabular}
-\end{table}
-The exact video threshold is 0.6412901874067937 (key \texttt{video\_\allowbreak confidence\_\allowbreak threshold} in \texttt{configs/\allowbreak perception.yaml}); still images use 0.87. Code, report sources and a demo input video are in the project repository (\url{https://github.com/BANGPC123/itas-mm-scaffold}, branch \texttt{work/final-20261102}).
 
 \end{document}
