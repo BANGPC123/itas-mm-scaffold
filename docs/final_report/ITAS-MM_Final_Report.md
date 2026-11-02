@@ -82,7 +82,7 @@ Retrieval-augmented question answering on Vietnamese traffic law is an emerging 
 - Hard vetoes (for example, unsupported symbol shape) clear the ballots.
 - The threshold for video can be set separately from still images (`video_confidence_threshold`).
 
-**Lane.** UFLD-v2 (ResNet-18) with a road-surface veto. The lane overlay is visual context only. In the uploaded-video result, lane lines are updated on alternate analysis samples (3 Hz), while signs are analysed at 6 Hz.
+**Lane.** UFLD-v2 ResNet-18 with light sanity filtering (finite, in-image, at least 3 points) and temporal smoothing; visual context only, no surface veto in the final upload mode. In the uploaded-video result, lane lines are updated on alternate analysis samples (3 Hz), while signs are analysed at 6 Hz.
 
 ## 9. Model Development
 
@@ -92,7 +92,7 @@ Retrieval-augmented question answering on Vietnamese traffic law is an emerging 
 |---|---|---|---|---|
 | Sign detector | YOLO11n | 2.59 M parameters | 640 px (960 px multi-scale on video); 1 class | `finetuned_20261026.pt` (default) |
 | Sign recognizer | MobileNetV3-small | 1.56 M parameters | 128 px crop; 87 codes + background | `retrained_20261028.pt`; checkpoint threshold 0.87 |
-| Lane | UFLD-v2 ResNet-18 + SegFormer surface veto | CULane-trained weights | ego-lane polylines | visual context only |
+| Lane | UFLD-v2 ResNet-18 with light sanity filtering and temporal smoothing; no surface veto in upload mode | CULane-trained weights | lane polylines | visual context only |
 | Legal retrieval | BM25 with positional bigram/trigram evidence | 703 chunks, four official PDFs | ranked legal locators | no text generation |
 | Speech | VieNeu v3 ONNX | - | Vietnamese MP3, cached by text | offline |
 
@@ -107,7 +107,7 @@ Retrieval-augmented question answering on Vietnamese traffic law is an emerging 
 - Raw recognition fields (`raw_label`, `raw_score`) are kept on every detection, so a rejected crop can be explained.
 - Track matching and ballot voting were replaced as described in Section 8.
 - The result video carries spoken cues. Signs detected within 1.5 seconds of each other are read as one cue of at most two codes; further signs in the same cluster are read right after it. Each cue plays when the result video reaches its time.
-- The result video is written at 30 FPS. Together with the lane update rate above, this cut processing time for a 90-second clip from 406.3 s to 165.0 s on the same machine; sign results did not change (Section 10.7).
+- The result video is written at 30 FPS. Together with the lane update rate above, this cut processing time for a 90-second clip from 406.3 s to 165.0 s on the same machine; sign results did not change (Section 10.7). A later change, the simplified lane path described in Section 8, reduced processing of a 60-second clip (1,800 frames at 30 FPS) from 171.7 s to 77.9 s in a script run on the same machine, with sign boxes, labels, context and speech identical in all 360 analysed samples; a web upload of a re-encoded copy of that clip took 127.9 s. These are single runs (evidence/LANE_SIMPLE.md).
 - Videos longer than 100,000 frames are refused with a message asking the user to trim them.
 
 ## 10. Model Evaluation and Fine-Tuning

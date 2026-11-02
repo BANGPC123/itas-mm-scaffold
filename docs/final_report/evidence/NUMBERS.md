@@ -113,3 +113,4 @@ Paths are relative to the repo root. "Report 3" = docs/report3/REPORT3_MODEL_RES
 | Name coverage: 87 codes all named | output/final_20261102/missing_names.txt (0 missing) |
 | Demo clip sources and hashes | docs/final_report/evidence/SOURCES.md |
 | Evaluation videos are Hanoi, two day and one night | data/manifests/field_video_20261029/sources.csv (role eval) and CP2 notes |
+| Simplified lane path, 60 s clip: 171.7 s to 77.9 s processing (script, one run each); 0 of 360 sign samples differ; lanes shown in 0 then 8 samples | docs/final_report/evidence/LANE_SIMPLE.md (section 1, 2, 3) |
