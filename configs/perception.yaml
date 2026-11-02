@@ -84,4 +84,6 @@ applicability:
 
 # Automatic candidates displayed separately from verified legal conditions.
 supplementary_ocr:
-  enabled: true
+  # Disabled in the final build (02/11/2026): the parser covers only time windows and vehicle
+  # types, results are not shown in the UI, and night panels were unreadable in the demo clips.
+  enabled: false

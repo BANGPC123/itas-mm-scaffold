@@ -250,9 +250,10 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 - **Threshold.** The video threshold favours coverage over precision. The 90.7% figure comes from one AI-assisted reviewer on 52 tracks and needs a larger, independently graded sample.
 - **Lane.** Lane overlays are visual context only. There is no human-reviewed Vietnamese lane ground truth, lanes are not classified as dashed or solid, and lanes are not used to decide which sign applies.
 - **Real time.** Real-time streaming analysis (live camera or live playback) was prototyped but is not part of the final application; uploaded video is processed about 1.8 times slower than real time on the test machine (165 s for a 90-second clip). Offline segment runs measured about 3 FPS of inference.
+- **Supplementary panels.** Supplementary panels (time windows, vehicle types, distances) are not read in the final build. The OCR component works in isolation (it read a "100m" distance panel correctly) but is disabled: its parser covers only time windows and vehicle types, results are not shown, and night panels were unreadable. Sign applicability is therefore reported as uncertain.
 - **Legal retrieval.** Legal retrieval sometimes ranks a general article above the article for the detected sign.
 - **Legal and GPS.** GPS is simulated. The legal corpus has not been checked for current effect (`legal_currency_verified: false`). The system is not legal advice and not a driving-safety system.
-- **Future work.** More output classes; human-labelled test sets; a stronger tracker (for example, ByteTrack-style association); lane attributes (dashed/solid) in a BDD100K-like schema; real-time streaming on GPU with a lighter lane model and frame skipping; speed optimisation (TensorRT or ONNX); real GPS.
+- **Future work.** More output classes; human-labelled test sets; a stronger tracker (for example, ByteTrack-style association); lane attributes (dashed/solid) in a BDD100K-like schema; supplementary-panel OCR with a dedicated test set; real-time streaming on GPU with a lighter lane model and frame skipping; speed optimisation (TensorRT or ONNX); real GPS.
 
 ## 14. References
 
