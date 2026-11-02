@@ -18,6 +18,7 @@
 \setlist{nosep,leftmargin=1.4em}
 \renewcommand{\arraystretch}{1.12}
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\setlength{\emergencystretch}{1.5em}
 
 \title{\textbf{ITAS-MM: An Intelligent Multimodal Traffic Assistance System for Real-Time Traffic Sign Recognition, Lane Detection, and Legally Grounded Driving Guidance}\\[4pt]
 \large DSP391m Data Science Capstone --- Final Report}
@@ -138,8 +139,8 @@ Field evaluation & 15 segments $\times$ 60~s at 6~Hz & MP4 + JSONL \\
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[node distance=0.55cm and 0.5cm,
-  box/.style={draw,rounded corners=3pt,align=center,minimum height=1.0cm,text width=2.3cm,font=\small,fill=blue!6},
-  io/.style={draw,rounded corners=3pt,align=center,minimum height=1.0cm,text width=2.0cm,font=\small,fill=gray!12},
+  box/.style={draw,rounded corners=3pt,align=center,minimum height=1.0cm,text width=2.15cm,font=\small,fill=blue!6},
+  io/.style={draw,rounded corners=3pt,align=center,minimum height=1.0cm,text width=1.9cm,font=\small,fill=gray!12},
   arr/.style={-{Stealth[length=2.2mm]},thick}]
 \node[io] (in) {Upload\\video / image};
 \node[box,right=of in] (det) {Sign detector\\YOLO11n\\(1 class)};
@@ -195,10 +196,10 @@ with $m=3$ for uploaded video. Unknown samples cast no ballot, so one misread no
 
 \subsection{Legal retrieval}
 Passages are ranked with BM25 over 703 chunks, plus half-weighted bigram and trigram phrase evidence:
-\begin{equation}
-\mathrm{score}(q,d)=\sum_{g\in G_1(q)} w(g,d)+\tfrac12\sum_{g\in G_2(q)\cup G_3(q)} w(g,d),\qquad
-w(g,d)=\mathrm{IDF}(g)\,\frac{f(g,d)\,(k_1+1)}{f(g,d)+k_1\bigl(1-b+b\,\frac{|d|}{\overline{|d|}}\bigr)},
-\end{equation}
+\begin{align}
+\mathrm{score}(q,d)&=\sum_{g\in G_1(q)} w(g,d)+\tfrac12\sum_{g\in G_2(q)\cup G_3(q)} w(g,d),\\
+w(g,d)&=\mathrm{IDF}(g)\,\frac{f(g,d)\,(k_1+1)}{f(g,d)+k_1\bigl(1-b+b\,\frac{|d|}{\overline{|d|}}\bigr)},
+\end{align}
 with $k_1=1.2$, $b=0.75$, $\mathrm{IDF}(g)=\ln\!\bigl(1+\frac{N-n_g+0.5}{n_g+0.5}\bigr)$, and $G_n(q)$ the word $n$-grams of the query. No text is generated: results are page-grounded quotations with source links.
 
 \subsection{Evaluation metrics}\label{sec:metrics}
@@ -227,13 +228,13 @@ The detector comparison uses a paired image-level bootstrap with $B=1000$ resamp
 \begin{table}[H]
 \centering
 \caption{Components of the final system.}
-\begin{tabularx}{\linewidth}{lllY}
+\begin{tabularx}{\linewidth}{lYlY}
 \toprule
 Component & Architecture & Size & Notes \\
 \midrule
 Sign detector & YOLO11n & 2.59~M param. & 640~px (960~px multi-scale on video), 1 class \\
 Sign recognizer & MobileNetV3-small & 1.56~M param. & 128~px crop, 87 codes + background \\
-Lane & UFLD-v2 ResNet-18 + SegFormer veto & CULane weights & visual context only; 3~Hz on uploaded video \\
+Lane & UFLD-v2 (ResNet-18) + SegFormer veto & CULane weights & visual context only; 3~Hz on uploaded video \\
 Legal retrieval & BM25 + phrase evidence & 703 chunks & no text generation \\
 Speech & VieNeu v3 (ONNX) & -- & Vietnamese audio, cached by text \\
 \bottomrule
@@ -336,9 +337,10 @@ On video each sign is seen in many frames, so a lower per-crop threshold can be 
 \begin{table}[H]
 \centering
 \caption{Fifteen 60~s field segments at 6~Hz. Coded tracks are not graded here.}
+\small
 \begin{tabular}{lrrrrr}
 \toprule
-Configuration & Tracks & Coded tracks & Distinct codes & Median confirm. (ms) & FPS \\
+Configuration & Tracks & Coded & Codes & Confirm. (ms) & FPS \\
 \midrule
 Baseline (previous tracker, 0.87) & 1,205 & 75 & 15 & 333 & 2.82 \\
 New tracker, 0.87 & 846 & 75 & 15 & 333 & 3.05 \\
@@ -371,7 +373,7 @@ Uploaded 20~s night clip through the web interface & 44.6~s \\
 The speed change did not change sign results: all 540 analysis samples of the 90~s clip have identical sign boxes and labels before and after.
 
 \subsection{Legal retrieval}
-On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and MRR 0.684. The corpus has not been checked for legal currency; each result is returned with \texttt{legal\_currency\_verified: false}.
+On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and MRR 0.684. The corpus has not been checked for legal currency; each result is flagged as not verified for legal currency.
 
 %=====================================================================
 \section{Results Interpretation and Visualization}
@@ -380,14 +382,14 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 
 \textbf{Three overlapping signs.} In a Hanoi night clip, three panels are stacked on one pole. The baseline read none of them; the final configuration reads P.112 and W.245a (Figure~\ref{fig:three}). The third panel scores only 0.13--0.51 for its top-1 class and is not read by either configuration: a limit of the recognizer on low-support classes, not of the threshold.
 
-\begin{figure}[H]
+\begin{figure}[!htb]
 \centering
 \includegraphics[width=0.92\linewidth]{fig_three_signs_baseline_vs_final.png}
 \caption{Night clip at 33.0~s: baseline (red, previous tracker at 0.87, no codes) against the final configuration (green, new tracker at 0.64, reads P.112 and W.245a).}
 \label{fig:three}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!htb]
 \centering
 \begin{minipage}{0.49\linewidth}\centering
 \includegraphics[width=\linewidth]{fig2_detector_recall_by_size.png}
@@ -403,7 +405,7 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 
 \textbf{Small signs remain the main weakness.} Below 16~px detector recall is 0.713 after fine-tuning, against about 0.96 at 32~px and above (Figure~\ref{fig:recall}); recognizer accuracy follows the same pattern (Figure~\ref{fig:recsize}).
 
-\begin{figure}[H]
+\begin{figure}[!htb]
 \centering
 \begin{minipage}{0.49\linewidth}\centering
 \includegraphics[width=\linewidth]{fig6_recognizer_confusion_test_ge32.png}
@@ -417,7 +419,7 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 \end{minipage}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!htb]
 \centering
 \begin{minipage}{0.49\linewidth}\centering
 \includegraphics[width=\linewidth]{ui_video_result_desktop.png}
@@ -509,6 +511,6 @@ Check & Result \\
 \bottomrule
 \end{tabular}
 \end{table}
-The exact video threshold is 0.6412901874067937 (\texttt{video\_confidence\_threshold} in \texttt{configs/perception.yaml}); still images use 0.87. Code, report sources and a demo input video are in the project repository (\url{https://github.com/BANGPC123/itas-mm-scaffold}, branch \texttt{work/final-20261102}).
+The exact video threshold is 0.6412901874067937 (key \texttt{video\_\allowbreak confidence\_\allowbreak threshold} in \texttt{configs/\allowbreak perception.yaml}); still images use 0.87. Code, report sources and a demo input video are in the project repository (\url{https://github.com/BANGPC123/itas-mm-scaffold}, branch \texttt{work/final-20261102}).
 
 \end{document}
