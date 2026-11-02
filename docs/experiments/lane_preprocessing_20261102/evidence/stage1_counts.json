@@ -1,0 +1,3362 @@
+[
+  {
+    "clip": "day",
+    "time_s": 2,
+    "role": "acceptance",
+    "source_frame": 60,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 2,
+    "role": "acceptance",
+    "source_frame": 60,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 2,
+    "role": "acceptance",
+    "source_frame": 60,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 3,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 2,
+    "role": "acceptance",
+    "source_frame": 60,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 2,
+    "role": "acceptance",
+    "source_frame": 60,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 6,
+    "role": "acceptance",
+    "source_frame": 180,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 6,
+    "role": "acceptance",
+    "source_frame": 180,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 6,
+    "role": "acceptance",
+    "source_frame": 180,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 6,
+    "role": "acceptance",
+    "source_frame": 180,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 6,
+    "role": "acceptance",
+    "source_frame": 180,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 10,
+    "role": "acceptance",
+    "source_frame": 300,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 7,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 10,
+    "role": "acceptance",
+    "source_frame": 300,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 16,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 10,
+    "role": "acceptance",
+    "source_frame": 300,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 17,
+      "slot2_row_head": 7,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 10,
+    "role": "acceptance",
+    "source_frame": 300,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 10,
+    "role": "acceptance",
+    "source_frame": 300,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 14,
+    "role": "acceptance",
+    "source_frame": 420,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 14,
+    "role": "acceptance",
+    "source_frame": 420,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 2,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 14,
+    "role": "acceptance",
+    "source_frame": 420,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 2,
+      "slot2_row_head": 6,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 14,
+    "role": "acceptance",
+    "source_frame": 420,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 14,
+    "role": "acceptance",
+    "source_frame": 420,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 18,
+    "role": "acceptance",
+    "source_frame": 540,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 18,
+    "role": "acceptance",
+    "source_frame": 540,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 18,
+    "role": "acceptance",
+    "source_frame": 540,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 18,
+    "role": "acceptance",
+    "source_frame": 540,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 18,
+    "role": "acceptance",
+    "source_frame": 540,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 22,
+    "role": "acceptance",
+    "source_frame": 660,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 22,
+    "role": "acceptance",
+    "source_frame": 660,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 22,
+    "role": "acceptance",
+    "source_frame": 660,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 22,
+    "role": "acceptance",
+    "source_frame": 660,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 22,
+    "role": "acceptance",
+    "source_frame": 660,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 26,
+    "role": "acceptance",
+    "source_frame": 780,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 26,
+    "role": "acceptance",
+    "source_frame": 780,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 26,
+    "role": "acceptance",
+    "source_frame": 780,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 26,
+    "role": "acceptance",
+    "source_frame": 780,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 26,
+    "role": "acceptance",
+    "source_frame": 780,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 30,
+    "role": "acceptance",
+    "source_frame": 900,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 30,
+    "role": "acceptance",
+    "source_frame": 900,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 30,
+    "role": "acceptance",
+    "source_frame": 900,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 30,
+    "role": "acceptance",
+    "source_frame": 900,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 30,
+    "role": "acceptance",
+    "source_frame": 900,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 34,
+    "role": "acceptance",
+    "source_frame": 1020,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 14,
+      "slot2_row_head": 4,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 34,
+    "role": "acceptance",
+    "source_frame": 1020,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 11,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 34,
+    "role": "acceptance",
+    "source_frame": 1020,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 17,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 34,
+    "role": "acceptance",
+    "source_frame": 1020,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 34,
+    "role": "acceptance",
+    "source_frame": 1020,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 38,
+    "role": "acceptance",
+    "source_frame": 1140,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 18,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 38,
+    "role": "acceptance",
+    "source_frame": 1140,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 38,
+    "role": "acceptance",
+    "source_frame": 1140,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 38,
+    "role": "acceptance",
+    "source_frame": 1140,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 8,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 38,
+    "role": "acceptance",
+    "source_frame": 1140,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 42,
+    "role": "acceptance",
+    "source_frame": 1260,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 32,
+      "slot1_row_head": 32,
+      "slot2_row_head": 28,
+      "slot3_col_head": 9
+    },
+    "canonical_lines": 1,
+    "relaxed_lines": 1,
+    "displayed_lines": 1,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 42,
+    "role": "acceptance",
+    "source_frame": 1260,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 33,
+      "slot1_row_head": 32,
+      "slot2_row_head": 28,
+      "slot3_col_head": 6
+    },
+    "canonical_lines": 1,
+    "relaxed_lines": 1,
+    "displayed_lines": 1,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 42,
+    "role": "acceptance",
+    "source_frame": 1260,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 33,
+      "slot1_row_head": 32,
+      "slot2_row_head": 30,
+      "slot3_col_head": 8
+    },
+    "canonical_lines": 1,
+    "relaxed_lines": 1,
+    "displayed_lines": 1,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 42,
+    "role": "acceptance",
+    "source_frame": 1260,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 17,
+      "slot1_row_head": 28,
+      "slot2_row_head": 0,
+      "slot3_col_head": 19
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 42,
+    "role": "acceptance",
+    "source_frame": 1260,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 23
+    },
+    "canonical_lines": 1,
+    "relaxed_lines": 1,
+    "displayed_lines": 1,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 46,
+    "role": "acceptance",
+    "source_frame": 1380,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 26,
+      "slot2_row_head": 0,
+      "slot3_col_head": 6
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 46,
+    "role": "acceptance",
+    "source_frame": 1380,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 24,
+      "slot2_row_head": 0,
+      "slot3_col_head": 2
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 46,
+    "role": "acceptance",
+    "source_frame": 1380,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 25,
+      "slot2_row_head": 0,
+      "slot3_col_head": 4
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 46,
+    "role": "acceptance",
+    "source_frame": 1380,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 8
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 46,
+    "role": "acceptance",
+    "source_frame": 1380,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 3
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 50,
+    "role": "acceptance",
+    "source_frame": 1500,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 50,
+    "role": "acceptance",
+    "source_frame": 1500,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 50,
+    "role": "acceptance",
+    "source_frame": 1500,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 50,
+    "role": "acceptance",
+    "source_frame": 1500,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 50,
+    "role": "acceptance",
+    "source_frame": 1500,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 54,
+    "role": "acceptance",
+    "source_frame": 1620,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 54,
+    "role": "acceptance",
+    "source_frame": 1620,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 54,
+    "role": "acceptance",
+    "source_frame": 1620,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 54,
+    "role": "acceptance",
+    "source_frame": 1620,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 54,
+    "role": "acceptance",
+    "source_frame": 1620,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 58,
+    "role": "acceptance",
+    "source_frame": 1740,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 58,
+    "role": "acceptance",
+    "source_frame": 1740,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 58,
+    "role": "acceptance",
+    "source_frame": 1740,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 58,
+    "role": "acceptance",
+    "source_frame": 1740,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 58,
+    "role": "acceptance",
+    "source_frame": 1740,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 55,
+    "role": "diagnostic_not_scored",
+    "source_frame": 1650,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 55,
+    "role": "diagnostic_not_scored",
+    "source_frame": 1650,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 55,
+    "role": "diagnostic_not_scored",
+    "source_frame": 1650,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 25,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 55,
+    "role": "diagnostic_not_scored",
+    "source_frame": 1650,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 55,
+    "role": "diagnostic_not_scored",
+    "source_frame": 1650,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 59,
+    "role": "diagnostic_not_scored",
+    "source_frame": 1770,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 59,
+    "role": "diagnostic_not_scored",
+    "source_frame": 1770,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 59,
+    "role": "diagnostic_not_scored",
+    "source_frame": 1770,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 31,
+      "slot2_row_head": 3,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 59,
+    "role": "diagnostic_not_scored",
+    "source_frame": 1770,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "day",
+    "time_s": 59,
+    "role": "diagnostic_not_scored",
+    "source_frame": 1770,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 3,
+    "role": "acceptance",
+    "source_frame": 180,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 5,
+      "slot3_col_head": 1
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 3,
+    "role": "acceptance",
+    "source_frame": 180,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 5,
+      "slot3_col_head": 3
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 3,
+    "role": "acceptance",
+    "source_frame": 180,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 2,
+      "slot1_row_head": 16,
+      "slot2_row_head": 11,
+      "slot3_col_head": 8
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 3,
+    "role": "acceptance",
+    "source_frame": 180,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 20,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 3,
+    "role": "acceptance",
+    "source_frame": 180,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 5,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 9,
+    "role": "acceptance",
+    "source_frame": 540,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 9,
+    "role": "acceptance",
+    "source_frame": 540,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 9,
+    "role": "acceptance",
+    "source_frame": 540,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 9,
+    "role": "acceptance",
+    "source_frame": 540,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 9,
+    "role": "acceptance",
+    "source_frame": 540,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 15,
+    "role": "acceptance",
+    "source_frame": 900,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 27,
+      "slot1_row_head": 43,
+      "slot2_row_head": 42,
+      "slot3_col_head": 35
+    },
+    "canonical_lines": 4,
+    "relaxed_lines": 4,
+    "displayed_lines": 4,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 15,
+    "role": "acceptance",
+    "source_frame": 900,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 26,
+      "slot1_row_head": 43,
+      "slot2_row_head": 42,
+      "slot3_col_head": 35
+    },
+    "canonical_lines": 4,
+    "relaxed_lines": 4,
+    "displayed_lines": 4,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 15,
+    "role": "acceptance",
+    "source_frame": 900,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 25,
+      "slot1_row_head": 42,
+      "slot2_row_head": 42,
+      "slot3_col_head": 35
+    },
+    "canonical_lines": 4,
+    "relaxed_lines": 4,
+    "displayed_lines": 4,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 15,
+    "role": "acceptance",
+    "source_frame": 900,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 28,
+      "slot1_row_head": 44,
+      "slot2_row_head": 43,
+      "slot3_col_head": 35
+    },
+    "canonical_lines": 4,
+    "relaxed_lines": 4,
+    "displayed_lines": 4,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 15,
+    "role": "acceptance",
+    "source_frame": 900,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 28,
+      "slot1_row_head": 43,
+      "slot2_row_head": 43,
+      "slot3_col_head": 34
+    },
+    "canonical_lines": 4,
+    "relaxed_lines": 4,
+    "displayed_lines": 4,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 21,
+    "role": "acceptance",
+    "source_frame": 1260,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 40,
+      "slot2_row_head": 39,
+      "slot3_col_head": 34
+    },
+    "canonical_lines": 3,
+    "relaxed_lines": 3,
+    "displayed_lines": 3,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 21,
+    "role": "acceptance",
+    "source_frame": 1260,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 41,
+      "slot2_row_head": 40,
+      "slot3_col_head": 30
+    },
+    "canonical_lines": 3,
+    "relaxed_lines": 3,
+    "displayed_lines": 3,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 21,
+    "role": "acceptance",
+    "source_frame": 1260,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 41,
+      "slot2_row_head": 40,
+      "slot3_col_head": 29
+    },
+    "canonical_lines": 3,
+    "relaxed_lines": 3,
+    "displayed_lines": 3,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 21,
+    "role": "acceptance",
+    "source_frame": 1260,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 20,
+      "slot1_row_head": 39,
+      "slot2_row_head": 39,
+      "slot3_col_head": 27
+    },
+    "canonical_lines": 3,
+    "relaxed_lines": 3,
+    "displayed_lines": 3,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 21,
+    "role": "acceptance",
+    "source_frame": 1260,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 23,
+      "slot1_row_head": 39,
+      "slot2_row_head": 38,
+      "slot3_col_head": 9
+    },
+    "canonical_lines": 3,
+    "relaxed_lines": 3,
+    "displayed_lines": 3,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 27,
+    "role": "acceptance",
+    "source_frame": 1620,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 43,
+      "slot2_row_head": 43,
+      "slot3_col_head": 37
+    },
+    "canonical_lines": 3,
+    "relaxed_lines": 3,
+    "displayed_lines": 3,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 27,
+    "role": "acceptance",
+    "source_frame": 1620,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 43,
+      "slot2_row_head": 43,
+      "slot3_col_head": 37
+    },
+    "canonical_lines": 3,
+    "relaxed_lines": 3,
+    "displayed_lines": 3,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 27,
+    "role": "acceptance",
+    "source_frame": 1620,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 43,
+      "slot2_row_head": 42,
+      "slot3_col_head": 37
+    },
+    "canonical_lines": 3,
+    "relaxed_lines": 3,
+    "displayed_lines": 3,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 27,
+    "role": "acceptance",
+    "source_frame": 1620,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 43,
+      "slot2_row_head": 42,
+      "slot3_col_head": 35
+    },
+    "canonical_lines": 3,
+    "relaxed_lines": 3,
+    "displayed_lines": 3,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 27,
+    "role": "acceptance",
+    "source_frame": 1620,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 42,
+      "slot2_row_head": 42,
+      "slot3_col_head": 34
+    },
+    "canonical_lines": 3,
+    "relaxed_lines": 3,
+    "displayed_lines": 3,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 33,
+    "role": "acceptance",
+    "source_frame": 1980,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 16,
+      "slot2_row_head": 13,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 33,
+    "role": "acceptance",
+    "source_frame": 1980,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 17,
+      "slot2_row_head": 17,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 33,
+    "role": "acceptance",
+    "source_frame": 1980,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 20,
+      "slot2_row_head": 20,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 33,
+    "role": "acceptance",
+    "source_frame": 1980,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 17,
+      "slot1_row_head": 20,
+      "slot2_row_head": 1,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 33,
+    "role": "acceptance",
+    "source_frame": 1980,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 16,
+      "slot1_row_head": 10,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 39,
+    "role": "acceptance",
+    "source_frame": 2340,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 39,
+    "role": "acceptance",
+    "source_frame": 2340,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 8,
+      "slot2_row_head": 4,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 39,
+    "role": "acceptance",
+    "source_frame": 2340,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 13,
+      "slot2_row_head": 20,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 39,
+    "role": "acceptance",
+    "source_frame": 2340,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 8,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 39,
+    "role": "acceptance",
+    "source_frame": 2340,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 8,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 45,
+    "role": "acceptance",
+    "source_frame": 2700,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 45,
+    "role": "acceptance",
+    "source_frame": 2700,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 3,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 45,
+    "role": "acceptance",
+    "source_frame": 2700,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 4,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 45,
+    "role": "acceptance",
+    "source_frame": 2700,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 45,
+    "role": "acceptance",
+    "source_frame": 2700,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 51,
+    "role": "acceptance",
+    "source_frame": 3060,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 14,
+      "slot1_row_head": 42,
+      "slot2_row_head": 10,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 1,
+    "relaxed_lines": 1,
+    "displayed_lines": 1,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 51,
+    "role": "acceptance",
+    "source_frame": 3060,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 15,
+      "slot1_row_head": 42,
+      "slot2_row_head": 10,
+      "slot3_col_head": 5
+    },
+    "canonical_lines": 1,
+    "relaxed_lines": 1,
+    "displayed_lines": 1,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 51,
+    "role": "acceptance",
+    "source_frame": 3060,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 20,
+      "slot1_row_head": 42,
+      "slot2_row_head": 17,
+      "slot3_col_head": 21
+    },
+    "canonical_lines": 2,
+    "relaxed_lines": 2,
+    "displayed_lines": 2,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 51,
+    "role": "acceptance",
+    "source_frame": 3060,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 51,
+    "role": "acceptance",
+    "source_frame": 3060,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 57,
+    "role": "acceptance",
+    "source_frame": 3420,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 3,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 57,
+    "role": "acceptance",
+    "source_frame": 3420,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 2,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 57,
+    "role": "acceptance",
+    "source_frame": 3420,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 1,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 57,
+    "role": "acceptance",
+    "source_frame": 3420,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 57,
+    "role": "acceptance",
+    "source_frame": 3420,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 1
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 63,
+    "role": "acceptance",
+    "source_frame": 3780,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 63,
+    "role": "acceptance",
+    "source_frame": 3780,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 63,
+    "role": "acceptance",
+    "source_frame": 3780,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 63,
+    "role": "acceptance",
+    "source_frame": 3780,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 63,
+    "role": "acceptance",
+    "source_frame": 3780,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 69,
+    "role": "acceptance",
+    "source_frame": 4140,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 27,
+      "slot1_row_head": 20,
+      "slot2_row_head": 2,
+      "slot3_col_head": 22
+    },
+    "canonical_lines": 2,
+    "relaxed_lines": 2,
+    "displayed_lines": 2,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 69,
+    "role": "acceptance",
+    "source_frame": 4140,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 27,
+      "slot1_row_head": 25,
+      "slot2_row_head": 3,
+      "slot3_col_head": 25
+    },
+    "canonical_lines": 2,
+    "relaxed_lines": 2,
+    "displayed_lines": 2,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 69,
+    "role": "acceptance",
+    "source_frame": 4140,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 25,
+      "slot1_row_head": 29,
+      "slot2_row_head": 10,
+      "slot3_col_head": 23
+    },
+    "canonical_lines": 2,
+    "relaxed_lines": 2,
+    "displayed_lines": 2,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 69,
+    "role": "acceptance",
+    "source_frame": 4140,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 23,
+      "slot1_row_head": 7,
+      "slot2_row_head": 0,
+      "slot3_col_head": 12
+    },
+    "canonical_lines": 1,
+    "relaxed_lines": 1,
+    "displayed_lines": 1,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 69,
+    "role": "acceptance",
+    "source_frame": 4140,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 23,
+      "slot1_row_head": 10,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 1,
+    "relaxed_lines": 1,
+    "displayed_lines": 1,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 75,
+    "role": "acceptance",
+    "source_frame": 4500,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 2,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 75,
+    "role": "acceptance",
+    "source_frame": 4500,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 1,
+      "slot1_row_head": 1,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 75,
+    "role": "acceptance",
+    "source_frame": 4500,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 6,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 75,
+    "role": "acceptance",
+    "source_frame": 4500,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 20,
+      "slot1_row_head": 34,
+      "slot2_row_head": 17,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 75,
+    "role": "acceptance",
+    "source_frame": 4500,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 17,
+      "slot1_row_head": 34,
+      "slot2_row_head": 31,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 81,
+    "role": "acceptance",
+    "source_frame": 4860,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 7,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 81,
+    "role": "acceptance",
+    "source_frame": 4860,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 4,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 81,
+    "role": "acceptance",
+    "source_frame": 4860,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 81,
+    "role": "acceptance",
+    "source_frame": 4860,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 81,
+    "role": "acceptance",
+    "source_frame": 4860,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 87,
+    "role": "acceptance",
+    "source_frame": 5220,
+    "variant": "A0",
+    "mode": "none",
+    "params": {},
+    "row_counts": {
+      "slot0_col_head": 1,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 87,
+    "role": "acceptance",
+    "source_frame": 5220,
+    "variant": "A1a",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 87,
+    "role": "acceptance",
+    "source_frame": 5220,
+    "variant": "A1b",
+    "mode": "gamma",
+    "params": {
+      "gamma": 0.6
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 87,
+    "role": "acceptance",
+    "source_frame": 5220,
+    "variant": "A2a",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 2.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  },
+  {
+    "clip": "night",
+    "time_s": 87,
+    "role": "acceptance",
+    "source_frame": 5220,
+    "variant": "A2b",
+    "mode": "clahe",
+    "params": {
+      "clahe_clip": 3.0,
+      "clahe_tile": 8
+    },
+    "row_counts": {
+      "slot0_col_head": 0,
+      "slot1_row_head": 0,
+      "slot2_row_head": 0,
+      "slot3_col_head": 0
+    },
+    "canonical_lines": 0,
+    "relaxed_lines": 0,
+    "displayed_lines": 0,
+    "rejection_reason": null
+  }
+]

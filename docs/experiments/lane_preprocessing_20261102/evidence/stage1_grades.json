@@ -1,0 +1,175 @@
+{
+  "grader": "AI visual review, 448 px cells, no temporal, not human ground truth",
+  "grades": {
+    "day_42s": {
+      "A0": [
+        "S"
+      ],
+      "A1a": [
+        "S"
+      ],
+      "A1b": [
+        "S"
+      ],
+      "A2a": [],
+      "A2b": [
+        "S"
+      ]
+    },
+    "night_15s": {
+      "A0": [
+        "S",
+        "S",
+        "U",
+        "S"
+      ],
+      "A1a": [
+        "S",
+        "S",
+        "U",
+        "S"
+      ],
+      "A1b": [
+        "S",
+        "S",
+        "U",
+        "S"
+      ],
+      "A2a": [
+        "S",
+        "S",
+        "U",
+        "S"
+      ],
+      "A2b": [
+        "S",
+        "S",
+        "U",
+        "S"
+      ]
+    },
+    "night_21s": {
+      "A0": [
+        "U",
+        "S",
+        "S"
+      ],
+      "A1a": [
+        "U",
+        "S",
+        "S"
+      ],
+      "A1b": [
+        "U",
+        "S",
+        "S"
+      ],
+      "A2a": [
+        "S",
+        "S",
+        "U"
+      ],
+      "A2b": [
+        "U",
+        "S",
+        "S"
+      ]
+    },
+    "night_27s": {
+      "A0": [
+        "U",
+        "S",
+        "D"
+      ],
+      "A1a": [
+        "U",
+        "S",
+        "D"
+      ],
+      "A1b": [
+        "U",
+        "S",
+        "D"
+      ],
+      "A2a": [
+        "U",
+        "S",
+        "D"
+      ],
+      "A2b": [
+        "U",
+        "S",
+        "D"
+      ]
+    },
+    "night_51s": {
+      "A0": [
+        "S"
+      ],
+      "A1a": [
+        "S"
+      ],
+      "A1b": [
+        "S",
+        "S"
+      ],
+      "A2a": [],
+      "A2b": []
+    },
+    "night_69s": {
+      "A0": [
+        "S",
+        "S"
+      ],
+      "A1a": [
+        "S",
+        "S"
+      ],
+      "A1b": [
+        "S",
+        "S"
+      ],
+      "A2a": [
+        "S"
+      ],
+      "A2b": [
+        "S"
+      ]
+    }
+  },
+  "totals_acceptance_frames": {
+    "A0": {
+      "D": 1,
+      "S": 10,
+      "U": 3
+    },
+    "A1a": {
+      "D": 1,
+      "S": 10,
+      "U": 3
+    },
+    "A1b": {
+      "D": 1,
+      "S": 11,
+      "U": 3
+    },
+    "A2a": {
+      "D": 1,
+      "S": 7,
+      "U": 3
+    },
+    "A2b": {
+      "D": 1,
+      "S": 8,
+      "U": 3
+    }
+  },
+  "diagnostic_frames_displayed_lines": {
+    "A0": 0,
+    "A1a": 0,
+    "A1b": 0,
+    "A2a": 0,
+    "A2b": 0
+  },
+  "note": "Frames and variants not listed have 0 displayed lines (see stage1_counts.json)."
+}
