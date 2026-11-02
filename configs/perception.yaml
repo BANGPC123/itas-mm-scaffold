@@ -47,6 +47,12 @@ lane_visual_fallback:
 offline_video_lane:
   display: simple
   display_row_ratio: 0.5
+  # Experiment (lane-only, simple display): preprocess the frame sent to UFLD for the displayed
+  # curves only. none keeps the previous path. Sign, camera_view and ego inputs stay on the original frame.
+  lane_preprocess: none      # none | gamma | clahe
+  lane_gamma: 0.8
+  lane_clahe_clip: 2.0
+  lane_clahe_tile: 8
 
 lane_detector:
   backend: ufld_v2
