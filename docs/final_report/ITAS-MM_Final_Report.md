@@ -295,7 +295,7 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 | `node --test frontend/src/*.test.js` | 14 passed, 0 failed, 0 skipped, 0 deselected; exit 0 |
 | `npm run build` (frontend) | Build succeeded (1 November 2026; not rerun in this experiment) |
 
-Implementation commit: `4e662ab800629508397199e560c919e1fa4c58bb`; the final report commit and suite replay are recorded in `output/lane_relax_20261102/checks_final.json` (evidence/LANE_SIMPLE.md).
+Implementation commit: `4e662ab`. Commands, hashes and the history of these counts are in `docs/final_report/evidence/LANE_SIMPLE.md`.
 
 **Appendix B. End-to-end checks.** On 31 October 2026, four items passed: server start (1), upload refusal while a job runs (8), legal search with source (9), and server restart with speech (10). Four were partly checked: live API response on the night clip (2, 3), upload job completed with a verified decode and cues (6), and the length and format checks (7). Items 2 to 5 (live boxes, live seek and camera) were removed from the final scope on 1 November 2026. On 1 November 2026 the upload-only interface was checked in the browser with a 20-second night clip and a daytime image: the sign list, the legal lookup and a 390 px mobile layout without horizontal scrolling. Speech playback was not listened to and is not verified by ear. The full table is in `docs/final_report/evidence/E2E_CHECKLIST.md`.
 
