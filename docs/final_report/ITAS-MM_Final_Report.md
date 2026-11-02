@@ -14,9 +14,7 @@ ITAS-MM: traffic sign recognition, lane visualisation and retrieval-grounded spo
 |---|---|---|
 | Trần Anh Kiệt | SE182050 | Detector and lane model training and evaluation; finalisation of the demo application |
 | Phan Khánh Băng | SE180630 | Outline, literature review, objectives and scope; consolidation of the written report |
-| Huỳnh Thiên Quốc | SE181733 | Data collection and preparation; evaluation support |
 | Cao Trần Tiến | SE184692 | Detector and lane model training and evaluation; finalisation of the demo application |
-| Vũ Lương Quang Thắng | SE184739 | Legal corpus, speech output and testing support |
 
 ## 3. Introduction and Background
 
