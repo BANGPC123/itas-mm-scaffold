@@ -103,6 +103,8 @@ Paths are relative to the repo root. "Report 3" = docs/report3/REPORT3_MODEL_RES
 | node --test frontend/src/*.test.js | 14 / 14 pass, exit 0 (1 Nov 2026) | output/final_20261102/t15_node_test.txt |
 | npm run build | succeeded, exit 0 (1 Nov 2026) | output/final_20261102/t15_npm_build.txt |
 | Earlier run, 31 Oct 2026 | pytest 597 passed; node 9 / 9 | output/final_20261102/t12_pytest.txt, t12_node_test.txt |
+| pytest tests/, lane display experiment (2 Nov 2026) | 613 passed, 0 failed, 11 skipped, 38 deselected; exit 0; implementation `4e662ab800629508397199e560c919e1fa4c58bb` | output/lane_relax_20261102/pytest_final.log, checks_final.json; evidence/LANE_SIMPLE.md |
+| node --test frontend/src/*.test.js, lane display experiment (2 Nov 2026) | 14 passed, 0 failed, 0 skipped, 0 deselected; exit 0; same implementation commit | output/lane_relax_20261102/node_final.log, checks_final.json |
 
 ## Other facts used
 

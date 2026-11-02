@@ -71,6 +71,15 @@ Started with `start.ps1` on port 8000. Uploaded the 60 s clip (`web_clip_60s.mp4
 
 ## 8. Test results
 
-- `tests/unit/test_lane_simple_20261102.py`: 7 passed.
-- `node --test frontend/src/*.test.js`: 14 pass, 0 fail.
-- `python -m pytest -q tests` (full suite, log `pytest_full.log`): 607 passed, 11 skipped, 38 deselected, 0 failed.
+Implementation commit: `4e662ab800629508397199e560c919e1fa4c58bb` (2 November 2026). The final report commit is recorded with the full-suite replay in `output/lane_relax_20261102/checks_final.json`.
+
+| Check | Passed | Failed | Skipped | Deselected | Status |
+|---|---:|---:|---:|---:|---|
+| `tests/unit/test_lane_simple_20261102.py` | 8 | 0 | 0 | 0 | PASS |
+| `tests/unit/test_lane_relax_20261102.py` | 5 | 0 | 0 | 0 | PASS |
+| `python -m pytest -q tests` | 613 | 0 | 11 | 38 | PASS, exit 0 |
+| `node --test frontend/src/*.test.js` | 14 | 0 | 0 | 0 | PASS, exit 0 |
+
+The earlier 607 full-suite passes / 7 simple-lane tests were measured at `a30b4f0`, before the overlay-status test added in `dd5a3e4` raised those counts to 608 / 8; this change adds five relaxation tests, yielding 613 full-suite passes.
+
+Logs: `output/lane_relax_20261102/pytest_focused_native.log` (16 passes: 8 simple, 5 relaxation, 3 decode), `pytest_precommit.log`, `node_precommit.log`, and the final-commit replay `pytest_final.log` / `node_final.log` in the same directory. `checks_final.json` records the exact tested final HEAD, commands, exit codes and all four counters. Tests run on Windows native with `PYTHONNOUSERSITE=1` and dedicated pytest temporary/cache directories; the earlier sandbox temp-directory PermissionError is kept separately in `pytest_focused.log`.

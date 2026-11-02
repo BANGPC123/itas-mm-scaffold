@@ -246,7 +246,7 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 - **Labels.** Sign-code labels are AI-assisted labelling, not ground truth by independent human annotators. Some shared names are shown as group names: for example, R.301a/c/d/e, W.205a/b/d, P.106a/b, W.202/W.202a, R.302a/b and I.407/I.407a are not separated into their variants.
 - **Precision.** The field precision figures (90.7% on 43 decided new tracks; 0.9633 for the 0.87 setting on the combined Report 3 population) come from one or two AI-assisted reviewers and small samples. They are not independent measurements.
 - **Threshold.** The video threshold favours coverage over precision. The 90.7% figure comes from one AI-assisted reviewer on 52 tracks and needs a larger, independently graded sample.
-- **Lane.** Lane overlays are visual context only. There is no human-reviewed Vietnamese lane ground truth, lanes are not classified as dashed or solid, and lanes are not used to decide which sign applies. On the 60-second demo clip the CULane-trained UFLD-v2 returned lane lines in 8 of 360 samples, some on kerbs or parked cars; on the 90-second night clip, lines were shown in 178 of 540 samples (coverage, not accuracy).
+- **Lane.** Lane overlays are visual context only. There is no human-reviewed Vietnamese lane ground truth, lanes are not classified as dashed or solid, and lanes are not used to decide which sign applies. On the 60-second demo clip the CULane-trained UFLD-v2 returned lane lines in 8 of 360 samples, some on kerbs or parked cars; on the 90-second night clip, lines were shown in 178 of 540 samples (coverage, not accuracy). Lowering the UFLD row-existence threshold to 0.35 and 0.25 was tested but did not improve enough to meet the selection rule on 30 preselected frames assessed by AI visual review (evidence/LANE_RELAX.md).
 - **Real time.** Real-time streaming analysis (live camera or live playback) was prototyped but is not part of the final application; uploaded video is processed about 1.7 times slower than real time on the test machine (153 s for a 90-second clip, one run). Offline segment runs measured about 3 FPS of inference.
 - **Supplementary panels.** Supplementary panels (time windows, vehicle types, distances) are not read in the final build. The OCR component works in isolation (it read a "100m" distance panel correctly) but is disabled: its parser covers only time windows and vehicle types, results are not shown, and night panels were unreadable. Sign applicability is therefore reported as uncertain.
 - **Legal retrieval.** Legal retrieval sometimes ranks a general article above the article for the detected sign.
@@ -287,13 +287,15 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 
 ## 15. Appendices
 
-**Appendix A. Automated test results (1 November 2026).**
+**Appendix A. Automated test results (Python/Node refreshed 2 November 2026).**
 
 | Check | Result |
 |---|---|
-| `python -m pytest -q tests` (with `PYTHONNOUSERSITE=1`) | 600 passed, 11 skipped, 38 deselected by `pytest.ini`; exit 0 |
-| `node --test frontend/src/*.test.js` | 14 of 14 passed |
-| `npm run build` (frontend) | Build succeeded |
+| `python -m pytest -q tests` (with `PYTHONNOUSERSITE=1`) | 613 passed, 0 failed, 11 skipped, 38 deselected by `pytest.ini`; exit 0 |
+| `node --test frontend/src/*.test.js` | 14 passed, 0 failed, 0 skipped, 0 deselected; exit 0 |
+| `npm run build` (frontend) | Build succeeded (1 November 2026; not rerun in this experiment) |
+
+Implementation commit: `4e662ab800629508397199e560c919e1fa4c58bb`; the final report commit and suite replay are recorded in `output/lane_relax_20261102/checks_final.json` (evidence/LANE_SIMPLE.md).
 
 **Appendix B. End-to-end checks.** On 31 October 2026, four items passed: server start (1), upload refusal while a job runs (8), legal search with source (9), and server restart with speech (10). Four were partly checked: live API response on the night clip (2, 3), upload job completed with a verified decode and cues (6), and the length and format checks (7). Items 2 to 5 (live boxes, live seek and camera) were removed from the final scope on 1 November 2026. On 1 November 2026 the upload-only interface was checked in the browser with a 20-second night clip and a daytime image: the sign list, the legal lookup and a 390 px mobile layout without horizontal scrolling. Speech playback was not listened to and is not verified by ear. The full table is in `docs/final_report/evidence/E2E_CHECKLIST.md`.
 
