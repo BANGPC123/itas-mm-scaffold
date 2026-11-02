@@ -295,17 +295,17 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 | `node --test frontend/src/*.test.js` | 14 of 14 passed |
 | `npm run build` (frontend) | Build succeeded |
 
-**Appendix B. End-to-end checks.** On 31 October 2026, four items passed: server start (1), upload refusal while a job runs (8), legal search with source (9), and server restart with speech (10). Four were partly checked: live API response on the night clip (2, 3), upload job completed with a verified decode and cues (6), and the length and format checks (7). Items 2 to 5 (live boxes, live seek and camera) were removed from the final scope on 1 November 2026. On 1 November 2026 the upload-only interface was checked in the browser with a 20-second night clip and a daytime image: the sign list, the legal lookup and a 390 px mobile layout without horizontal scrolling. Speech playback was not listened to and is not verified by ear. The full table is in `output/final_20261102/E2E_CHECKLIST.md`.
+**Appendix B. End-to-end checks.** On 31 October 2026, four items passed: server start (1), upload refusal while a job runs (8), legal search with source (9), and server restart with speech (10). Four were partly checked: live API response on the night clip (2, 3), upload job completed with a verified decode and cues (6), and the length and format checks (7). Items 2 to 5 (live boxes, live seek and camera) were removed from the final scope on 1 November 2026. On 1 November 2026 the upload-only interface was checked in the browser with a 20-second night clip and a daytime image: the sign list, the legal lookup and a 390 px mobile layout without horizontal scrolling. Speech playback was not listened to and is not verified by ear. The full table is in `docs/final_report/evidence/E2E_CHECKLIST.md`.
 
-**Appendix C. Demo clips.** Three 90-second clips were cut from the field-evaluation source videos for the demonstration (Hồ Tây day road; Hanoi night with the three-sign overlap; Hanoi day road with many prohibition and warning signs). Sources, source hashes and cut times are listed in `output/final_20261102/demo_clips/SOURCES.md`.
+**Appendix C. Demo clips.** Three 90-second clips were cut from the field-evaluation source videos for the demonstration (Hồ Tây day road; Hanoi night with the three-sign overlap; Hanoi day road with many prohibition and warning signs). Sources, source hashes and cut times are listed in `docs/final_report/evidence/SOURCES.md`.
 
-**Appendix D. Number sources.** Every number in this report is listed with its source file in `output/final_20261102/NUMBERS.md`.
+**Appendix D. Number sources.** Every number in this report is listed with its source file in `docs/final_report/evidence/NUMBERS.md`.
 
 **Appendix E. Configuration values and result files.**
 
 - Video threshold, exact value: 0.6412901874067937, set as `video_confidence_threshold` in `configs/perception.yaml`; written as 0.64 in the text. Still-image threshold: 0.87 (recognizer checkpoint).
 - Field segment runs in `output/kiet_wp_20261029/field_eval/`: the baseline runs are the folders prefixed `B_`; the new tracker at 0.87, 0.75 and 0.64 are the folders prefixed `N87_`, `N75_` and `N64_`.
-- Track grading for the 0.64 setting: `output/final_20261102/track_grading_064.csv` (copy of the grading sheet; 52 tracks, with verdict and note per track).
-- Upload speed check (1 November 2026): `output/final_20261102/speed_check/SPEED.md`.
-- Runtime measurement: `output/final_20261102/t9_latency_original.json`. Upload job used for the end-to-end check: `output/offline_video_jobs/a2b1e58883ef41e2a9b12e6c6f987d45/`.
+- Track grading for the 0.64 setting: `docs/final_report/evidence/track_grading_064.csv` (copy of the grading sheet; 52 tracks, with verdict and note per track).
+- Upload speed check (1 November 2026): `docs/final_report/evidence/SPEED.md`.
+- Runtime measurement: `docs/final_report/evidence/t9_latency_original.json`. Upload job used for the end-to-end check: `output/offline_video_jobs/a2b1e58883ef41e2a9b12e6c6f987d45/`.
 

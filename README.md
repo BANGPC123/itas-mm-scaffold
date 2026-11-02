@@ -1,5 +1,7 @@
 # ITAS-MM — Bản cuối (02/11/2026)
 
+> Bản cuối nằm ở nhánh **`work/final-20261102`**. Nhánh mặc định `main` là bản cũ, chưa có các thay đổi cuối.
+
 Web cuối chỉ còn hai luồng: **tải lên video MP4** hoặc **tải lên ảnh** (JPG/PNG). Hệ thống xử lý tệp rồi hiển thị kết quả. Chế độ live và camera đã bỏ khỏi giao diện cuối; phần live/camera trong các mục bên dưới là lịch sử của các bản trước.
 
 Cài đặt và chạy:
@@ -8,6 +10,7 @@ Cài đặt và chạy:
 python -m pip install -r requirements.txt
 npm --prefix frontend install
 npm --prefix frontend run build
+python scripts/setup_offline_speech.py   # một lần: cài giọng đọc offline (cần mạng)
 .\start.ps1
 ```
 
@@ -18,7 +21,7 @@ Mở http://127.0.0.1:8000.
 
 Video demo: [docs/demo/itas-mm_demo_video.mp4](docs/demo/itas-mm_demo_video.mp4), đoạn video lái xe 2 phút 20 giây dùng làm đầu vào khi demo tab **Video** (nén 1280x720, 30 fps, khoảng 44 MB).
 
-Báo cáo cuối: [docs/final_report/ITAS-MM_Final_Report.docx](docs/final_report/ITAS-MM_Final_Report.docx) (bản Markdown: [ITAS-MM_Final_Report.md](docs/final_report/ITAS-MM_Final_Report.md)). Số liệu và nguồn của từng số: `output/final_20261102/NUMBERS.md`.
+Báo cáo cuối: [docs/final_report/ITAS-MM_Final_Report.docx](docs/final_report/ITAS-MM_Final_Report.docx) (bản Markdown: [ITAS-MM_Final_Report.md](docs/final_report/ITAS-MM_Final_Report.md)). Số liệu và nguồn của từng số: [docs/final_report/evidence/NUMBERS.md](docs/final_report/evidence/NUMBERS.md). Thư mục `evidence/` là bản sao các file bằng chứng chính từ `output/final_20261102/`; các đường dẫn `output/...` khác (log, video kết quả) chỉ có trên máy chạy, vì `output/` không đưa lên Git.
 
 Kiểm tra:
 
