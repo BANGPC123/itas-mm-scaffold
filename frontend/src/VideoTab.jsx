@@ -72,7 +72,16 @@ export default function VideoTab({ names }) {
     const id = setInterval(async () => {
       try {
         const reply = await fetch(`${API}/pipeline/offline-video/jobs/${job.job_id}`);
-        if (reply.ok && alive) setJob(await reply.json());
+        if (!alive) return;
+        if (reply.ok) setJob(await reply.json());
+        else if (reply.status === 404) {
+          // The server keeps jobs in memory; after a restart the old job is gone. Stop polling.
+          setJob((prev) => ({
+            ...prev,
+            status: "failed",
+            message: "Máy chủ đã khởi động lại nên không còn công việc này. Hãy tải video lên lại.",
+          }));
+        }
       } catch {
         // Keep the last progress; the connection may come back.
       }
