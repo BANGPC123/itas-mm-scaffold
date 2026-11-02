@@ -29,7 +29,13 @@ RUNTIME_FILES=['configs/perception.yaml','src/pipeline/orchestrator.py','src/uti
     'models/sign_recognizer/reference_gate_20261011_final.npz']
 
 
-def draw_frame(frame,payload,lines,boxes,timestamp,font,fps,analysis_hz):
+def lane_status_message(view,lane_simple=False):
+    if view=='side_or_cabin':return 'Camera quay ngang/vào cabin: không gán biển trong gương cho hướng đi.'
+    if lane_simple:return 'Làn: ứng viên UFLD-v2, chỉ để tham khảo, có thể sai.'
+    return 'Vạch sơn quan sát được; không nối nét qua xe hoặc vùng thiếu bằng chứng.'
+
+
+def draw_frame(frame,payload,lines,boxes,timestamp,font,fps,analysis_hz,lane_simple=False):
     h,w=frame.shape[:2]
     for xy in lines:
         if len(xy)>=2:cv2.polylines(frame,[np.asarray(xy,np.int32)],False,(40,220,255),2)
@@ -44,7 +50,7 @@ def draw_frame(frame,payload,lines,boxes,timestamp,font,fps,analysis_hz):
     draw.rectangle((0,0,w,57),fill=(15,23,34))
     draw.text((10,3),f'ITAS-MM | {timestamp/60:.2f} phút | Video {fps:g} FPS | AI {analysis_hz:g} Hz | Ô tô con',font=font,fill='white')
     view=payload['lane'].get('camera_view','unknown')
-    message='Camera quay ngang/vào cabin: không gán biển trong gương cho hướng đi.' if view=='side_or_cabin' else 'Vạch sơn quan sát được; không nối nét qua xe hoặc vùng thiếu bằng chứng.'
+    message=lane_status_message(view,lane_simple)
     draw.text((10,29),message,font=font,fill='white')
     for x,y,text,color in labels:
         x=max(4,min(x,w-int(draw.textlength(text,font=font))-8))

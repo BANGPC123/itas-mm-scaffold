@@ -107,7 +107,7 @@ Retrieval-augmented question answering on Vietnamese traffic law is an emerging 
 - Raw recognition fields (`raw_label`, `raw_score`) are kept on every detection, so a rejected crop can be explained.
 - Track matching and ballot voting were replaced as described in Section 8.
 - The result video carries spoken cues. Signs detected within 1.5 seconds of each other are read as one cue of at most two codes; further signs in the same cluster are read right after it. Each cue plays when the result video reaches its time.
-- The result video is written at 30 FPS. Together with the lane update rate above, this cut processing time for a 90-second clip from 406.3 s to 165.0 s on the same machine; sign results did not change (Section 10.7). A later change, the simplified lane path described in Section 8, reduced processing of a 60-second clip (1,800 frames at 30 FPS) from 171.7 s to 77.9 s in a script run on the same machine, with sign boxes, labels, context and speech identical in all 360 analysed samples; a web upload of a re-encoded copy of that clip took 127.9 s. These are single runs (evidence/LANE_SIMPLE.md).
+- An earlier optimisation step: the result video is written at 30 FPS. Together with the lane update rate above, this cut processing time for a 90-second clip from 406.3 s to 165.0 s on the same machine; sign results did not change (Section 10.7). A later change, the simplified lane path described in Section 8, reduced processing of a 60-second clip (1,800 frames at 30 FPS) from 171.7 s to 77.9 s in a script run on the same machine, with sign boxes, labels, context and speech identical in all 360 analysed samples; a web upload of a re-encoded copy of that clip took 127.9 s. These are single runs (evidence/LANE_SIMPLE.md). On the 90-second night clip, the simplified lane path took 153.3 s in one run, 1.7 times real time (evidence/SPEED.md).
 - Videos longer than 100,000 frames are refused with a message asking the user to trim them.
 
 ## 10. Model Evaluation and Fine-Tuning
@@ -177,7 +177,7 @@ On the 120-frame field pilot, the fine-tuned detector raises precision from 0.64
 | Prototype: live request, lane overlay on (same clip) | p50 271.7 ms, p95 843.0 ms | same |
 | Offline pipeline per image (detection, recognition, lane, context, retrieval; audio off) | 46.2 ms (21.7 FPS) | Report 3, VI.5 |
 | Detector, fine-tuned | 10.8 ms per image (92.7 FPS) | Report 3, VI.5 |
-| Uploaded video, 90-second clip, after the speed change (2,700 frames at 30 FPS) | 165.0 s processing, 1.8 times slower than real time | speed check, 1 Nov 2026 (Appendix E) |
+| Uploaded video, 90-second clip, current simple lane path (2,700 frames at 30 FPS) | 153.3 s processing, 1.7 times slower than real time (one run); earlier speed step: 165.0 s, 1.8 times | speed check, 3 Nov 2026 (evidence/SPEED.md); earlier step 1 Nov 2026 (Appendix E) |
 | Uploaded video, same clip, before the speed change (5,400 frames at 60 FPS) | 406.3 s processing, 4.5 times slower than real time; an earlier run on 31 Oct 2026 took 301.2 s (3.3 times) | speed check, 1 Nov 2026; job summary, 31 Oct 2026 |
 | Uploaded video, 20-second night clip through the web interface, after the speed change | 44.6 s processing | speed check, 1 Nov 2026 |
 
@@ -189,7 +189,7 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 
 ## 11. Results Interpretation and Visualization
 
-**What the final system does.** On uploaded forward-camera video, the system detects sign panels, confirms codes across frames, and produces a verified MP4 with a spoken cue for each confirmed group of signs and a timed list of the signs. On a single image, it reports each detected panel with its code and confidence, reads the result aloud, and looks up the cited legal passages. The offline segment runs measured about 3 FPS of inference, and processing is slower than real time (1.8 times for a 90-second clip, Section 10.7).
+**What the final system does.** On uploaded forward-camera video, the system detects sign panels, confirms codes across frames, and produces a verified MP4 with a spoken cue for each confirmed group of signs and a timed list of the signs. On a single image, it reports each detected panel with its code and confidence, reads the result aloud, and looks up the cited legal passages. The offline segment runs measured about 3 FPS of inference, and processing is slower than real time (1.7 times for a 90-second clip, Section 10.7).
 
 **Three overlapping signs (case study).** In a night clip from Hanoi (source 31.7–34.8 s), three panels are stacked on a pole. The baseline read none of them (0 coded boxes at 33.0 s). The final configuration reads two of them, P.112 and W.245a (Figure 1). The third panel is not read by either configuration, and this is a limit of the recognizer on low-support classes, not of the threshold.
 
@@ -227,7 +227,7 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 2. The recognizer covers 87 codes and is accurate on crops of 32 px and above (0.970 accuracy on TEST). Its weakest range is below 16 px.
 3. Video confirmation is more stable with the new tracker: tracks with fewer than three samples fall from 1,022 to 637 on the same 15 segments.
 4. The video threshold of 0.64 gives 96 coded tracks against 75 at 0.87, with 90.7% precision on 43 decided new tracks. This is based on one reviewer and a small sample.
-5. The upload pipeline is slower than real time: 1.8 times for a 90-second clip after the speed change (165.0 s of processing), down from 4.5 times on the same clip before it.
+5. The upload pipeline is slower than real time: 1.7 times for a 90-second clip with the simplified lane path (153.3 s of processing, one run), down from 4.5 times on the same clip before the speed changes.
 
 **Recommendations.**
 
@@ -246,8 +246,8 @@ On 24 development cases, Recall@1 is 0.542, Recall@3 0.833, Recall@4 0.875 and M
 - **Labels.** Sign-code labels are AI-assisted labelling, not ground truth by independent human annotators. Some shared names are shown as group names: for example, R.301a/c/d/e, W.205a/b/d, P.106a/b, W.202/W.202a, R.302a/b and I.407/I.407a are not separated into their variants.
 - **Precision.** The field precision figures (90.7% on 43 decided new tracks; 0.9633 for the 0.87 setting on the combined Report 3 population) come from one or two AI-assisted reviewers and small samples. They are not independent measurements.
 - **Threshold.** The video threshold favours coverage over precision. The 90.7% figure comes from one AI-assisted reviewer on 52 tracks and needs a larger, independently graded sample.
-- **Lane.** Lane overlays are visual context only. There is no human-reviewed Vietnamese lane ground truth, lanes are not classified as dashed or solid, and lanes are not used to decide which sign applies.
-- **Real time.** Real-time streaming analysis (live camera or live playback) was prototyped but is not part of the final application; uploaded video is processed about 1.8 times slower than real time on the test machine (165 s for a 90-second clip). Offline segment runs measured about 3 FPS of inference.
+- **Lane.** Lane overlays are visual context only. There is no human-reviewed Vietnamese lane ground truth, lanes are not classified as dashed or solid, and lanes are not used to decide which sign applies. On the 60-second demo clip the CULane-trained UFLD-v2 returned lane lines in 8 of 360 samples, some on kerbs or parked cars; the model does not transfer well to this camera.
+- **Real time.** Real-time streaming analysis (live camera or live playback) was prototyped but is not part of the final application; uploaded video is processed about 1.7 times slower than real time on the test machine (153 s for a 90-second clip, one run). Offline segment runs measured about 3 FPS of inference.
 - **Supplementary panels.** Supplementary panels (time windows, vehicle types, distances) are not read in the final build. The OCR component works in isolation (it read a "100m" distance panel correctly) but is disabled: its parser covers only time windows and vehicle types, results are not shown, and night panels were unreadable. Sign applicability is therefore reported as uncertain.
 - **Legal retrieval.** Legal retrieval sometimes ranks a general article above the article for the detected sign.
 - **Legal and GPS.** GPS is simulated. The legal corpus has not been checked for current effect (`legal_currency_verified: false`). The system is not legal advice and not a driving-safety system.

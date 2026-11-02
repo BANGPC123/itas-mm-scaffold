@@ -146,7 +146,7 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
                     _,aux_boxes=aux_motion.advance(canvas)
                     candidate_lines,_=candidate_motion.advance(canvas)
                 rendered=draw_frame(canvas,last_payload,lines,boxes,
-                                    absolute,font,out_fps,fps/step)
+                                    absolute,font,out_fps,fps/step,lane_simple=lane_simple)
                 if candidate_lines:
                     for poly in candidate_lines:
                         if len(poly)>=2:

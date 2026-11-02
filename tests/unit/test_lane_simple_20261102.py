@@ -135,6 +135,14 @@ def test_repository_config_defaults_to_simple_lane_path(tmp_path):
     assert summary['offline_video_lane_display'] == 'simple'
 
 
+def test_overlay_status_text_depends_on_display_mode():
+    from scripts.complete_test_video import lane_status_message
+    assert lane_status_message('forward', lane_simple=True) == 'Làn: ứng viên UFLD-v2, chỉ để tham khảo, có thể sai.'
+    assert lane_status_message('forward', lane_simple=False).startswith('Vạch sơn quan sát được')
+    assert lane_status_message('side_or_cabin', lane_simple=True).startswith('Camera quay ngang')
+    assert lane_status_message('side_or_cabin', lane_simple=False).startswith('Camera quay ngang')
+
+
 def test_unknown_display_value_is_rejected(tmp_path, monkeypatch):
     monkeypatch.setattr(renderer, 'load_config',
                         lambda name: {'offline_video_lane': {'display': 'bogus'}})
