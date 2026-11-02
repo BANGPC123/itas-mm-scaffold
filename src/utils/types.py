@@ -56,6 +56,7 @@ class LaneInfo:
     display_polylines: list[list[tuple[int, int]]] | None = None
     camera_view: str = 'unknown'
     candidate_polylines: list[list[tuple[int,int]]] = field(default_factory=list)
+    relaxed_polylines: list[list[tuple[int,int]]] = field(default_factory=list)
 
 
 @dataclass

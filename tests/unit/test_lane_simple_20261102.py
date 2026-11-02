@@ -27,7 +27,12 @@ def _pipeline(lane_factory, camera=None):
     pipe = Pipeline.__new__(Pipeline)
     pipe.sign_detector = _Stub(detect=lambda road: [], _model=object())
     pipe.sign_recognizer = _Stub(recognize=lambda road, signs, **kw: signs, model=object())
-    pipe.lane_detector = _Stub(detect=lambda image: lane_factory())
+    def detect(image, **kwargs):
+        lane = lane_factory()
+        if kwargs.get('display_row_ratio') is not None:
+            lane.relaxed_polylines = list(lane.polylines)
+        return lane
+    pipe.lane_detector = _Stub(detect=detect)
     pipe.camera_lane_visual = _Stub(
         detect=camera or (lambda image, lane: LaneInfo([], backend='camera_road_paint_visual', camera_view='forward')))
     pipe.zone_classifier = _Stub(classify=lambda lat, lon: SimpleNamespace(zone_label='Urban'))

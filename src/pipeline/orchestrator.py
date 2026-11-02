@@ -102,13 +102,14 @@ class Pipeline:
         # Offline video may reuse the previous lane result on alternate samples (lane is the
         # slowest stage and changes slowly); signs are still analysed on every sample.
         if not hasattr(self,'_reused_lane'):self._reused_lane={}
-        lane_key=(image.shape,road_bottom,lane_visual_roi,lane_display_mode,offline_video_quality,lane_simple)
+        display_row_ratio=load_config('perception').get('offline_video_lane',{}).get('display_row_ratio',.5) if lane_simple else None
+        lane_key=(image.shape,road_bottom,lane_visual_roi,lane_display_mode,offline_video_quality,lane_simple,display_row_ratio)
         cached=self._reused_lane.get(stream_id) if reuse_lane and stream_id is not None and frame_timestamp is not None else None
         if cached is not None and cached[0]==lane_key and 0<frame_timestamp-cached[1]<=.4:
             import copy
             lane=copy.deepcopy(cached[2])
         else:
-            lane=self.lane_detector.detect(image)
+            lane=self.lane_detector.detect(image,display_row_ratio=display_row_ratio) if lane_simple else self.lane_detector.detect(image)
             # Simple mode keeps the UFLD geometry: no YOLOPv2, screening, candidate overlay or surface veto.
             simple=lane_simple and lane.backend=='ufld_v2'
             raw_ufld_hypotheses=list(lane.polylines) if offline_video_quality and lane.backend=='ufld_v2' else []
@@ -166,12 +167,14 @@ class Pipeline:
                 lane.lane_center_offset_px=None
             from src.perception.lane_display_quality import visual_polylines
             display_mode='candidate' if simple else lane_display_mode
-            lane.display_polylines=lane.polylines if lane.backend=='camera_road_paint_visual' else visual_polylines(lane,image.shape,mode=display_mode)
+            from src.utils.types import LaneInfo
+            display_lane=LaneInfo([],polylines=lane.relaxed_polylines) if simple else lane
+            lane.display_polylines=lane.polylines if lane.backend=='camera_road_paint_visual' else visual_polylines(display_lane,image.shape,mode=display_mode)
             if stream_id is not None and lane.backend!='camera_road_paint_visual':
                 from src.perception.lane_temporal import LaneStreamPool
                 if not hasattr(self,'lane_stream_pool'):self.lane_stream_pool=LaneStreamPool()
                 from src.perception.lane_display_quality import visual_polylines
-                safe_display=lane.polylines if lane.backend=='camera_road_paint_visual' else visual_polylines(lane,image.shape,mode=display_mode)
+                safe_display=lane.polylines if lane.backend=='camera_road_paint_visual' else visual_polylines(display_lane,image.shape,mode=display_mode)
                 lane.display_polylines=self.lane_stream_pool.get(stream_id,image.shape,(road_bottom,lane.backend)).update(safe_display,frame_timestamp,image.shape,image=image)
             if lane_display_mode=='candidate' and lane.backend=='ufld_v2':
                 # High-recall visual mode is not trusted lane geometry.

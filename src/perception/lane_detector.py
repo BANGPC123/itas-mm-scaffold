@@ -37,14 +37,16 @@ class LaneDetector:
         self.hough_max_line_gap = cfg["hough_max_line_gap"]
         self.roi_top_ratio = cfg["roi_top_ratio"]
 
-    def detect(self, image: np.ndarray) -> LaneInfo:
+    def detect(self, image: np.ndarray, *, display_row_ratio=None) -> LaneInfo:
         """Run lane detection on a single BGR image.
 
         Returns LaneInfo with an empty line list if no lines are found
         (e.g. blank/black input) rather than raising.
         """
         if self.backend == "ufld_v2":
-            return self.learned.detect(image,filter_geometry=self.filter_geometry) if self.learned else LaneInfo([],backend="unavailable")
+            options={'filter_geometry':self.filter_geometry}
+            if display_row_ratio is not None:options['display_row_ratio']=display_row_ratio
+            return self.learned.detect(image,**options) if self.learned else LaneInfo([],backend="unavailable")
         if image is None or image.size == 0:
             logger.warning("Received empty image; returning no lane lines.")
             return LaneInfo(lane_lines=[])

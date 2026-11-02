@@ -46,6 +46,7 @@ lane_visual_fallback:
 # smoothing, no YOLOPv2 / surface veto / candidate overlay. precision = previous pipeline (rollback).
 offline_video_lane:
   display: simple
+  display_row_ratio: 0.5
 
 lane_detector:
   backend: ufld_v2

@@ -76,7 +76,9 @@ class UFLDv2:
         self.mean = torch.tensor([.485,.456,.406], device=device, dtype=self.dtype)[:,None,None]
         self.std = torch.tensor([.229,.224,.225], device=device, dtype=self.dtype)[:,None,None]
 
-    def detect(self,image,*,filter_geometry=True):
+    def detect(self,image,*,filter_geometry=True,display_row_ratio=None):
+        if display_row_ratio is not None and not 0 < display_row_ratio <= 1:
+            raise ValueError('display_row_ratio must be greater than 0 and at most 1')
         if image is None or image.size==0:return LaneInfo([],backend='ufld_v2')
         if insufficient_information(image):
             return LaneInfo([],backend='ufld_v2',rejection_reason='insufficient_image_information')
@@ -89,19 +91,24 @@ class UFLDv2:
             pred = self.model(x.unsqueeze(0))
             coordinates = [local_expectation(v).cpu().numpy() for v in pred[:2]]
             existence = [v.argmax(1)[0].cpu().numpy() for v in pred[2:]]
-        polylines=[]
+        polylines=[];relaxed_polylines=[]
         for coords,valid,indices,anchors,scale,other_scale,isrow in [
             (coordinates[0],existence[0],[1,2],np.linspace(.42,1,72),w,h,True),
             (coordinates[1],existence[1],[0,3],np.linspace(0,1,81),h,w,False)]:
             for lane in indices:
-                if int(valid[:,lane].sum())<=len(anchors)/(2 if isrow else 4):continue
+                count=int(valid[:,lane].sum())
+                canonical=count>len(anchors)/(2 if isrow else 4)
+                relaxed=display_row_ratio is not None and count>len(anchors)*(display_row_ratio if isrow else .25)
+                if not canonical and not relaxed:continue
                 points=[]
                 for k,anchor in enumerate(anchors):
                     if not valid[k,lane]:continue
                     value=float(coords[k,lane])*scale
                     point=(int(value),int(anchor*other_scale)) if isrow else (int(anchor*other_scale),int(value))
                     points.append((max(0,min(w-1,point[0])),max(0,min(h-1,point[1]))))
-                if len(points)>=3 and (not filter_geometry or plausible_lane(points,w,h)):polylines.append(points)
+                if len(points)>=3 and (not filter_geometry or plausible_lane(points,w,h)):
+                    if canonical:polylines.append(points)
+                    if relaxed:relaxed_polylines.append(points)
         yref=h*.9;candidates=[]
         for points in polylines:
             ordered=sorted(points,key=lambda p:p[1]);ys=[p[1] for p in ordered]
@@ -111,4 +118,4 @@ class UFLDv2:
         if left and right:
             l=max(left,key=lambda v:v[0]);r=min(right,key=lambda v:v[0]);ego=[l[1],r[1]];offset=(l[0]+r[0])/2-w/2
         lines=[(*p1,*p2) for points in polylines for p1,p2 in zip(points,points[1:])]
-        return LaneInfo(lines,offset,polylines,ego,'ufld_v2')
+        return LaneInfo(lines,offset,polylines,ego,'ufld_v2',relaxed_polylines=relaxed_polylines)
