@@ -20,7 +20,8 @@
 \title{ITAS-MM: An Intelligent Multimodal Traffic Assistance System for Real-Time Traffic Sign Recognition, Lane Detection, and Legally Grounded Driving Guidance}
 
 \author{\IEEEauthorblockN{Tran Anh Kiet (SE182050), Phan Khanh Bang (SE180630), Cao Tran Tien (SE184692)}
-\IEEEauthorblockA{FPT University, Vietnam}}
+\IEEEauthorblockA{FPT University, Vietnam\\
+kiettase182050@fpt.edu.vn, bangpkse180630@fpt.edu.vn, tienctse184692@fpt.edu.vn}}
 
 \maketitle
 
@@ -42,7 +43,7 @@ This paper describes ITAS-MM, a prototype that connects these two lines of work.
 
 The paper makes three contributions. First, it describes a two-stage sign pipeline in which a class-agnostic detector is followed by an 87-code classifier with an explicit background class, so that localization does not depend on the size of the code vocabulary and uncertain crops can be rejected. Second, it introduces a simple temporal evidence module that associates detections across frames without relying on their labels and confirms a code only when it clearly leads the other candidates. Third, it reports an evaluation that pairs standard data set metrics with measurements on real driving video, which exposes a domain gap that data set metrics alone would hide.
 
-The rest of the paper is organized as follows. Section~\ref{sec:related} reviews related work. Section~\ref{sec:data} describes the data. Section~\ref{sec:method} presents the models and the temporal module, and Section~\ref{sec:impl} describes how they are packaged into a web application. Section~\ref{sec:exp} reports the experiments, Section~\ref{sec:discussion} discusses the findings and limitations, and Section~\ref{sec:conclusion} concludes.
+The rest of the paper is organized as follows. Section~\ref{sec:related} reviews related work. Section~\ref{sec:method} presents the system, the data, the models, the temporal module and the web application. Section~\ref{sec:exp} reports the experiments and results, and Section~\ref{sec:discussion} discusses the findings and limitations. Section~\ref{sec:conclusion} concludes, Section~\ref{sec:future} outlines future work and Section~\ref{sec:ethics} discusses ethical considerations.
 
 \section{Related Work}\label{sec:related}
 
@@ -54,9 +55,43 @@ The rest of the paper is organized as follows. Section~\ref{sec:related} reviews
 
 \textit{Spoken and multimodal assistance.} Vietnamese neural text-to-speech is available as open software \cite{vieneu}, and multimodal assistants that combine vision and speech have been built for visually impaired users \cite{naviblind} and for driver warnings based on large language models \cite{xu2024}. Studies of driver response show that auditory and multimodal warnings can reduce cognitive load compared with visual alerts alone \cite{politis}. ITAS-MM follows this direction with short, neutral spoken observations rather than commands.
 
-\section{Data}\label{sec:data}
+\section{Methodology}\label{sec:method}
 
-\subsection{Sources and merging}
+\subsection{System overview}
+
+Fig.~\ref{fig:arch} shows the pipeline. An uploaded video is decoded frame by frame and analyzed at 6 Hz. For each analyzed frame, the detector proposes sign panels, the recognizer assigns a code to each panel, and the temporal module decides which codes are confirmed. Confirmed codes are used to retrieve legal passages and to produce spoken cues, and the system writes a result video with the overlays and a timed list of signs. A still image follows the same path without the temporal step. The lane model runs in parallel and provides visual context only.
+
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[node distance=0.45cm and 0.55cm,
+  box/.style={draw,rounded corners=3pt,align=center,minimum height=1.05cm,text width=2.5cm,font=\small,fill=blue!6},
+  io/.style={draw,rounded corners=3pt,align=center,minimum height=1.05cm,text width=2.2cm,font=\small,fill=gray!12},
+  arr/.style={-{Stealth[length=2.2mm]},thick}]
+\node[io] (in) {Uploaded video or image};
+\node[box,right=of in] (det) {Sign detector\\YOLO11n, 1 class};
+\node[box,right=of det] (rec) {Recognizer\\MobileNetV3-small\\87 codes + background};
+\node[box,right=of rec] (tmp) {Temporal module\\association + voting};
+\node[io,right=of tmp] (out) {Result video, sign list, spoken cues};
+\node[box,below=of det] (lane) {Lane overlay\\UFLD-v2, light filter};
+\node[box,below=of tmp] (law) {Legal retrieval\\BM25, 703 passages};
+\node[box,below=of rec] (tts) {Vietnamese TTS\\VieNeu};
+\draw[arr] (in) -- (det);
+\draw[arr] (det) -- (rec);
+\draw[arr] (rec) -- (tmp);
+\draw[arr] (tmp) -- (out);
+\draw[arr] (in.south) |- (lane.west);
+\draw[arr] (tmp.south) -- (law.north);
+\draw[arr] (law.west) -- (tts.east);
+\draw[arr] (lane.south) |- ([yshift=-4.5mm]tts.south) -| ([xshift=4mm]out.south);
+\draw[arr] (tts.south) -- ([yshift=-1.8mm]tts.south) -| ([xshift=-4mm]out.south);
+\end{tikzpicture}
+\caption{Overview of ITAS-MM. Signs are analyzed at 6 Hz on video; the lane overlay is used for display only and does not influence sign decisions.}
+\label{fig:arch}
+\end{figure*}
+
+\subsection{Data}\label{sec:data}
+
+\subsubsection{Sources and merging}
 
 The sign data set merges five public Vietnamese traffic sign collections, four published on Kaggle and one on Roboflow Universe, listed in Table~\ref{tab:sources}. Together they provide 29,599 images and 60,580 annotated boxes, but they overlap heavily: one Kaggle collection is itself an earlier export of the Roboflow project, and many images are consecutive frames of driving videos. Each image therefore keeps its provenance, exact duplicates are merged into one canonical image whose boxes keep the list of source annotations they came from, and the resulting localization set contains 15,603 images and 30,558 boxes, about half of the raw total.
 
@@ -81,11 +116,11 @@ Total & 29,599 & 60,580 & 15,603 \\
 \end{tabular}
 \end{table}
 
-\subsection{Recognition labels}
+\subsubsection{Recognition labels}
 
 The recognition labels were built in two steps. An initial manifest covers 30 codes with 10,003 crops. The ontology was then extended to 87 QCVN codes. Boxes outside the original 30 codes were labeled by two independent passes of an AI-assisted labeling procedure that compared each crop with the official figure of the regulation. A box was kept only when both passes agreed, which retained 976 boxes (raw agreement 76.9\%) and excluded 555. The final recognizer was trained on 17,445 training and 3,933 validation crops whose native short side is at least 16 pixels, while the test split keeps all sizes. Because these labels were not reviewed by independent human annotators, accuracies measured on them describe agreement with the labeling procedure rather than expert accuracy.
 
-\subsection{Exploratory analysis}
+\subsubsection{Exploratory analysis}
 
 Table~\ref{tab:sizes} shows the distribution of box sizes, measured by the shorter side of each box. The data are dominated by small signs: about 27\% of training boxes and 31\% of test boxes are shorter than 16 pixels, and only about one box in five is 64 pixels or larger. Because recognition becomes unreliable below about 16 pixels, as shown in Section~\ref{sec:exp}, a large share of the boxes can be localized but not read. Class support is also uneven. In the 71-class labeling of the original release, the speed limit sign P.127 alone has 2,123 training boxes, followed by the no-stopping and no-parking signs P.130 and P.131a with 1,325 and 1,219, while several classes have fewer than ten training boxes. In the final 87-code recognizer, 55 codes have enough training data to be treated as main classes and 32 low-support classes are trained but reported separately.
 
@@ -104,45 +139,11 @@ Test & 1,502 & 1,306 & 1,180 & 900 & 4,888 \\
 \end{tabular}
 \end{table}
 
-\subsection{Field video and legal corpus}
+\subsubsection{Field video and legal corpus}
 
 Two further sources were used for evaluation on real video. A field pilot of 120 frames with 66 signs from one development driving video provides human-reviewed boxes, although sign codes were not reviewed. Three field evaluation videos recorded in Hanoi, two by day and one at night, were cut into fifteen segments of 60 seconds. These segments carry no annotation and are used to measure behavior such as track counts and speed. Finally, the legal corpus consists of Law No.~36/2024/QH15 \cite{law36}, Decree No.~168/2024/ND-CP \cite{decree168} and QCVN 41:2024 \cite{qcvn41}, indexed as 703 page-grounded passages from four official PDF files.
 
 
-
-\section{Methodology}\label{sec:method}
-
-\subsection{System overview}
-
-Fig.~\ref{fig:arch} shows the pipeline. An uploaded video is decoded frame by frame and analyzed at 6 Hz. For each analyzed frame, the detector proposes sign panels, the recognizer assigns a code to each panel, and the temporal module decides which codes are confirmed. Confirmed codes are used to retrieve legal passages and to produce spoken cues, and the system writes a result video with the overlays and a timed list of signs. A still image follows the same path without the temporal step. The lane model runs in parallel and provides visual context only.
-
-\begin{figure*}[t]
-\centering
-\begin{tikzpicture}[node distance=0.45cm and 0.55cm,
-  box/.style={draw,rounded corners=3pt,align=center,minimum height=1.05cm,text width=2.5cm,font=\small,fill=blue!6},
-  io/.style={draw,rounded corners=3pt,align=center,minimum height=1.05cm,text width=2.2cm,font=\small,fill=gray!12},
-  arr/.style={-{Stealth[length=2.2mm]},thick}]
-\node[io] (in) {Uploaded video or image};
-\node[box,right=of in] (det) {Sign detector\\YOLO11n, 1 class};
-\node[box,right=of det] (rec) {Recognizer\\MobileNetV3-small\\87 codes + background};
-\node[box,right=of rec] (tmp) {Temporal module\\association + voting};
-\node[io,right=of tmp] (out) {Result video, sign list, spoken cues};
-\node[box,below=of det] (lane) {Lane overlay\\UFLD-v2 + surface veto};
-\node[box,below=of tmp] (law) {Legal retrieval\\BM25, 703 passages};
-\node[box,below=of rec] (tts) {Vietnamese TTS\\VieNeu};
-\draw[arr] (in) -- (det);
-\draw[arr] (det) -- (rec);
-\draw[arr] (rec) -- (tmp);
-\draw[arr] (tmp) -- (out);
-\draw[arr] (in.south) |- (lane.west);
-\draw[arr] (tmp.south) -- (law.north);
-\draw[arr] (law.west) -- (tts.east);
-\draw[arr] (lane.south) |- ([yshift=-4.5mm]tts.south) -| ([xshift=4mm]out.south);
-\draw[arr] (tts.south) -- ([yshift=-1.8mm]tts.south) -| ([xshift=-4mm]out.south);
-\end{tikzpicture}
-\caption{Overview of ITAS-MM. Signs are analyzed at 6 Hz on video; the lane overlay is used for display only and does not influence sign decisions.}
-\label{fig:arch}
-\end{figure*}
 
 \subsection{Detection and recognition}
 
@@ -194,13 +195,13 @@ Stage & Epochs, optimizer & Augmentation \\
 
 The recognizer was trained for 30 epochs with AdamW and a one-cycle schedule at a peak learning rate of $4\times10^{-4}$, a batch of 128 and 14,000 crops sampled per epoch, with sampling weights that favor rare classes. It was initialized from the earlier 30-code model, so that the original classes keep their learned features while the 57 new codes are added. The checkpoint was selected by the main-class macro F1 score on the validation split and the acceptance threshold was calibrated on the same split. Retraining from scratch on the same machine reproduced the validation macro F1 to within 0.0011 and selected the same epoch and threshold.
 
-\section{System Implementation}\label{sec:impl}
+\subsection{System implementation}\label{sec:impl}
 
 The models are packaged as a local web application with a Python backend built on FastAPI and a single-page frontend built with React. Two workflows are offered. For an image, the frontend sends the file to an analysis endpoint and receives the detected panels, their codes and confidences, an annotated image and the spoken text, which is synthesized only when the user asks for it. For a video, the upload is stored and processed as a background job. The server accepts MP4 files of up to 850 MB and 100,000 frames, refuses a second job while one is running, and reports progress that the frontend converts into an estimated remaining time.
 
 The video job reads every source frame in order, runs the full pipeline on the analyzed frames and draws the overlays on the frames that are written to the result video. Between two analyzed frames, the boxes and lane lines are moved with the image content so that the overlay stays aligned. When the job ends, the result video is decoded again from start to finish, and it is published only if the number of decoded frames matches the number written. The job also records, for every confirmed sign, the time at which it was confirmed; the frontend plays the corresponding spoken cue when the result video reaches that time and clears pending cues when the user seeks.
 
-Profiling showed that the lane models and the drawing and encoding of output frames dominated the processing time, while sign detection and recognition took less than a tenth of it. Two changes were therefore made. The result video is written at 30 frames per second instead of the source rate of 60, and the lane overlay is recomputed on every second analyzed frame, that is at 3 Hz, while signs are still analyzed at 6 Hz. On a 90 s night clip these changes reduced the processing time from 406 s to 165 s, and the sign boxes and labels were identical in all 540 analyzed frames before and after the change.
+Profiling showed that the lane models and the drawing and encoding of output frames dominated the processing time, while sign detection and recognition took less than a tenth of it. Two changes were therefore made. The result video is written at 30 frames per second instead of the source rate of 60, and the lane overlay is recomputed on every second analyzed frame, that is at 3 Hz, while signs are still analyzed at 6 Hz. On a 90 s night clip these changes reduced the processing time from 406 s to 165 s, and the sign boxes and labels were identical in all 540 analyzed frames before and after the change. A later change, the simplified lane path (UFLD-v2 polylines only, without YOLOPv2 or the surface veto), gave 153 s for the same clip in a single run, and sign results of a 60 s clip were identical in all 360 analyzed samples.
 
 Fig.~\ref{fig:ui} shows the interface after a video has been processed. The result video is shown next to a timed list of confirmed signs; selecting a time moves the video to that moment, and each sign can be expanded to show the cited legal passage with a link to the source document.
 
@@ -211,7 +212,7 @@ Fig.~\ref{fig:ui} shows the interface after a video has been processed. The resu
 \label{fig:ui}
 \end{figure}
 
-\section{Experiments}\label{sec:exp}
+\section{Experiments and Results}\label{sec:exp}
 
 \subsection{Setup and metrics}
 
@@ -388,7 +389,7 @@ P.131a, no parking & appendix passage on zone plates & Art.~22, rank 2 \\
 
 \subsection{Runtime}
 
-On the development GPU the fine-tuned detector needs 10.8 ms per image, the recognizer 0.12 ms per crop in batches of 50, and the complete per-image pipeline, including lane detection and retrieval, 46.2 ms. Uploaded video is slower than this per-image figure suggests, because every source frame must be decoded and every output frame drawn and encoded. With the settings of Section~\ref{sec:impl}, a 90 s clip is processed in 165 s, or 1.8 times its duration.
+On the development GPU the fine-tuned detector needs 10.8 ms per image, the recognizer 0.12 ms per crop in batches of 50, and the complete per-image pipeline, including lane detection and retrieval, 46.2 ms. Uploaded video is slower than this per-image figure suggests, because every source frame must be decoded and every output frame drawn and encoded. With the settings of Section~\ref{sec:impl}, a 90 s clip is processed in 153 s in a single run, or 1.7 times its duration.
 
 \section{Discussion}\label{sec:discussion}
 
@@ -398,13 +399,23 @@ The experiments support three observations. First, separating detection from cla
 
 The work has several limitations that follow from these observations. The recognizer covers 87 codes, which is only part of the QCVN 41:2024 catalog, and 32 of them have little training data. The labels for the extended codes and the precision figures on field video come from AI-assisted review rather than independent human annotation, and the field samples are small.
 
-The lane overlay has no Vietnamese ground truth, does not distinguish dashed from solid markings and is never used to decide which sign applies to the vehicle. Supplementary panels that restrict a sign by time, vehicle type or distance are not interpreted in the final version: an optical character recognition component read a distance panel correctly in a test, but its parser covered only time windows and vehicle types and night panels were unreadable, so it was disabled and sign applicability is reported as uncertain. Uploaded video is processed about 1.8 times slower than real time, a real-time streaming mode was prototyped but not retained, and the position input is simulated rather than taken from GPS. Finally, retrieval sometimes ranks a general article above the article that defines the detected sign, and the legal corpus has not been checked for current legal effect. In addition, the models were not compared with other published methods on a common public benchmark, because the merged data set, its 87-code ontology and the field video differ from those used in prior work; the reported gains are therefore relative to the project's own baselines. For these reasons ITAS-MM must be understood as a research prototype and not as a driving-safety system or a source of legal advice.
+The lane overlay has no Vietnamese ground truth, does not distinguish dashed from solid markings and is never used to decide which sign applies to the vehicle. On a 60 s demo clip the CULane-trained UFLD-v2 returned lane lines in 8 of 360 samples, some on kerbs or parked cars; on a 90 s night clip lines were shown in 178 of 540 samples (coverage, not accuracy). Lowering the row-existence threshold to 0.35 and 0.25 and brightening or contrast-enhancing the lane input (gamma, CLAHE) added mostly wrong lines or no correct ones, and were not adopted. Supplementary panels that restrict a sign by time, vehicle type or distance are not interpreted in the final version: an optical character recognition component read a distance panel correctly in a test, but its parser covered only time windows and vehicle types and night panels were unreadable, so it was disabled and sign applicability is reported as uncertain. Uploaded video is processed about 1.7 times slower than real time (one run), a real-time streaming mode was prototyped but not retained, and the position input is simulated rather than taken from GPS. Finally, retrieval sometimes ranks a general article above the article that defines the detected sign, and the legal corpus has not been checked for current legal effect. In addition, the models were not compared with other published methods on a common public benchmark, because the merged data set, its 87-code ontology and the field video differ from those used in prior work; the reported gains are therefore relative to the project's own baselines. For these reasons ITAS-MM must be understood as a research prototype and not as a driving-safety system or a source of legal advice.
 
 \section{Conclusion}\label{sec:conclusion}
 
-This paper presented ITAS-MM, a prototype that turns forward-camera video into confirmed Vietnamese traffic sign codes, cited legal passages and short spoken observations. A single-class detector, an 87-code classifier with a background class and a label-independent temporal module together achieve strong results on curated data and a measurable improvement in the stability of video decisions. The evaluation also shows clearly where the approach falls short: small and nighttime signs, a sizable gap between curated and real video, and the absence of human ground truth for field accuracy.
+This paper presented ITAS-MM, a prototype that turns forward-camera video into confirmed Vietnamese traffic sign codes, cited legal passages and short spoken observations. A single-class detector, an 87-code classifier with a background class and a label-independent temporal module together achieve strong results on curated data and a measurable improvement in the stability of video decisions. The evaluation also shows clearly where the approach falls short: small and nighttime signs, a sizable gap between curated and real video, and the absence of human ground truth for field accuracy. The source code, configuration and evaluation scripts are available at \url{https://github.com/BANGPC123/itas-mm-scaffold}.
 
-Future work should first build a source-disjoint field test set with human-reviewed boxes, codes and lanes, so that field precision and recall can be measured rather than estimated. Recognition of small signs could be improved with tiled inference and additional training crops between 16 and 32 pixels, and the most confused pairs need targeted data. Beyond recognition, the system would benefit from more output classes, a stronger multi-object tracker, lane markings classified as dashed or solid, supplementary-panel reading with its own test set, real GPS input and an optimized runtime that allows real-time streaming on embedded hardware. The source code, configuration and evaluation scripts are available at \url{https://github.com/BANGPC123/itas-mm-scaffold}.
+\section{Future Work}\label{sec:future}
+
+Future work should first build a source-disjoint field test set with human-reviewed boxes, codes and lanes, so that field precision and recall can be measured rather than estimated. Recognition of small signs could be improved with tiled inference and additional training crops between 16 and 32 pixels, and the most confused pairs need targeted data. Beyond recognition, the system would benefit from more output classes, a stronger multi-object tracker, lane markings classified as dashed or solid, supplementary-panel reading with its own test set, real GPS input and an optimized runtime that allows real-time streaming on embedded hardware.
+
+\section{Ethical Considerations}\label{sec:ethics}
+
+\textit{Privacy.} The field videos are publicly available driving recordings and are processed locally on the project machine; no video is uploaded to an external service. The system detects and classifies traffic sign panels only. It does not identify people or vehicles, and it stores no personal data beyond the uploaded file and its derived results on the local machine.
+
+\textit{Bias.} The training data come from five public collections, and the field evaluation videos were recorded in a single city. Small signs, nighttime scenes and the 32 low-support codes are recognized less reliably, so the system serves some conditions and regions worse than others. Labels for the extended codes and the field precision figures rely on AI-assisted review, which may carry systematic errors that have not been measured against independent human annotators.
+
+\textit{Safety and responsible use.} ITAS-MM is a research prototype. Its outputs, including the lane overlay, the spoken cues and the retrieved legal passages, are reference information only and must not replace the driver's own observation or professional legal advice. The spoken cues state explicitly that they are AI predictions, the legal corpus has not been checked for current legal effect, and the system is not intended for use while driving.
 
 \begin{thebibliography}{99}
 \bibitem{who2023} World Health Organization, \emph{Global Status Report on Road Safety 2023}. Geneva, Switzerland: WHO, 2023.
