@@ -4,10 +4,8 @@ data/regulations/raw/decree-168-2024-nd-cp/source.html whitespace=-trailing-spac
 data/regulations/raw/** -text
 data/regulations/current_raw/** -text
 data/regulations/current_raw/**/*.pdf binary
-
 # Reference manifests carry SHA256 of their own bytes; keep line endings exact.
 data/manifests/** -text
-
 # Model/checkpoint artifacts uploaded by owner through Git LFS (2026-10-18)
 *.pt filter=lfs diff=lfs merge=lfs -text
 *.pth filter=lfs diff=lfs merge=lfs -text
@@ -17,3 +15,4 @@ data/manifests/** -text
 *.onnx filter=lfs diff=lfs merge=lfs -text
 *.safetensors filter=lfs diff=lfs merge=lfs -text
 *.ckpt filter=lfs diff=lfs merge=lfs -text
+output/demo_20261114/**/*.mp4 filter=lfs diff=lfs merge=lfs -text

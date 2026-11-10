@@ -1,4 +1,4 @@
-path: D:/itas-mm/data/processed/canonical/itas_mm_v1/localization
+path: D:/DSP391m/datasets/ITAS-MM/processed/canonical/itas_mm_v1/localization
 train: images/train
 val: images/val
 test: images/test
