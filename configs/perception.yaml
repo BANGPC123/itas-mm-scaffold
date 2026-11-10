@@ -1,16 +1,29 @@
+# Imported 59-class checkpoint is a secondary *research overlay*, not an
+# automatic replacement of the verified production detector or legal classifier.
+auxiliary_sign_review:
+  enabled: true
+  weights_path: data/raw/user_archives_20261014/yolo11_optimized/weights/best.pt
+  labels_path: data/reference/yolo11_optimized_classes_20261014.json
+  image_size: 416
+  confidence_threshold: 0.65
+  overlap_iou: 0.35
+  max_candidates: 12
+
 sign_detector:
-  # No default weights ship with this repo — train on a labeled dataset first.
-  # See README.md "Training the sign detector".
-  weights_path: null            # e.g. "models/sign_detector/best.pt"
+  image_size: 640
+  video_image_size: 960
+  video_multiscale: true
+  secondary_image_size: 640
+  # Rollback: models/sign_detector/retrained_20261009.pt (previous default).
+  weights_path: models/sign_detector/finetuned_20261026.pt
   confidence_threshold: 0.35
   iou_threshold: 0.45
-  device: "cpu"                 # "cuda:0" if a GPU is available
-  # Compound-sign grouping: panels whose box centers are within this many
-  # pixels (at model input resolution) are grouped into one logical sign.
+  device: "auto"
+  # Retained for the legacy grouping entry point; runtime uses applicability rules.
   compound_group_distance_px: 40
 
 sahi:
-  enabled: true
+  enabled: false
   slice_height: 512
   slice_width: 512
   overlap_height_ratio: 0.2
@@ -18,8 +31,30 @@ sahi:
   postprocess_type: "NMS"
   postprocess_match_threshold: 0.5
 
+lane_visual_fallback:
+  camera_aware: true
+  surface_veto: true
+  surface_veto_path: models/lane/candidates/segformer_cityscapes_20261011
+  # Optional dashboard-heavy MP4 VISUAL ONLY. Never use BDD mask for scope.
+  model: yolopv2
+  weights_path: models/lane/candidates/yolopv2_official_20261011/yolopv2.pt
+  roi: 0.80
+  mask_threshold: 0.56
+  min_span_ratio: 0.20
+
+# Offline MP4 lane display. simple = UFLD-v2 polylines with light sanity filter and temporal
+# smoothing, no YOLOPv2 / surface veto / candidate overlay. precision = previous pipeline (rollback).
+offline_video_lane:
+  display: simple
+  display_row_ratio: 0.5
+
 lane_detector:
-  # Classical CV baseline (see README "Current status"). Not a learned model.
+  backend: ufld_v2
+  filter_geometry: false
+  half: true
+  weights_path: models/lane/selected_20261009.pth
+  device: auto
+  # Parameters used only when the classical backend is explicitly selected.
   canny_low_threshold: 50
   canny_high_threshold: 150
   hough_rho: 2
@@ -28,3 +63,33 @@ lane_detector:
   hough_min_line_length: 40
   hough_max_line_gap: 25
   roi_top_ratio: 0.6   # fraction of image height where the region of interest starts
+
+sign_recognizer:
+  # Rollback: models/sign_recognizer/retrained_20261009.pt with reference_gate_20261011_final.npz
+  # (confidence_threshold 0.63, reference_gate_margin 0.015). The old gate holds embeddings of the
+  # old encoder and cannot be used with the 2026-10-28 model, so no gate is configured.
+  weights_path: models/sign_recognizer/retrained_20261028.pt
+  confidence_threshold: 0.87   # calibrated on VAL; the checkpoint value takes precedence at load time
+  # Video only (stream_id set). Overrides the checkpoint threshold on the video path; still images keep the checkpoint value.
+  # Chosen at CP2 (2026-10-30): T2 value from docs/release_gate_v2.json, precision 90.7% on decided video tracks (cp2_grading.csv).
+  video_confidence_threshold: 0.6412901874067937
+  min_short_side: 32
+  video_min_short_side: 12
+  # Keep confident detector boxes that the recognizer scores as background
+  # (codes outside its class list; I.434a bus stop is a class since 2026-10-28) as unrecognised
+  # signs. Chosen on VAL only: 91% of such boxes at >=0.5 / >=16 px are real signs.
+  keep_background_detector_confidence: 0.5
+  keep_background_min_side: 16
+
+applicability:
+  current_vehicle: car
+  panel_overlap: 0.5
+  panel_gap_ratio: 0.5
+  projection_y_ratio: 0.8
+  boundary_margin_ratio: 0.1
+
+# Automatic candidates displayed separately from verified legal conditions.
+supplementary_ocr:
+  # Disabled in the final build (02/11/2026): the parser covers only time windows and vehicle
+  # types, results are not shown in the UI, and night panels were unreadable in the demo clips.
+  enabled: false

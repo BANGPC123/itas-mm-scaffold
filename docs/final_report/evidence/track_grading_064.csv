@@ -1,0 +1,53 @@
+file,code,in_N75,verdict,note
+000_R.302a_6JuxWcAf-wM_30_39.83.jpg,R.302a,yes,correct,
+001_R.303_6JuxWcAf-wM_30_47.17.jpg,R.303,no,wrong,"map-pin advert, not a sign"
+002_R.303_6JuxWcAf-wM_30_50.67.jpg,R.303,yes,wrong,"map-pin advert, not a sign"
+003_DP.134_6JuxWcAf-wM_30_59.33.jpg,DP.134,no,uncertain,unclear round sign
+004_P.130_6JuxWcAf-wM_830_840.50.jpg,P.130,yes,correct,
+005_P.106a_6JuxWcAf-wM_830_847.17.jpg,P.106a,yes,correct,
+006_P.104_6JuxWcAf-wM_830_850.33.jpg,P.104,yes,correct,
+007_W.207_6JuxWcAf-wM_830_853.33.jpg,W.207,no,correct,
+008_W.207_6JuxWcAf-wM_830_858.17.jpg,W.207,yes,correct,
+009_W.245a_6JuxWcAf-wM_830_859.33.jpg,W.245a,yes,correct,
+010_P.105_6JuxWcAf-wM_830_870.50.jpg,P.105,yes,uncertain,too blurred
+011_P.130_6JuxWcAf-wM_830_884.67.jpg,P.130,yes,correct,
+012_P.102_6JuxWcAf-wM_1630_1642.33.jpg,P.102,yes,uncertain,unreadable red blob
+013_W.224_6JuxWcAf-wM_1630_1643.67.jpg,W.224,no,uncertain,symbol not visible
+014_W.245a_6JuxWcAf-wM_1630_1649.83.jpg,W.245a,yes,correct,
+015_P.131a_6JuxWcAf-wM_1630_1674.83.jpg,P.131a,yes,correct,
+016_R.302a_6JuxWcAf-wM_2430_2478.50.jpg,R.302a,yes,correct,
+017_I.423_6JuxWcAf-wM_2430_2484.33.jpg,I.423,no,correct,
+018_I.423_6JuxWcAf-wM_2430_2485.83.jpg,I.423,yes,correct,
+019_P.131a_6JuxWcAf-wM_3230_3249.00.jpg,P.131a,yes,correct,
+020_P.131a_6JuxWcAf-wM_3230_3262.83.jpg,P.131a,yes,correct,
+021_P.131a_6JuxWcAf-wM_3230_3275.00.jpg,P.131a,yes,correct,
+022_P.131a_6JuxWcAf-wM_3230_3283.83.jpg,P.131a,yes,correct,
+023_I.423_6JuxWcAf-wM_3230_3283.00.jpg,I.423,yes,correct,
+024_P.112_YQl9c5gCjhg_30_32.83.jpg,P.112,yes,correct,
+025_P.117_YQl9c5gCjhg_30_43.67.jpg,P.117,yes,correct,
+026_P.117_YQl9c5gCjhg_734_736.67.jpg,P.117,yes,correct,
+027_R.302a_YQl9c5gCjhg_734_752.17.jpg,R.302a,yes,correct,
+028_P.102_YQl9c5gCjhg_734_755.50.jpg,P.102,yes,correct,
+029_P.102_YQl9c5gCjhg_734_756.67.jpg,P.102,yes,correct,
+030_P.102_YQl9c5gCjhg_734_765.50.jpg,P.102,yes,correct,
+031_P.131a_YQl9c5gCjhg_734_774.17.jpg,P.131a,yes,correct,
+032_P.102_YQl9c5gCjhg_1439_1476.50.jpg,P.102,yes,correct,
+033_R.302a_YQl9c5gCjhg_1439_1481.50.jpg,R.302a,yes,correct,
+034_P.102_YQl9c5gCjhg_1439_1498.33.jpg,P.102,yes,correct,
+035_P.131a_YQl9c5gCjhg_2144_2172.17.jpg,P.131a,yes,correct,
+036_R.302a_YQl9c5gCjhg_2144_2203.50.jpg,R.302a,yes,correct,
+037_I.407a_YQl9c5gCjhg_2849_2861.17.jpg,I.407a,yes,uncertain,blurred blue panel
+038_I.407a_YQl9c5gCjhg_2849_2863.00.jpg,I.407a,no,uncertain,blurred blue panel
+039_P.127_YQl9c5gCjhg_2849_2889.83.jpg,P.127,no,wrong,"crop is R.303 roundabout, P.127 only partly visible"
+040_R.303_YQl9c5gCjhg_2849_2891.00.jpg,R.303,yes,correct,
+041_P.103a_YQl9c5gCjhg_2849_2894.17.jpg,P.103a,no,uncertain,symbol unclear
+042_W.201a_bPFWcTjKdBU_30_67.00.jpg,W.201a,yes,uncertain,bend direction unclear
+043_I.423_bPFWcTjKdBU_30_81.67.jpg,I.423,yes,correct,
+044_I.423_bPFWcTjKdBU_30_83.83.jpg,I.423,yes,correct,
+045_P.103a_bPFWcTjKdBU_611_661.00.jpg,P.103a,no,correct,
+046_P.131a_bPFWcTjKdBU_611_669.67.jpg,P.131a,yes,correct,
+047_P.103a_bPFWcTjKdBU_611_666.33.jpg,P.103a,yes,wrong,"taxi-only prohibition, not P.103a"
+048_P.103c_bPFWcTjKdBU_2354_2356.50.jpg,P.103c,no,correct,
+049_P.103c_bPFWcTjKdBU_2354_2358.17.jpg,P.103c,no,correct,
+050_P.131a_bPFWcTjKdBU_2354_2366.50.jpg,P.131a,yes,correct,
+051_P.131a_bPFWcTjKdBU_2354_2389.67.jpg,P.131a,no,uncertain,unreadable blur

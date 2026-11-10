@@ -19,12 +19,22 @@ logger = get_logger(__name__)
 
 
 class VectorStore:
-    def __init__(self, rag_config: dict[str, Any], ollama_client: OllamaClient):
+    def __init__(
+        self,
+        rag_config: dict[str, Any],
+        ollama_client: OllamaClient,
+        *,
+        create_if_missing: bool = True,
+    ):
         self.ollama_client = ollama_client
         self._client = chromadb.PersistentClient(path=rag_config["vector_store_dir"])
-        self._collection = self._client.get_or_create_collection(
-            name=rag_config["collection_name"]
-        )
+        self._collection_name = rag_config["collection_name"]
+        if create_if_missing:
+            self._collection = self._client.get_or_create_collection(
+                name=self._collection_name
+            )
+        else:
+            self._collection = self._client.get_collection(name=self._collection_name)
 
     def index_chunks(self, chunks: list[DocumentChunk]) -> None:
         """Embed and upsert a list of chunks. Idempotent by chunk id."""
@@ -35,20 +45,80 @@ class VectorStore:
             )
             return
 
-        ids = [f"{c.source_file}::{c.chunk_index}" for c in chunks]
-        embeddings = [self.ollama_client.embed(c.text) for c in chunks]
+        ids = [self._chunk_id(chunk) for chunk in chunks]
         documents = [c.text for c in chunks]
-        metadatas = [
-            {"source_file": c.source_file, "chunk_index": c.chunk_index} for c in chunks
-        ]
+        embeddings = self.ollama_client.embed_many(documents)
+        metadatas = [self._metadata(chunk) for chunk in chunks]
 
         self._collection.upsert(
             ids=ids, embeddings=embeddings, documents=documents, metadatas=metadatas
         )
         logger.info("Indexed %d chunks into the vector store.", len(chunks))
 
-    def query(self, query_text: str, top_k: int) -> list[str]:
-        """Return the top_k most relevant chunk texts for query_text.
+    @staticmethod
+    def _chunk_id(chunk: DocumentChunk) -> str:
+        if not all(
+            value.strip()
+            for value in (chunk.document_id, chunk.locator_type, chunk.locator)
+        ):
+            raise ValueError(
+                "Chunk legal identity requires document_id, locator_type, and locator"
+            )
+        return (
+            f"{chunk.document_id}::{chunk.locator_type}::{chunk.locator}::"
+            f"{chunk.chunk_index}"
+        )
+
+    @staticmethod
+    def _metadata(chunk: DocumentChunk) -> dict[str, str | int]:
+        return {
+            "document_id": chunk.document_id,
+            "source_file": chunk.source_file,
+            "chunk_index": chunk.chunk_index,
+            "locator_type": chunk.locator_type,
+            "locator": chunk.locator,
+        }
+
+    def rebuild(
+        self,
+        chunks: list[DocumentChunk],
+        *,
+        fingerprint: str,
+        schema_version: str,
+        embedding_model: str,
+    ) -> None:
+        """Replace the derived collection after every candidate embeds successfully."""
+        if not chunks:
+            raise ValueError("Cannot rebuild a vector store from an empty corpus")
+
+        ids = [self._chunk_id(chunk) for chunk in chunks]
+        documents = [chunk.text for chunk in chunks]
+        embeddings = self.ollama_client.embed_many(documents)
+        metadatas = [self._metadata(chunk) for chunk in chunks]
+        metadata = {
+            "corpus_fingerprint": fingerprint,
+            "schema_version": schema_version,
+            "embedding_model": embedding_model,
+        }
+
+        self._client.delete_collection(name=self._collection_name)
+        self._collection = self._client.get_or_create_collection(
+            name=self._collection_name, metadata=metadata
+        )
+        self._collection.upsert(
+            ids=ids,
+            embeddings=embeddings,
+            documents=documents,
+            metadatas=metadatas,
+        )
+        logger.info("Rebuilt vector store with %d chunks.", len(chunks))
+
+    def get_index_metadata(self) -> dict[str, object]:
+        """Return metadata published with the current index collection."""
+        return dict(self._collection.metadata or {})
+
+    def query(self, query_text: str, top_k: int) -> list[DocumentChunk]:
+        """Return the top_k most relevant chunks with source metadata.
 
         Returns an empty list if the collection is empty rather than
         raising, so callers can handle "no regulation found" gracefully.
@@ -65,4 +135,19 @@ class VectorStore:
             query_embeddings=[query_embedding],
             n_results=min(top_k, self._collection.count()),
         )
-        return results["documents"][0] if results["documents"] else []
+        if not results["documents"]:
+            return []
+
+        documents = results["documents"][0]
+        metadatas = results["metadatas"][0]
+        return [
+            DocumentChunk(
+                text=text,
+                source_file=metadata.get("source_file", ""),
+                chunk_index=metadata.get("chunk_index", 0),
+                document_id=metadata.get("document_id", ""),
+                locator_type=metadata.get("locator_type", ""),
+                locator=metadata.get("locator", ""),
+            )
+            for text, metadata in zip(documents, metadatas, strict=True)
+        ]

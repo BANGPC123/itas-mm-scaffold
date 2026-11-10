@@ -1,0 +1,35 @@
+{
+    "schema_version":  1,
+    "purpose":  "Pinned official PDF bytes for the 2026-10-22 research snapshot, not current-law verification",
+    "source_count":  4,
+    "sources":  [
+                    {
+                        "file":  "36_2024_QH15_part1.pdf",
+                        "document":  "36/2024/QH15",
+                        "source_url":  "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/9/36-2024-qh15.pdf",
+                        "bytes":  782574,
+                        "sha256":  "e83b092fd1e93a63d3082424bd63e7ad99afcf39ba3729f6d82ce19fe8b33690"
+                    },
+                    {
+                        "file":  "36_2024_QH15_part2.pdf",
+                        "document":  "36/2024/QH15",
+                        "source_url":  "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/9/36-2024-qh15_tiep.pdf",
+                        "bytes":  751786,
+                        "sha256":  "55ba152f3abe925d9a75418c3e61bc0122824db41a0d2352053dbff2c6264f8c"
+                    },
+                    {
+                        "file":  "168_2024_NDCP.pdf",
+                        "document":  "168/2024/NĐ-CP",
+                        "source_url":  "https://datafiles.chinhphu.vn/cpp/files/vbpq/2025/01/168-nd-cp.signed.pdf",
+                        "bytes":  5088723,
+                        "sha256":  "7bb11b939d162499ab404aa41a940cce05dbf071d9cbae7a8898b00d4b4a48bd"
+                    },
+                    {
+                        "file":  "QCVN41_2024.pdf",
+                        "document":  "QCVN 41:2024/BGTVT",
+                        "source_url":  "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/11/51-bgtvt-kem.pdf",
+                        "bytes":  25535085,
+                        "sha256":  "b6b99d0a0aeb13fe79072831857ece15bb254d8fb7817e80e4a2739a0d2145ce"
+                    }
+                ]
+}

@@ -1,10 +1,6 @@
-"""Traffic sign detection: YOLOv11 (+ optional SAHI slicing) with
-compound-sign grouping.
+"""YOLOv11 panel localization with optional SAHI slicing.
 
-IMPORTANT: this module ships with no trained weights (see README
-"Current status"). If `weights_path` in configs/perception.yaml is null or
-the file does not exist, `SignDetector.detect()` logs a warning and returns
-an empty list rather than fabricating detections.
+Missing checkpoints return no detections. Context grouping runs after recognition.
 """
 from __future__ import annotations
 
@@ -26,7 +22,13 @@ class SignDetector:
 
         self.confidence_threshold = sd_cfg["confidence_threshold"]
         self.iou_threshold = sd_cfg["iou_threshold"]
+        self.image_size = sd_cfg.get('image_size',640)
+        self.video_multiscale = sd_cfg.get('video_multiscale', False)
+        self.secondary_image_size = sd_cfg.get('secondary_image_size', 640)
         self.device = sd_cfg["device"]
+        if self.device == "auto":
+            import torch
+            self.device = "0" if torch.cuda.is_available() else "cpu"
         self.compound_group_distance_px = sd_cfg["compound_group_distance_px"]
         self.sahi_enabled = self.sahi_cfg.get("enabled", False)
 
@@ -88,7 +90,18 @@ class SignDetector:
             if self.sahi_enabled and self._sahi_model is not None
             else self._detect_plain(image)
         )
-        return self._group_compound_signs(raw_boxes)
+        return raw_boxes
+
+    def detect_views(self, image: np.ndarray):
+        """Keep native coordinates for two inference scales; restore state."""
+        primary = self.detect(image)
+        original_size = self.image_size
+        try:
+            self.image_size = self.secondary_image_size
+            secondary = self.detect(image)
+        finally:
+            self.image_size = original_size
+        return primary, secondary
 
     def _detect_plain(self, image: np.ndarray) -> list[SignDetection]:
         results = self._model.predict(
@@ -96,6 +109,7 @@ class SignDetector:
             conf=self.confidence_threshold,
             iou=self.iou_threshold,
             device=self.device,
+            imgsz=self.image_size,
             verbose=False,
         )
         detections: list[SignDetection] = []
@@ -138,57 +152,6 @@ class SignDetector:
             )
         return detections
 
-    def _group_compound_signs(
-        self, detections: list[SignDetection]
-    ) -> list[SignDetection]:
-        """Group nearby panel detections into a single compound-sign entry.
-
-        Panels whose bounding boxes are within `compound_group_distance_px`
-        of each other (measured between box centers) are treated as one
-        compound sign assembly, per the project's grouping requirement.
-        """
-        if not detections:
-            return []
-
-        def center(d: SignDetection) -> tuple[float, float]:
-            x1, y1, x2, y2 = d.bbox_xyxy
-            return (x1 + x2) / 2, (y1 + y2) / 2
-
-        unassigned = list(detections)
-        groups: list[list[SignDetection]] = []
-
-        while unassigned:
-            seed = unassigned.pop(0)
-            group = [seed]
-            seed_c = center(seed)
-            remaining = []
-            for d in unassigned:
-                dc = center(d)
-                dist = ((dc[0] - seed_c[0]) ** 2 + (dc[1] - seed_c[1]) ** 2) ** 0.5
-                if dist <= self.compound_group_distance_px:
-                    group.append(d)
-                else:
-                    remaining.append(d)
-            unassigned = remaining
-            groups.append(group)
-
-        results: list[SignDetection] = []
-        for group in groups:
-            if len(group) == 1:
-                results.append(group[0])
-                continue
-
-            xs1 = [d.bbox_xyxy[0] for d in group]
-            ys1 = [d.bbox_xyxy[1] for d in group]
-            xs2 = [d.bbox_xyxy[2] for d in group]
-            ys2 = [d.bbox_xyxy[3] for d in group]
-            results.append(
-                SignDetection(
-                    label="compound_sign",
-                    confidence=min(d.confidence for d in group),
-                    bbox_xyxy=(min(xs1), min(ys1), max(xs2), max(ys2)),
-                    is_compound=True,
-                    panel_labels=[d.label for d in group],
-                )
-            )
-        return results
+    def _group_compound_signs(self, detections):
+        from src.context.sign_applicability import SignApplicability
+        return SignApplicability().group(detections)

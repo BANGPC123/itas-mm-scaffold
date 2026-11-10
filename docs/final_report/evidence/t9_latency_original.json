@@ -1,0 +1,3079 @@
+{
+  "git_head": "b693616a6b1697e2a262cb3c4f1336f64f19dd09",
+  "video": "output\\kiet_wp_20261029\\videos\\YQl9c5gCjhg.mp4",
+  "start_s": 30.0,
+  "sample_step_s": 0.2,
+  "frames_sampled": 120,
+  "warmup_frames_discarded": 5,
+  "endpoint_defaults": {
+    "synthesize_audio": true,
+    "annotate": true,
+    "road_bottom": 1.0
+  },
+  "configs": {
+    "lane_visual_roi_true": {
+      "summary": {
+        "frames_measured": 115,
+        "detection": {
+          "p50_ms": 25.4,
+          "p95_ms": 39.5,
+          "mean_ms": 27.0
+        },
+        "recognition": {
+          "p50_ms": 6.6,
+          "p95_ms": 17.3,
+          "mean_ms": 7.3
+        },
+        "lane": {
+          "p50_ms": 230.0,
+          "p95_ms": 287.8,
+          "mean_ms": 235.4
+        },
+        "reasoning": {
+          "p50_ms": 0.0,
+          "p95_ms": 1.1,
+          "mean_ms": 0.1
+        },
+        "tts": {
+          "p50_ms": 0.0,
+          "p95_ms": 520.2,
+          "mean_ms": 61.6
+        },
+        "total": {
+          "p50_ms": 271.7,
+          "p95_ms": 843.0,
+          "mean_ms": 338.6
+        }
+      },
+      "frames": [
+        {
+          "frame_timestamp_s": 31.0,
+          "wall_ms": 321.7,
+          "timings": {
+            "detection": 27.3,
+            "recognition": 1.4,
+            "lane": 284.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 321.1
+          }
+        },
+        {
+          "frame_timestamp_s": 31.2,
+          "wall_ms": 251.1,
+          "timings": {
+            "detection": 24.3,
+            "recognition": 1.4,
+            "lane": 218.3,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 250.5
+          }
+        },
+        {
+          "frame_timestamp_s": 31.4,
+          "wall_ms": 257.9,
+          "timings": {
+            "detection": 24.2,
+            "recognition": 6.9,
+            "lane": 219.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 257.4
+          }
+        },
+        {
+          "frame_timestamp_s": 31.6,
+          "wall_ms": 331.3,
+          "timings": {
+            "detection": 25.4,
+            "recognition": 17.4,
+            "lane": 281.9,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 330.9
+          }
+        },
+        {
+          "frame_timestamp_s": 31.8,
+          "wall_ms": 374.3,
+          "timings": {
+            "detection": 25.6,
+            "recognition": 51.9,
+            "lane": 290.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 373.9
+          }
+        },
+        {
+          "frame_timestamp_s": 32.0,
+          "wall_ms": 294.5,
+          "timings": {
+            "detection": 28.1,
+            "recognition": 15.0,
+            "lane": 244.9,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 294.0
+          }
+        },
+        {
+          "frame_timestamp_s": 32.2,
+          "wall_ms": 289.8,
+          "timings": {
+            "detection": 27.9,
+            "recognition": 15.1,
+            "lane": 240.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 289.3
+          }
+        },
+        {
+          "frame_timestamp_s": 32.4,
+          "wall_ms": 284.1,
+          "timings": {
+            "detection": 26.1,
+            "recognition": 17.3,
+            "lane": 233.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 283.6
+          }
+        },
+        {
+          "frame_timestamp_s": 32.6,
+          "wall_ms": 289.7,
+          "timings": {
+            "detection": 32.9,
+            "recognition": 14.1,
+            "lane": 235.6,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 289.2
+          }
+        },
+        {
+          "frame_timestamp_s": 32.8,
+          "wall_ms": 325.7,
+          "timings": {
+            "detection": 26.5,
+            "recognition": 16.0,
+            "lane": 272.2,
+            "supplementary_ocr": 2.7,
+            "reasoning": 1.2,
+            "tts": 0.0,
+            "total": 325.2
+          }
+        },
+        {
+          "frame_timestamp_s": 33.0,
+          "wall_ms": 329.0,
+          "timings": {
+            "detection": 27.7,
+            "recognition": 14.9,
+            "lane": 277.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 1.7,
+            "tts": 0.0,
+            "total": 328.5
+          }
+        },
+        {
+          "frame_timestamp_s": 33.2,
+          "wall_ms": 1571.3,
+          "timings": {
+            "detection": 25.1,
+            "recognition": 15.1,
+            "lane": 226.9,
+            "supplementary_ocr": 0.0,
+            "reasoning": 1.2,
+            "tts": 1295.7,
+            "total": 1570.9
+          }
+        },
+        {
+          "frame_timestamp_s": 33.4,
+          "wall_ms": 986.3,
+          "timings": {
+            "detection": 35.3,
+            "recognition": 50.5,
+            "lane": 367.8,
+            "supplementary_ocr": 1.5,
+            "reasoning": 1.1,
+            "tts": 521.3,
+            "total": 985.8
+          }
+        },
+        {
+          "frame_timestamp_s": 33.6,
+          "wall_ms": 744.5,
+          "timings": {
+            "detection": 25.5,
+            "recognition": 16.1,
+            "lane": 225.4,
+            "supplementary_ocr": 0.1,
+            "reasoning": 1.7,
+            "tts": 467.3,
+            "total": 744.0
+          }
+        },
+        {
+          "frame_timestamp_s": 33.8,
+          "wall_ms": 898.8,
+          "timings": {
+            "detection": 26.6,
+            "recognition": 15.1,
+            "lane": 224.2,
+            "supplementary_ocr": 1.8,
+            "reasoning": 0.9,
+            "tts": 622.9,
+            "total": 898.3
+          }
+        },
+        {
+          "frame_timestamp_s": 34.0,
+          "wall_ms": 768.9,
+          "timings": {
+            "detection": 33.9,
+            "recognition": 20.7,
+            "lane": 239.6,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.5,
+            "tts": 466.1,
+            "total": 768.4
+          }
+        },
+        {
+          "frame_timestamp_s": 34.2,
+          "wall_ms": 907.8,
+          "timings": {
+            "detection": 27.0,
+            "recognition": 14.9,
+            "lane": 265.8,
+            "supplementary_ocr": 1.6,
+            "reasoning": 0.6,
+            "tts": 590.2,
+            "total": 907.3
+          }
+        },
+        {
+          "frame_timestamp_s": 34.4,
+          "wall_ms": 410.0,
+          "timings": {
+            "detection": 31.1,
+            "recognition": 16.0,
+            "lane": 356.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 409.6
+          }
+        },
+        {
+          "frame_timestamp_s": 34.6,
+          "wall_ms": 264.6,
+          "timings": {
+            "detection": 25.4,
+            "recognition": 16.0,
+            "lane": 216.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 264.0
+          }
+        },
+        {
+          "frame_timestamp_s": 34.8,
+          "wall_ms": 290.6,
+          "timings": {
+            "detection": 27.8,
+            "recognition": 23.8,
+            "lane": 228.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 290.1
+          }
+        },
+        {
+          "frame_timestamp_s": 35.0,
+          "wall_ms": 285.1,
+          "timings": {
+            "detection": 23.0,
+            "recognition": 1.3,
+            "lane": 254.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 284.6
+          }
+        },
+        {
+          "frame_timestamp_s": 35.2,
+          "wall_ms": 323.1,
+          "timings": {
+            "detection": 36.5,
+            "recognition": 7.7,
+            "lane": 272.3,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 322.6
+          }
+        },
+        {
+          "frame_timestamp_s": 35.4,
+          "wall_ms": 293.2,
+          "timings": {
+            "detection": 26.4,
+            "recognition": 14.0,
+            "lane": 245.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 292.8
+          }
+        },
+        {
+          "frame_timestamp_s": 35.6,
+          "wall_ms": 245.4,
+          "timings": {
+            "detection": 26.2,
+            "recognition": 1.6,
+            "lane": 211.3,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 244.9
+          }
+        },
+        {
+          "frame_timestamp_s": 35.8,
+          "wall_ms": 271.0,
+          "timings": {
+            "detection": 39.3,
+            "recognition": 8.1,
+            "lane": 217.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 270.6
+          }
+        },
+        {
+          "frame_timestamp_s": 36.0,
+          "wall_ms": 265.4,
+          "timings": {
+            "detection": 28.1,
+            "recognition": 11.7,
+            "lane": 219.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 264.9
+          }
+        },
+        {
+          "frame_timestamp_s": 36.2,
+          "wall_ms": 279.7,
+          "timings": {
+            "detection": 27.3,
+            "recognition": 9.3,
+            "lane": 236.9,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 279.3
+          }
+        },
+        {
+          "frame_timestamp_s": 36.4,
+          "wall_ms": 279.7,
+          "timings": {
+            "detection": 26.3,
+            "recognition": 9.3,
+            "lane": 237.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 279.2
+          }
+        },
+        {
+          "frame_timestamp_s": 36.6,
+          "wall_ms": 256.6,
+          "timings": {
+            "detection": 26.2,
+            "recognition": 1.3,
+            "lane": 223.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 256.2
+          }
+        },
+        {
+          "frame_timestamp_s": 36.8,
+          "wall_ms": 261.9,
+          "timings": {
+            "detection": 22.0,
+            "recognition": 1.4,
+            "lane": 232.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 261.4
+          }
+        },
+        {
+          "frame_timestamp_s": 37.0,
+          "wall_ms": 273.1,
+          "timings": {
+            "detection": 24.3,
+            "recognition": 7.8,
+            "lane": 234.4,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 272.6
+          }
+        },
+        {
+          "frame_timestamp_s": 37.2,
+          "wall_ms": 307.2,
+          "timings": {
+            "detection": 27.1,
+            "recognition": 10.3,
+            "lane": 263.4,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 306.8
+          }
+        },
+        {
+          "frame_timestamp_s": 37.4,
+          "wall_ms": 256.7,
+          "timings": {
+            "detection": 25.9,
+            "recognition": 1.3,
+            "lane": 223.3,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 256.3
+          }
+        },
+        {
+          "frame_timestamp_s": 37.6,
+          "wall_ms": 255.5,
+          "timings": {
+            "detection": 22.8,
+            "recognition": 1.6,
+            "lane": 224.4,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 255.1
+          }
+        },
+        {
+          "frame_timestamp_s": 37.8,
+          "wall_ms": 297.7,
+          "timings": {
+            "detection": 31.7,
+            "recognition": 1.4,
+            "lane": 256.3,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 297.2
+          }
+        },
+        {
+          "frame_timestamp_s": 38.0,
+          "wall_ms": 265.8,
+          "timings": {
+            "detection": 27.6,
+            "recognition": 1.7,
+            "lane": 229.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 265.3
+          }
+        },
+        {
+          "frame_timestamp_s": 38.2,
+          "wall_ms": 270.4,
+          "timings": {
+            "detection": 25.0,
+            "recognition": 1.5,
+            "lane": 237.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 269.9
+          }
+        },
+        {
+          "frame_timestamp_s": 38.4,
+          "wall_ms": 248.7,
+          "timings": {
+            "detection": 23.2,
+            "recognition": 1.4,
+            "lane": 214.8,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 248.2
+          }
+        },
+        {
+          "frame_timestamp_s": 38.6,
+          "wall_ms": 242.3,
+          "timings": {
+            "detection": 22.3,
+            "recognition": 1.5,
+            "lane": 209.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 241.7
+          }
+        },
+        {
+          "frame_timestamp_s": 38.8,
+          "wall_ms": 236.2,
+          "timings": {
+            "detection": 24.1,
+            "recognition": 1.5,
+            "lane": 201.6,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 235.8
+          }
+        },
+        {
+          "frame_timestamp_s": 39.0,
+          "wall_ms": 233.0,
+          "timings": {
+            "detection": 22.4,
+            "recognition": 1.3,
+            "lane": 201.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 232.6
+          }
+        },
+        {
+          "frame_timestamp_s": 39.2,
+          "wall_ms": 253.5,
+          "timings": {
+            "detection": 23.1,
+            "recognition": 1.5,
+            "lane": 222.1,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 253.0
+          }
+        },
+        {
+          "frame_timestamp_s": 39.4,
+          "wall_ms": 254.6,
+          "timings": {
+            "detection": 26.0,
+            "recognition": 2.0,
+            "lane": 218.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 254.0
+          }
+        },
+        {
+          "frame_timestamp_s": 39.6,
+          "wall_ms": 236.5,
+          "timings": {
+            "detection": 25.1,
+            "recognition": 1.4,
+            "lane": 202.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 236.1
+          }
+        },
+        {
+          "frame_timestamp_s": 39.8,
+          "wall_ms": 237.0,
+          "timings": {
+            "detection": 22.0,
+            "recognition": 1.3,
+            "lane": 206.9,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 236.5
+          }
+        },
+        {
+          "frame_timestamp_s": 40.0,
+          "wall_ms": 232.8,
+          "timings": {
+            "detection": 22.2,
+            "recognition": 1.4,
+            "lane": 202.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 232.4
+          }
+        },
+        {
+          "frame_timestamp_s": 40.2,
+          "wall_ms": 235.7,
+          "timings": {
+            "detection": 22.5,
+            "recognition": 1.5,
+            "lane": 204.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 235.2
+          }
+        },
+        {
+          "frame_timestamp_s": 40.4,
+          "wall_ms": 268.4,
+          "timings": {
+            "detection": 24.4,
+            "recognition": 9.7,
+            "lane": 225.8,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 267.9
+          }
+        },
+        {
+          "frame_timestamp_s": 40.6,
+          "wall_ms": 251.6,
+          "timings": {
+            "detection": 29.2,
+            "recognition": 7.1,
+            "lane": 208.6,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 251.2
+          }
+        },
+        {
+          "frame_timestamp_s": 40.8,
+          "wall_ms": 239.6,
+          "timings": {
+            "detection": 26.6,
+            "recognition": 1.3,
+            "lane": 203.8,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 239.1
+          }
+        },
+        {
+          "frame_timestamp_s": 41.0,
+          "wall_ms": 240.1,
+          "timings": {
+            "detection": 26.9,
+            "recognition": 1.4,
+            "lane": 205.1,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 239.7
+          }
+        },
+        {
+          "frame_timestamp_s": 41.2,
+          "wall_ms": 246.2,
+          "timings": {
+            "detection": 23.4,
+            "recognition": 1.5,
+            "lane": 214.6,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 245.7
+          }
+        },
+        {
+          "frame_timestamp_s": 41.4,
+          "wall_ms": 277.1,
+          "timings": {
+            "detection": 22.5,
+            "recognition": 6.7,
+            "lane": 234.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 276.4
+          }
+        },
+        {
+          "frame_timestamp_s": 41.6,
+          "wall_ms": 324.5,
+          "timings": {
+            "detection": 40.1,
+            "recognition": 15.7,
+            "lane": 261.8,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 324.1
+          }
+        },
+        {
+          "frame_timestamp_s": 41.8,
+          "wall_ms": 254.6,
+          "timings": {
+            "detection": 23.6,
+            "recognition": 7.9,
+            "lane": 216.3,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 254.1
+          }
+        },
+        {
+          "frame_timestamp_s": 42.0,
+          "wall_ms": 287.6,
+          "timings": {
+            "detection": 26.8,
+            "recognition": 6.9,
+            "lane": 246.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 287.1
+          }
+        },
+        {
+          "frame_timestamp_s": 42.2,
+          "wall_ms": 856.2,
+          "timings": {
+            "detection": 25.6,
+            "recognition": 14.4,
+            "lane": 223.6,
+            "supplementary_ocr": 2.6,
+            "reasoning": 1.4,
+            "tts": 578.9,
+            "total": 855.6
+          }
+        },
+        {
+          "frame_timestamp_s": 42.4,
+          "wall_ms": 798.5,
+          "timings": {
+            "detection": 26.3,
+            "recognition": 16.6,
+            "lane": 286.8,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.9,
+            "tts": 460.0,
+            "total": 798.0
+          }
+        },
+        {
+          "frame_timestamp_s": 42.6,
+          "wall_ms": 275.4,
+          "timings": {
+            "detection": 23.8,
+            "recognition": 7.0,
+            "lane": 237.1,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 274.9
+          }
+        },
+        {
+          "frame_timestamp_s": 42.8,
+          "wall_ms": 310.5,
+          "timings": {
+            "detection": 30.6,
+            "recognition": 13.5,
+            "lane": 258.8,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 310.0
+          }
+        },
+        {
+          "frame_timestamp_s": 43.0,
+          "wall_ms": 780.8,
+          "timings": {
+            "detection": 32.1,
+            "recognition": 8.6,
+            "lane": 237.8,
+            "supplementary_ocr": 1.4,
+            "reasoning": 1.1,
+            "tts": 491.5,
+            "total": 780.4
+          }
+        },
+        {
+          "frame_timestamp_s": 43.2,
+          "wall_ms": 814.8,
+          "timings": {
+            "detection": 26.6,
+            "recognition": 7.2,
+            "lane": 251.6,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.6,
+            "tts": 519.8,
+            "total": 814.0
+          }
+        },
+        {
+          "frame_timestamp_s": 43.4,
+          "wall_ms": 838.1,
+          "timings": {
+            "detection": 30.5,
+            "recognition": 16.6,
+            "lane": 283.8,
+            "supplementary_ocr": 1.6,
+            "reasoning": 0.5,
+            "tts": 494.7,
+            "total": 837.6
+          }
+        },
+        {
+          "frame_timestamp_s": 43.6,
+          "wall_ms": 1051.8,
+          "timings": {
+            "detection": 72.2,
+            "recognition": 16.1,
+            "lane": 378.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.6,
+            "tts": 575.7,
+            "total": 1051.3
+          }
+        },
+        {
+          "frame_timestamp_s": 43.8,
+          "wall_ms": 256.4,
+          "timings": {
+            "detection": 24.1,
+            "recognition": 7.8,
+            "lane": 217.8,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 255.8
+          }
+        },
+        {
+          "frame_timestamp_s": 44.0,
+          "wall_ms": 243.7,
+          "timings": {
+            "detection": 22.4,
+            "recognition": 1.3,
+            "lane": 213.1,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 243.2
+          }
+        },
+        {
+          "frame_timestamp_s": 44.2,
+          "wall_ms": 262.0,
+          "timings": {
+            "detection": 21.0,
+            "recognition": 7.0,
+            "lane": 227.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 261.5
+          }
+        },
+        {
+          "frame_timestamp_s": 44.4,
+          "wall_ms": 305.4,
+          "timings": {
+            "detection": 22.7,
+            "recognition": 14.7,
+            "lane": 260.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 304.9
+          }
+        },
+        {
+          "frame_timestamp_s": 44.6,
+          "wall_ms": 272.2,
+          "timings": {
+            "detection": 23.3,
+            "recognition": 10.0,
+            "lane": 232.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 271.7
+          }
+        },
+        {
+          "frame_timestamp_s": 44.8,
+          "wall_ms": 277.8,
+          "timings": {
+            "detection": 23.1,
+            "recognition": 7.9,
+            "lane": 239.9,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 277.2
+          }
+        },
+        {
+          "frame_timestamp_s": 45.0,
+          "wall_ms": 278.9,
+          "timings": {
+            "detection": 21.9,
+            "recognition": 7.6,
+            "lane": 242.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 278.3
+          }
+        },
+        {
+          "frame_timestamp_s": 45.2,
+          "wall_ms": 281.2,
+          "timings": {
+            "detection": 23.3,
+            "recognition": 6.9,
+            "lane": 244.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 280.8
+          }
+        },
+        {
+          "frame_timestamp_s": 45.4,
+          "wall_ms": 297.3,
+          "timings": {
+            "detection": 23.1,
+            "recognition": 7.7,
+            "lane": 259.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 296.8
+          }
+        },
+        {
+          "frame_timestamp_s": 45.6,
+          "wall_ms": 280.0,
+          "timings": {
+            "detection": 23.7,
+            "recognition": 1.5,
+            "lane": 248.1,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 279.4
+          }
+        },
+        {
+          "frame_timestamp_s": 45.8,
+          "wall_ms": 295.4,
+          "timings": {
+            "detection": 22.3,
+            "recognition": 1.3,
+            "lane": 264.6,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 295.0
+          }
+        },
+        {
+          "frame_timestamp_s": 46.0,
+          "wall_ms": 289.0,
+          "timings": {
+            "detection": 24.7,
+            "recognition": 1.4,
+            "lane": 254.8,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 288.6
+          }
+        },
+        {
+          "frame_timestamp_s": 46.2,
+          "wall_ms": 247.3,
+          "timings": {
+            "detection": 21.9,
+            "recognition": 1.3,
+            "lane": 217.1,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 246.9
+          }
+        },
+        {
+          "frame_timestamp_s": 46.4,
+          "wall_ms": 260.7,
+          "timings": {
+            "detection": 21.6,
+            "recognition": 1.4,
+            "lane": 230.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 259.9
+          }
+        },
+        {
+          "frame_timestamp_s": 46.6,
+          "wall_ms": 361.1,
+          "timings": {
+            "detection": 42.6,
+            "recognition": 3.1,
+            "lane": 307.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 360.6
+          }
+        },
+        {
+          "frame_timestamp_s": 46.8,
+          "wall_ms": 309.4,
+          "timings": {
+            "detection": 34.4,
+            "recognition": 1.6,
+            "lane": 266.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 309.0
+          }
+        },
+        {
+          "frame_timestamp_s": 47.0,
+          "wall_ms": 329.2,
+          "timings": {
+            "detection": 23.7,
+            "recognition": 1.4,
+            "lane": 296.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 328.6
+          }
+        },
+        {
+          "frame_timestamp_s": 47.2,
+          "wall_ms": 268.2,
+          "timings": {
+            "detection": 26.6,
+            "recognition": 1.8,
+            "lane": 233.3,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 267.7
+          }
+        },
+        {
+          "frame_timestamp_s": 47.4,
+          "wall_ms": 296.6,
+          "timings": {
+            "detection": 42.0,
+            "recognition": 2.3,
+            "lane": 243.9,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 296.0
+          }
+        },
+        {
+          "frame_timestamp_s": 47.6,
+          "wall_ms": 264.1,
+          "timings": {
+            "detection": 24.5,
+            "recognition": 1.6,
+            "lane": 228.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 263.5
+          }
+        },
+        {
+          "frame_timestamp_s": 47.8,
+          "wall_ms": 282.5,
+          "timings": {
+            "detection": 32.1,
+            "recognition": 1.3,
+            "lane": 241.4,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 282.0
+          }
+        },
+        {
+          "frame_timestamp_s": 48.0,
+          "wall_ms": 269.5,
+          "timings": {
+            "detection": 26.6,
+            "recognition": 1.4,
+            "lane": 235.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 269.0
+          }
+        },
+        {
+          "frame_timestamp_s": 48.2,
+          "wall_ms": 277.0,
+          "timings": {
+            "detection": 21.5,
+            "recognition": 1.3,
+            "lane": 247.6,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 276.5
+          }
+        },
+        {
+          "frame_timestamp_s": 48.4,
+          "wall_ms": 248.2,
+          "timings": {
+            "detection": 22.6,
+            "recognition": 1.4,
+            "lane": 217.1,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 247.7
+          }
+        },
+        {
+          "frame_timestamp_s": 48.6,
+          "wall_ms": 296.7,
+          "timings": {
+            "detection": 23.7,
+            "recognition": 1.5,
+            "lane": 264.4,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 296.3
+          }
+        },
+        {
+          "frame_timestamp_s": 48.8,
+          "wall_ms": 268.3,
+          "timings": {
+            "detection": 25.0,
+            "recognition": 7.3,
+            "lane": 228.9,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 267.7
+          }
+        },
+        {
+          "frame_timestamp_s": 49.0,
+          "wall_ms": 247.7,
+          "timings": {
+            "detection": 21.8,
+            "recognition": 1.3,
+            "lane": 217.4,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 247.2
+          }
+        },
+        {
+          "frame_timestamp_s": 49.2,
+          "wall_ms": 253.3,
+          "timings": {
+            "detection": 22.6,
+            "recognition": 1.6,
+            "lane": 221.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 252.8
+          }
+        },
+        {
+          "frame_timestamp_s": 49.4,
+          "wall_ms": 262.0,
+          "timings": {
+            "detection": 23.9,
+            "recognition": 8.6,
+            "lane": 222.1,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 261.5
+          }
+        },
+        {
+          "frame_timestamp_s": 49.6,
+          "wall_ms": 254.6,
+          "timings": {
+            "detection": 22.0,
+            "recognition": 1.3,
+            "lane": 224.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 254.1
+          }
+        },
+        {
+          "frame_timestamp_s": 49.8,
+          "wall_ms": 259.7,
+          "timings": {
+            "detection": 27.9,
+            "recognition": 1.6,
+            "lane": 222.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 259.1
+          }
+        },
+        {
+          "frame_timestamp_s": 50.0,
+          "wall_ms": 262.2,
+          "timings": {
+            "detection": 24.7,
+            "recognition": 1.4,
+            "lane": 230.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 261.7
+          }
+        },
+        {
+          "frame_timestamp_s": 50.2,
+          "wall_ms": 268.3,
+          "timings": {
+            "detection": 41.4,
+            "recognition": 7.2,
+            "lane": 212.3,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 267.9
+          }
+        },
+        {
+          "frame_timestamp_s": 50.4,
+          "wall_ms": 277.5,
+          "timings": {
+            "detection": 34.2,
+            "recognition": 1.4,
+            "lane": 230.1,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 277.0
+          }
+        },
+        {
+          "frame_timestamp_s": 50.6,
+          "wall_ms": 245.7,
+          "timings": {
+            "detection": 24.5,
+            "recognition": 1.5,
+            "lane": 213.1,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 245.3
+          }
+        },
+        {
+          "frame_timestamp_s": 50.8,
+          "wall_ms": 273.3,
+          "timings": {
+            "detection": 25.6,
+            "recognition": 1.4,
+            "lane": 238.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 272.7
+          }
+        },
+        {
+          "frame_timestamp_s": 51.0,
+          "wall_ms": 268.1,
+          "timings": {
+            "detection": 23.5,
+            "recognition": 1.5,
+            "lane": 236.4,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 267.8
+          }
+        },
+        {
+          "frame_timestamp_s": 51.2,
+          "wall_ms": 155.7,
+          "timings": {
+            "detection": 22.8,
+            "recognition": 1.5,
+            "lane": 119.3,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 155.1
+          }
+        },
+        {
+          "frame_timestamp_s": 51.4,
+          "wall_ms": 254.2,
+          "timings": {
+            "detection": 26.6,
+            "recognition": 1.4,
+            "lane": 219.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 253.8
+          }
+        },
+        {
+          "frame_timestamp_s": 51.6,
+          "wall_ms": 286.5,
+          "timings": {
+            "detection": 24.9,
+            "recognition": 1.4,
+            "lane": 253.4,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 286.0
+          }
+        },
+        {
+          "frame_timestamp_s": 51.8,
+          "wall_ms": 142.1,
+          "timings": {
+            "detection": 23.6,
+            "recognition": 1.5,
+            "lane": 107.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 141.6
+          }
+        },
+        {
+          "frame_timestamp_s": 52.0,
+          "wall_ms": 244.2,
+          "timings": {
+            "detection": 24.7,
+            "recognition": 1.4,
+            "lane": 211.6,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 243.7
+          }
+        },
+        {
+          "frame_timestamp_s": 52.2,
+          "wall_ms": 282.0,
+          "timings": {
+            "detection": 22.4,
+            "recognition": 1.8,
+            "lane": 250.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 281.5
+          }
+        },
+        {
+          "frame_timestamp_s": 52.4,
+          "wall_ms": 146.4,
+          "timings": {
+            "detection": 23.4,
+            "recognition": 1.8,
+            "lane": 115.1,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 146.0
+          }
+        },
+        {
+          "frame_timestamp_s": 52.6,
+          "wall_ms": 279.0,
+          "timings": {
+            "detection": 43.6,
+            "recognition": 7.6,
+            "lane": 220.4,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 278.4
+          }
+        },
+        {
+          "frame_timestamp_s": 52.8,
+          "wall_ms": 266.8,
+          "timings": {
+            "detection": 23.8,
+            "recognition": 21.9,
+            "lane": 212.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 266.1
+          }
+        },
+        {
+          "frame_timestamp_s": 53.0,
+          "wall_ms": 250.2,
+          "timings": {
+            "detection": 33.9,
+            "recognition": 9.2,
+            "lane": 200.3,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 249.7
+          }
+        },
+        {
+          "frame_timestamp_s": 53.2,
+          "wall_ms": 265.9,
+          "timings": {
+            "detection": 30.3,
+            "recognition": 6.6,
+            "lane": 216.3,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 265.4
+          }
+        },
+        {
+          "frame_timestamp_s": 53.4,
+          "wall_ms": 311.6,
+          "timings": {
+            "detection": 31.8,
+            "recognition": 8.4,
+            "lane": 264.6,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 311.1
+          }
+        },
+        {
+          "frame_timestamp_s": 53.6,
+          "wall_ms": 249.4,
+          "timings": {
+            "detection": 23.3,
+            "recognition": 8.1,
+            "lane": 211.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 249.0
+          }
+        },
+        {
+          "frame_timestamp_s": 53.8,
+          "wall_ms": 267.5,
+          "timings": {
+            "detection": 30.7,
+            "recognition": 12.2,
+            "lane": 216.8,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 267.1
+          }
+        }
+      ]
+    },
+    "lane_visual_roi_false": {
+      "summary": {
+        "frames_measured": 115,
+        "detection": {
+          "p50_ms": 24.3,
+          "p95_ms": 38.7,
+          "mean_ms": 26.7
+        },
+        "recognition": {
+          "p50_ms": 6.4,
+          "p95_ms": 18.7,
+          "mean_ms": 6.8
+        },
+        "lane": {
+          "p50_ms": 41.1,
+          "p95_ms": 58.6,
+          "mean_ms": 43.5
+        },
+        "reasoning": {
+          "p50_ms": 0.0,
+          "p95_ms": 0.8,
+          "mean_ms": 0.1
+        },
+        "tts": {
+          "p50_ms": 0.0,
+          "p95_ms": 493.7,
+          "mean_ms": 52.2
+        },
+        "total": {
+          "p50_ms": 78.9,
+          "p95_ms": 618.1,
+          "mean_ms": 136.1
+        }
+      },
+      "frames": [
+        {
+          "frame_timestamp_s": 31.0,
+          "wall_ms": 67.5,
+          "timings": {
+            "detection": 20.8,
+            "recognition": 1.4,
+            "lane": 38.4,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 67.1
+          }
+        },
+        {
+          "frame_timestamp_s": 31.2,
+          "wall_ms": 74.9,
+          "timings": {
+            "detection": 22.7,
+            "recognition": 1.6,
+            "lane": 43.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 74.3
+          }
+        },
+        {
+          "frame_timestamp_s": 31.4,
+          "wall_ms": 85.1,
+          "timings": {
+            "detection": 23.6,
+            "recognition": 7.4,
+            "lane": 44.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 84.6
+          }
+        },
+        {
+          "frame_timestamp_s": 31.6,
+          "wall_ms": 87.5,
+          "timings": {
+            "detection": 24.5,
+            "recognition": 14.6,
+            "lane": 41.3,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 87.0
+          }
+        },
+        {
+          "frame_timestamp_s": 31.8,
+          "wall_ms": 96.6,
+          "timings": {
+            "detection": 25.7,
+            "recognition": 18.7,
+            "lane": 42.9,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 95.9
+          }
+        },
+        {
+          "frame_timestamp_s": 32.0,
+          "wall_ms": 91.7,
+          "timings": {
+            "detection": 25.7,
+            "recognition": 16.5,
+            "lane": 42.6,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 91.1
+          }
+        },
+        {
+          "frame_timestamp_s": 32.2,
+          "wall_ms": 84.4,
+          "timings": {
+            "detection": 25.1,
+            "recognition": 15.1,
+            "lane": 37.6,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 83.9
+          }
+        },
+        {
+          "frame_timestamp_s": 32.4,
+          "wall_ms": 87.7,
+          "timings": {
+            "detection": 23.7,
+            "recognition": 16.1,
+            "lane": 41.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 87.2
+          }
+        },
+        {
+          "frame_timestamp_s": 32.6,
+          "wall_ms": 85.3,
+          "timings": {
+            "detection": 23.8,
+            "recognition": 14.2,
+            "lane": 38.4,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 84.8
+          }
+        },
+        {
+          "frame_timestamp_s": 32.8,
+          "wall_ms": 88.8,
+          "timings": {
+            "detection": 23.6,
+            "recognition": 18.7,
+            "lane": 37.3,
+            "supplementary_ocr": 1.3,
+            "reasoning": 0.6,
+            "tts": 0.0,
+            "total": 88.2
+          }
+        },
+        {
+          "frame_timestamp_s": 33.0,
+          "wall_ms": 98.2,
+          "timings": {
+            "detection": 23.9,
+            "recognition": 23.5,
+            "lane": 38.9,
+            "supplementary_ocr": 0.0,
+            "reasoning": 1.2,
+            "tts": 0.0,
+            "total": 97.8
+          }
+        },
+        {
+          "frame_timestamp_s": 33.2,
+          "wall_ms": 560.5,
+          "timings": {
+            "detection": 27.1,
+            "recognition": 14.1,
+            "lane": 37.3,
+            "supplementary_ocr": 0.0,
+            "reasoning": 1.2,
+            "tts": 472.7,
+            "total": 560.0
+          }
+        },
+        {
+          "frame_timestamp_s": 33.4,
+          "wall_ms": 621.4,
+          "timings": {
+            "detection": 26.2,
+            "recognition": 19.8,
+            "lane": 42.7,
+            "supplementary_ocr": 0.1,
+            "reasoning": 1.1,
+            "tts": 523.5,
+            "total": 620.9
+          }
+        },
+        {
+          "frame_timestamp_s": 33.6,
+          "wall_ms": 580.6,
+          "timings": {
+            "detection": 29.4,
+            "recognition": 19.2,
+            "lane": 40.5,
+            "supplementary_ocr": 1.3,
+            "reasoning": 1.3,
+            "tts": 480.6,
+            "total": 580.1
+          }
+        },
+        {
+          "frame_timestamp_s": 33.8,
+          "wall_ms": 620.7,
+          "timings": {
+            "detection": 31.8,
+            "recognition": 18.2,
+            "lane": 57.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.9,
+            "tts": 505.8,
+            "total": 620.2
+          }
+        },
+        {
+          "frame_timestamp_s": 34.0,
+          "wall_ms": 632.5,
+          "timings": {
+            "detection": 38.7,
+            "recognition": 14.6,
+            "lane": 62.6,
+            "supplementary_ocr": 1.5,
+            "reasoning": 0.7,
+            "tts": 507.4,
+            "total": 632.0
+          }
+        },
+        {
+          "frame_timestamp_s": 34.2,
+          "wall_ms": 643.1,
+          "timings": {
+            "detection": 45.0,
+            "recognition": 21.6,
+            "lane": 102.1,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.7,
+            "tts": 466.5,
+            "total": 642.6
+          }
+        },
+        {
+          "frame_timestamp_s": 34.4,
+          "wall_ms": 185.2,
+          "timings": {
+            "detection": 68.4,
+            "recognition": 15.6,
+            "lane": 94.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 184.7
+          }
+        },
+        {
+          "frame_timestamp_s": 34.6,
+          "wall_ms": 108.7,
+          "timings": {
+            "detection": 36.4,
+            "recognition": 17.3,
+            "lane": 47.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 108.0
+          }
+        },
+        {
+          "frame_timestamp_s": 34.8,
+          "wall_ms": 102.3,
+          "timings": {
+            "detection": 32.7,
+            "recognition": 19.1,
+            "lane": 42.9,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 101.7
+          }
+        },
+        {
+          "frame_timestamp_s": 35.0,
+          "wall_ms": 74.9,
+          "timings": {
+            "detection": 24.1,
+            "recognition": 1.9,
+            "lane": 42.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 74.3
+          }
+        },
+        {
+          "frame_timestamp_s": 35.2,
+          "wall_ms": 92.4,
+          "timings": {
+            "detection": 36.8,
+            "recognition": 7.0,
+            "lane": 41.6,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 91.8
+          }
+        },
+        {
+          "frame_timestamp_s": 35.4,
+          "wall_ms": 87.1,
+          "timings": {
+            "detection": 25.0,
+            "recognition": 14.9,
+            "lane": 40.9,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 86.5
+          }
+        },
+        {
+          "frame_timestamp_s": 35.6,
+          "wall_ms": 69.8,
+          "timings": {
+            "detection": 21.1,
+            "recognition": 1.4,
+            "lane": 40.6,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 69.2
+          }
+        },
+        {
+          "frame_timestamp_s": 35.8,
+          "wall_ms": 81.4,
+          "timings": {
+            "detection": 23.9,
+            "recognition": 7.9,
+            "lane": 43.6,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 81.1
+          }
+        },
+        {
+          "frame_timestamp_s": 36.0,
+          "wall_ms": 76.1,
+          "timings": {
+            "detection": 22.1,
+            "recognition": 7.6,
+            "lane": 40.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 75.6
+          }
+        },
+        {
+          "frame_timestamp_s": 36.2,
+          "wall_ms": 86.8,
+          "timings": {
+            "detection": 26.8,
+            "recognition": 8.4,
+            "lane": 45.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 86.4
+          }
+        },
+        {
+          "frame_timestamp_s": 36.4,
+          "wall_ms": 78.6,
+          "timings": {
+            "detection": 26.5,
+            "recognition": 7.8,
+            "lane": 38.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 78.1
+          }
+        },
+        {
+          "frame_timestamp_s": 36.6,
+          "wall_ms": 69.1,
+          "timings": {
+            "detection": 20.9,
+            "recognition": 1.3,
+            "lane": 40.9,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 68.7
+          }
+        },
+        {
+          "frame_timestamp_s": 36.8,
+          "wall_ms": 69.1,
+          "timings": {
+            "detection": 21.9,
+            "recognition": 1.3,
+            "lane": 39.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 68.5
+          }
+        },
+        {
+          "frame_timestamp_s": 37.0,
+          "wall_ms": 77.1,
+          "timings": {
+            "detection": 22.5,
+            "recognition": 7.8,
+            "lane": 39.6,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 76.5
+          }
+        },
+        {
+          "frame_timestamp_s": 37.2,
+          "wall_ms": 89.9,
+          "timings": {
+            "detection": 26.6,
+            "recognition": 17.5,
+            "lane": 39.8,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 89.5
+          }
+        },
+        {
+          "frame_timestamp_s": 37.4,
+          "wall_ms": 70.3,
+          "timings": {
+            "detection": 22.2,
+            "recognition": 1.4,
+            "lane": 40.4,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 69.8
+          }
+        },
+        {
+          "frame_timestamp_s": 37.6,
+          "wall_ms": 66.9,
+          "timings": {
+            "detection": 20.8,
+            "recognition": 1.3,
+            "lane": 38.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 66.5
+          }
+        },
+        {
+          "frame_timestamp_s": 37.8,
+          "wall_ms": 77.9,
+          "timings": {
+            "detection": 24.6,
+            "recognition": 1.5,
+            "lane": 39.4,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 77.3
+          }
+        },
+        {
+          "frame_timestamp_s": 38.0,
+          "wall_ms": 72.5,
+          "timings": {
+            "detection": 22.1,
+            "recognition": 1.3,
+            "lane": 39.6,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 71.9
+          }
+        },
+        {
+          "frame_timestamp_s": 38.2,
+          "wall_ms": 78.3,
+          "timings": {
+            "detection": 31.5,
+            "recognition": 1.3,
+            "lane": 39.3,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 77.8
+          }
+        },
+        {
+          "frame_timestamp_s": 38.4,
+          "wall_ms": 77.0,
+          "timings": {
+            "detection": 29.1,
+            "recognition": 1.4,
+            "lane": 40.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 76.5
+          }
+        },
+        {
+          "frame_timestamp_s": 38.6,
+          "wall_ms": 83.3,
+          "timings": {
+            "detection": 30.6,
+            "recognition": 1.6,
+            "lane": 44.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 82.7
+          }
+        },
+        {
+          "frame_timestamp_s": 38.8,
+          "wall_ms": 74.9,
+          "timings": {
+            "detection": 23.9,
+            "recognition": 1.5,
+            "lane": 42.6,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 74.4
+          }
+        },
+        {
+          "frame_timestamp_s": 39.0,
+          "wall_ms": 75.3,
+          "timings": {
+            "detection": 23.3,
+            "recognition": 1.4,
+            "lane": 43.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 74.8
+          }
+        },
+        {
+          "frame_timestamp_s": 39.2,
+          "wall_ms": 73.6,
+          "timings": {
+            "detection": 22.9,
+            "recognition": 1.4,
+            "lane": 42.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 73.0
+          }
+        },
+        {
+          "frame_timestamp_s": 39.4,
+          "wall_ms": 73.4,
+          "timings": {
+            "detection": 27.4,
+            "recognition": 1.4,
+            "lane": 38.1,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 73.0
+          }
+        },
+        {
+          "frame_timestamp_s": 39.6,
+          "wall_ms": 72.2,
+          "timings": {
+            "detection": 22.1,
+            "recognition": 1.4,
+            "lane": 41.3,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 71.7
+          }
+        },
+        {
+          "frame_timestamp_s": 39.8,
+          "wall_ms": 85.5,
+          "timings": {
+            "detection": 24.4,
+            "recognition": 1.6,
+            "lane": 50.4,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 85.0
+          }
+        },
+        {
+          "frame_timestamp_s": 40.0,
+          "wall_ms": 87.6,
+          "timings": {
+            "detection": 34.7,
+            "recognition": 1.5,
+            "lane": 38.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 87.0
+          }
+        },
+        {
+          "frame_timestamp_s": 40.2,
+          "wall_ms": 72.2,
+          "timings": {
+            "detection": 22.4,
+            "recognition": 1.3,
+            "lane": 41.6,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 71.8
+          }
+        },
+        {
+          "frame_timestamp_s": 40.4,
+          "wall_ms": 82.9,
+          "timings": {
+            "detection": 27.5,
+            "recognition": 6.7,
+            "lane": 41.4,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 82.5
+          }
+        },
+        {
+          "frame_timestamp_s": 40.6,
+          "wall_ms": 79.1,
+          "timings": {
+            "detection": 22.1,
+            "recognition": 10.4,
+            "lane": 39.9,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 78.7
+          }
+        },
+        {
+          "frame_timestamp_s": 40.8,
+          "wall_ms": 71.9,
+          "timings": {
+            "detection": 21.0,
+            "recognition": 2.1,
+            "lane": 41.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 71.4
+          }
+        },
+        {
+          "frame_timestamp_s": 41.0,
+          "wall_ms": 72.5,
+          "timings": {
+            "detection": 22.3,
+            "recognition": 1.5,
+            "lane": 41.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 71.9
+          }
+        },
+        {
+          "frame_timestamp_s": 41.2,
+          "wall_ms": 69.8,
+          "timings": {
+            "detection": 22.5,
+            "recognition": 1.4,
+            "lane": 39.3,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 69.3
+          }
+        },
+        {
+          "frame_timestamp_s": 41.4,
+          "wall_ms": 79.2,
+          "timings": {
+            "detection": 23.4,
+            "recognition": 7.2,
+            "lane": 37.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 78.7
+          }
+        },
+        {
+          "frame_timestamp_s": 41.6,
+          "wall_ms": 78.0,
+          "timings": {
+            "detection": 22.0,
+            "recognition": 8.0,
+            "lane": 39.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 77.6
+          }
+        },
+        {
+          "frame_timestamp_s": 41.8,
+          "wall_ms": 81.3,
+          "timings": {
+            "detection": 22.1,
+            "recognition": 6.9,
+            "lane": 44.9,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 80.7
+          }
+        },
+        {
+          "frame_timestamp_s": 42.0,
+          "wall_ms": 79.7,
+          "timings": {
+            "detection": 23.3,
+            "recognition": 7.2,
+            "lane": 41.8,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 79.3
+          }
+        },
+        {
+          "frame_timestamp_s": 42.2,
+          "wall_ms": 617.6,
+          "timings": {
+            "detection": 22.7,
+            "recognition": 12.3,
+            "lane": 49.1,
+            "supplementary_ocr": 2.0,
+            "reasoning": 0.9,
+            "tts": 520.2,
+            "total": 617.2
+          }
+        },
+        {
+          "frame_timestamp_s": 42.4,
+          "wall_ms": 558.8,
+          "timings": {
+            "detection": 24.7,
+            "recognition": 14.3,
+            "lane": 41.8,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.7,
+            "tts": 469.6,
+            "total": 558.3
+          }
+        },
+        {
+          "frame_timestamp_s": 42.6,
+          "wall_ms": 83.5,
+          "timings": {
+            "detection": 23.8,
+            "recognition": 7.2,
+            "lane": 45.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 83.1
+          }
+        },
+        {
+          "frame_timestamp_s": 42.8,
+          "wall_ms": 94.8,
+          "timings": {
+            "detection": 25.5,
+            "recognition": 16.6,
+            "lane": 45.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 94.3
+          }
+        },
+        {
+          "frame_timestamp_s": 43.0,
+          "wall_ms": 648.9,
+          "timings": {
+            "detection": 33.1,
+            "recognition": 15.8,
+            "lane": 49.0,
+            "supplementary_ocr": 1.3,
+            "reasoning": 0.6,
+            "tts": 540.2,
+            "total": 648.4
+          }
+        },
+        {
+          "frame_timestamp_s": 43.2,
+          "wall_ms": 576.6,
+          "timings": {
+            "detection": 24.6,
+            "recognition": 11.8,
+            "lane": 42.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.7,
+            "tts": 488.5,
+            "total": 576.1
+          }
+        },
+        {
+          "frame_timestamp_s": 43.4,
+          "wall_ms": 557.8,
+          "timings": {
+            "detection": 25.6,
+            "recognition": 16.1,
+            "lane": 41.5,
+            "supplementary_ocr": 1.2,
+            "reasoning": 0.6,
+            "tts": 463.8,
+            "total": 557.3
+          }
+        },
+        {
+          "frame_timestamp_s": 43.6,
+          "wall_ms": 668.5,
+          "timings": {
+            "detection": 30.9,
+            "recognition": 13.0,
+            "lane": 55.9,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.6,
+            "tts": 559.7,
+            "total": 667.9
+          }
+        },
+        {
+          "frame_timestamp_s": 43.8,
+          "wall_ms": 115.1,
+          "timings": {
+            "detection": 38.8,
+            "recognition": 7.4,
+            "lane": 62.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 114.5
+          }
+        },
+        {
+          "frame_timestamp_s": 44.0,
+          "wall_ms": 128.9,
+          "timings": {
+            "detection": 39.7,
+            "recognition": 1.8,
+            "lane": 81.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 128.3
+          }
+        },
+        {
+          "frame_timestamp_s": 44.2,
+          "wall_ms": 166.0,
+          "timings": {
+            "detection": 67.9,
+            "recognition": 7.6,
+            "lane": 83.4,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 165.3
+          }
+        },
+        {
+          "frame_timestamp_s": 44.4,
+          "wall_ms": 79.4,
+          "timings": {
+            "detection": 23.4,
+            "recognition": 13.2,
+            "lane": 36.3,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 78.9
+          }
+        },
+        {
+          "frame_timestamp_s": 44.6,
+          "wall_ms": 71.7,
+          "timings": {
+            "detection": 21.3,
+            "recognition": 6.5,
+            "lane": 36.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 71.2
+          }
+        },
+        {
+          "frame_timestamp_s": 44.8,
+          "wall_ms": 81.8,
+          "timings": {
+            "detection": 24.6,
+            "recognition": 6.9,
+            "lane": 43.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 81.3
+          }
+        },
+        {
+          "frame_timestamp_s": 45.0,
+          "wall_ms": 71.4,
+          "timings": {
+            "detection": 21.4,
+            "recognition": 6.4,
+            "lane": 36.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 70.9
+          }
+        },
+        {
+          "frame_timestamp_s": 45.2,
+          "wall_ms": 79.8,
+          "timings": {
+            "detection": 27.5,
+            "recognition": 8.4,
+            "lane": 37.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 79.1
+          }
+        },
+        {
+          "frame_timestamp_s": 45.4,
+          "wall_ms": 83.8,
+          "timings": {
+            "detection": 25.8,
+            "recognition": 10.9,
+            "lane": 39.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 83.2
+          }
+        },
+        {
+          "frame_timestamp_s": 45.6,
+          "wall_ms": 75.2,
+          "timings": {
+            "detection": 23.9,
+            "recognition": 1.9,
+            "lane": 42.4,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 74.7
+          }
+        },
+        {
+          "frame_timestamp_s": 45.8,
+          "wall_ms": 74.0,
+          "timings": {
+            "detection": 22.7,
+            "recognition": 1.6,
+            "lane": 42.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 73.4
+          }
+        },
+        {
+          "frame_timestamp_s": 46.0,
+          "wall_ms": 69.9,
+          "timings": {
+            "detection": 22.0,
+            "recognition": 1.5,
+            "lane": 39.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 69.1
+          }
+        },
+        {
+          "frame_timestamp_s": 46.2,
+          "wall_ms": 80.7,
+          "timings": {
+            "detection": 26.4,
+            "recognition": 2.3,
+            "lane": 44.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 80.0
+          }
+        },
+        {
+          "frame_timestamp_s": 46.4,
+          "wall_ms": 87.6,
+          "timings": {
+            "detection": 36.3,
+            "recognition": 2.1,
+            "lane": 42.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 87.0
+          }
+        },
+        {
+          "frame_timestamp_s": 46.6,
+          "wall_ms": 90.6,
+          "timings": {
+            "detection": 37.4,
+            "recognition": 1.4,
+            "lane": 45.1,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 90.1
+          }
+        },
+        {
+          "frame_timestamp_s": 46.8,
+          "wall_ms": 68.6,
+          "timings": {
+            "detection": 20.7,
+            "recognition": 1.4,
+            "lane": 40.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 68.1
+          }
+        },
+        {
+          "frame_timestamp_s": 47.0,
+          "wall_ms": 86.4,
+          "timings": {
+            "detection": 36.2,
+            "recognition": 1.4,
+            "lane": 42.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 85.9
+          }
+        },
+        {
+          "frame_timestamp_s": 47.2,
+          "wall_ms": 71.5,
+          "timings": {
+            "detection": 24.7,
+            "recognition": 1.5,
+            "lane": 38.6,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 71.0
+          }
+        },
+        {
+          "frame_timestamp_s": 47.4,
+          "wall_ms": 69.9,
+          "timings": {
+            "detection": 21.5,
+            "recognition": 1.5,
+            "lane": 40.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 69.3
+          }
+        },
+        {
+          "frame_timestamp_s": 47.6,
+          "wall_ms": 69.8,
+          "timings": {
+            "detection": 24.3,
+            "recognition": 1.4,
+            "lane": 37.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 69.3
+          }
+        },
+        {
+          "frame_timestamp_s": 47.8,
+          "wall_ms": 71.2,
+          "timings": {
+            "detection": 23.1,
+            "recognition": 1.3,
+            "lane": 40.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 70.7
+          }
+        },
+        {
+          "frame_timestamp_s": 48.0,
+          "wall_ms": 70.4,
+          "timings": {
+            "detection": 21.4,
+            "recognition": 1.5,
+            "lane": 40.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 69.9
+          }
+        },
+        {
+          "frame_timestamp_s": 48.2,
+          "wall_ms": 68.4,
+          "timings": {
+            "detection": 24.8,
+            "recognition": 1.4,
+            "lane": 35.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 67.8
+          }
+        },
+        {
+          "frame_timestamp_s": 48.4,
+          "wall_ms": 79.1,
+          "timings": {
+            "detection": 29.7,
+            "recognition": 1.4,
+            "lane": 41.1,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 78.6
+          }
+        },
+        {
+          "frame_timestamp_s": 48.6,
+          "wall_ms": 71.0,
+          "timings": {
+            "detection": 22.3,
+            "recognition": 1.6,
+            "lane": 39.8,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 70.4
+          }
+        },
+        {
+          "frame_timestamp_s": 48.8,
+          "wall_ms": 76.7,
+          "timings": {
+            "detection": 23.2,
+            "recognition": 7.6,
+            "lane": 38.9,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 76.1
+          }
+        },
+        {
+          "frame_timestamp_s": 49.0,
+          "wall_ms": 70.0,
+          "timings": {
+            "detection": 23.6,
+            "recognition": 1.4,
+            "lane": 38.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 69.2
+          }
+        },
+        {
+          "frame_timestamp_s": 49.2,
+          "wall_ms": 83.1,
+          "timings": {
+            "detection": 29.2,
+            "recognition": 1.5,
+            "lane": 46.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 82.5
+          }
+        },
+        {
+          "frame_timestamp_s": 49.4,
+          "wall_ms": 87.4,
+          "timings": {
+            "detection": 29.6,
+            "recognition": 12.2,
+            "lane": 38.3,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 86.9
+          }
+        },
+        {
+          "frame_timestamp_s": 49.6,
+          "wall_ms": 74.1,
+          "timings": {
+            "detection": 23.2,
+            "recognition": 1.7,
+            "lane": 41.5,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 73.2
+          }
+        },
+        {
+          "frame_timestamp_s": 49.8,
+          "wall_ms": 87.6,
+          "timings": {
+            "detection": 28.6,
+            "recognition": 2.9,
+            "lane": 48.9,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 87.1
+          }
+        },
+        {
+          "frame_timestamp_s": 50.0,
+          "wall_ms": 76.9,
+          "timings": {
+            "detection": 22.9,
+            "recognition": 3.2,
+            "lane": 43.3,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 76.2
+          }
+        },
+        {
+          "frame_timestamp_s": 50.2,
+          "wall_ms": 78.4,
+          "timings": {
+            "detection": 24.1,
+            "recognition": 6.9,
+            "lane": 40.1,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 77.8
+          }
+        },
+        {
+          "frame_timestamp_s": 50.4,
+          "wall_ms": 74.6,
+          "timings": {
+            "detection": 23.3,
+            "recognition": 1.5,
+            "lane": 43.1,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 73.8
+          }
+        },
+        {
+          "frame_timestamp_s": 50.6,
+          "wall_ms": 84.9,
+          "timings": {
+            "detection": 38.7,
+            "recognition": 1.4,
+            "lane": 38.4,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 84.3
+          }
+        },
+        {
+          "frame_timestamp_s": 50.8,
+          "wall_ms": 75.9,
+          "timings": {
+            "detection": 21.0,
+            "recognition": 1.4,
+            "lane": 46.7,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 75.2
+          }
+        },
+        {
+          "frame_timestamp_s": 51.0,
+          "wall_ms": 75.4,
+          "timings": {
+            "detection": 25.7,
+            "recognition": 1.7,
+            "lane": 41.6,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 74.9
+          }
+        },
+        {
+          "frame_timestamp_s": 51.2,
+          "wall_ms": 71.4,
+          "timings": {
+            "detection": 24.3,
+            "recognition": 1.3,
+            "lane": 39.0,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 70.9
+          }
+        },
+        {
+          "frame_timestamp_s": 51.4,
+          "wall_ms": 72.9,
+          "timings": {
+            "detection": 22.7,
+            "recognition": 1.4,
+            "lane": 41.9,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 72.4
+          }
+        },
+        {
+          "frame_timestamp_s": 51.6,
+          "wall_ms": 68.8,
+          "timings": {
+            "detection": 21.7,
+            "recognition": 1.5,
+            "lane": 39.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 68.2
+          }
+        },
+        {
+          "frame_timestamp_s": 51.8,
+          "wall_ms": 73.4,
+          "timings": {
+            "detection": 25.2,
+            "recognition": 1.3,
+            "lane": 40.3,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 73.0
+          }
+        },
+        {
+          "frame_timestamp_s": 52.0,
+          "wall_ms": 79.1,
+          "timings": {
+            "detection": 31.9,
+            "recognition": 1.7,
+            "lane": 39.1,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 78.6
+          }
+        },
+        {
+          "frame_timestamp_s": 52.2,
+          "wall_ms": 70.2,
+          "timings": {
+            "detection": 25.4,
+            "recognition": 1.3,
+            "lane": 37.3,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 69.8
+          }
+        },
+        {
+          "frame_timestamp_s": 52.4,
+          "wall_ms": 66.0,
+          "timings": {
+            "detection": 20.8,
+            "recognition": 1.6,
+            "lane": 37.4,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 65.5
+          }
+        },
+        {
+          "frame_timestamp_s": 52.6,
+          "wall_ms": 71.5,
+          "timings": {
+            "detection": 21.6,
+            "recognition": 7.1,
+            "lane": 36.4,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 71.0
+          }
+        },
+        {
+          "frame_timestamp_s": 52.8,
+          "wall_ms": 83.3,
+          "timings": {
+            "detection": 23.5,
+            "recognition": 12.2,
+            "lane": 40.4,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 82.8
+          }
+        },
+        {
+          "frame_timestamp_s": 53.0,
+          "wall_ms": 80.8,
+          "timings": {
+            "detection": 27.8,
+            "recognition": 7.2,
+            "lane": 39.1,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 80.4
+          }
+        },
+        {
+          "frame_timestamp_s": 53.2,
+          "wall_ms": 86.2,
+          "timings": {
+            "detection": 30.4,
+            "recognition": 7.5,
+            "lane": 40.1,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 85.6
+          }
+        },
+        {
+          "frame_timestamp_s": 53.4,
+          "wall_ms": 96.8,
+          "timings": {
+            "detection": 35.8,
+            "recognition": 11.7,
+            "lane": 41.9,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 96.2
+          }
+        },
+        {
+          "frame_timestamp_s": 53.6,
+          "wall_ms": 83.0,
+          "timings": {
+            "detection": 24.4,
+            "recognition": 8.0,
+            "lane": 43.2,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 82.4
+          }
+        },
+        {
+          "frame_timestamp_s": 53.8,
+          "wall_ms": 84.4,
+          "timings": {
+            "detection": 22.8,
+            "recognition": 7.2,
+            "lane": 47.1,
+            "supplementary_ocr": 0.0,
+            "reasoning": 0.0,
+            "tts": 0.0,
+            "total": 83.8
+          }
+        }
+      ]
+    }
+  }
+}

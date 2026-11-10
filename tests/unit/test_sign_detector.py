@@ -23,11 +23,11 @@ def test_detect_returns_empty_list_when_no_weights_configured():
     assert detector.detect(dummy_image) == []
 
 
-def test_group_compound_signs_merges_nearby_panels():
+def test_group_compound_signs_merges_primary_with_supplement_below():
     detector = SignDetector(_perception_config_no_weights())
     detections = [
-        SignDetection(label="panel_a", confidence=0.9, bbox_xyxy=(10, 10, 30, 30)),
-        SignDetection(label="panel_b", confidence=0.8, bbox_xyxy=(35, 10, 55, 30)),
+        SignDetection(label="panel_a", confidence=0.9, bbox_xyxy=(10, 10, 30, 30), panel_role="primary"),
+        SignDetection(label="panel_b", confidence=0.8, bbox_xyxy=(12, 32, 28, 42), panel_role="supplementary"),
     ]
     grouped = detector._group_compound_signs(detections)
     assert len(grouped) == 1

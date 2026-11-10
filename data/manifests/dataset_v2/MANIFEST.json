@@ -1,0 +1,113 @@
+{
+  "version": "dataset_v2.1",
+  "description": "Canonical V1 localization pixels (hash-verified) plus owner-reviewed field pilot frames.",
+  "inputs_sha256": {
+    "sources.json": "ddbf6ab9e89d3ec0db9282e7a678f523ab978f3d6ead39c757317820d595f00c",
+    "download-manifest.csv": "6a76b084a06bc96c83b047d1f3458fa70da2b50d72cf8f900fa4a1082a5f53dc",
+    "processed/canonical/itas_mm_v1/localization/samples.csv": "a2f382866519858bc2bf426fceeea23d5474d9440f63a998b1cf996ed9485edc",
+    "processed/canonical/itas_mm_v1/localization/boxes.csv": "d97920a6fad3b9a50eb900526daa42f6fef0cb772c95cfe1f789d33535858f8a",
+    "pilot/review_manifest.json": "bda76c70be9de0b544f2a25aa2c26d1482170515805fca2fbf5d89d761a307b7",
+    "pilot/human_review.json": "7abe3862e4c300058254c0bc70e89065ddacdc36c4d524170323afc195759ee4"
+  },
+  "splits": {
+    "TRAIN": {
+      "samples": 10952,
+      "split_groups": 6861,
+      "boxes": 20923,
+      "frozen_sha256": "c5de7105dd962e983344862b126cb2bd7d8115998e30280e637fd83ac4f9c560"
+    },
+    "VAL": {
+      "samples": 2325,
+      "split_groups": 1354,
+      "boxes": 4747,
+      "frozen_sha256": "30362e09b64cc1138d31663adf3c52c4616a445b79e120e63939611cca52b144"
+    },
+    "TEST": {
+      "samples": 2446,
+      "split_groups": 1404,
+      "boxes": 4954,
+      "frozen_sha256": "2167cb380ecae1185fc645767993364fd8ec143ac64b6a741598c340fb02979d"
+    }
+  },
+  "sources": {
+    "kaggle_lapnguyen_v2": 8158,
+    "kaggle_jaydenguyenx_v1": 868,
+    "kaggle_thaivothanh_v1": 1633,
+    "kaggle_namvipcf2000_v1": 2030,
+    "roboflow_vietnam_traffic_sign_detection_v6": 2914,
+    "field_video_dev_20261015": 120
+  },
+  "label_status": {
+    "ai_reviewed": 514,
+    "none": 15209
+  },
+  "pilot": {
+    "source_video_sha256": "eb109f8c852df580611c236e2b313b01cf4a62662586ce71fa35525bdda05ac4",
+    "frames": 120,
+    "review_method": {
+      "type": "owner_bulk_approval_of_ai_boxes",
+      "reviewer": "Kiet (owner)",
+      "written_by": "Claude on owner instruction",
+      "codes_reviewed": false,
+      "lanes_reviewed": false,
+      "exhaustive_checked": true,
+      "frames_without_boxes_reviewed": true,
+      "attestation": "Owner stated all 120 frames reviewed and no visible sign missed (chat, 2026-10-26 12:36 +07)",
+      "circularity_warning": "GT boxes come from old detector proposals; scores of that detector on this set are circular."
+    }
+  },
+  "ai_reviews": [
+    {
+      "name": "canonical_ai",
+      "review_sha256": "bc3fcd702572a2a3956186d9a2319094deac0f89bc3857a563d5cd59fe0320c2",
+      "frames": 394,
+      "input_manifest_sha256": "1ab247c1763a9efefd3fdac99cb47c801a5b5da1999d774bc32a6d885eba3585",
+      "perception_config_sha256": "58292d7cc50533707d2754f196e268112c69f194f1ff4d79c743388131313a47",
+      "model_sha256": {
+        "detector": "c7fc0b607d603c88d33e02fa9986a787d527f8050b74d204fce40b365149541f",
+        "recognizer": "c1dad57daf61c104d4f0b6cb2387bc2c53ff397eaf948934e4a53a63babb859b",
+        "lane": "5207a4ea327cd770d5702d952a4050d3c51004e7cecdd60d8fc49933e813ab26",
+        "recognizer_reference_gate": "e9f543aba6df389015c537b8f456aeb1d2ec91a2bb5fcf8e3c7528a6ad023cb9"
+      },
+      "method": "ai_reviewed",
+      "human_confirmed": false
+    },
+    {
+      "name": "pilot_v0_ai",
+      "review_sha256": "e2910d13f7c896811475b041d3b690c1ca7f6286ae7ebbca575cae86774e61d2",
+      "frames": 120,
+      "input_manifest_sha256": "bda76c70be9de0b544f2a25aa2c26d1482170515805fca2fbf5d89d761a307b7",
+      "perception_config_sha256": "58292d7cc50533707d2754f196e268112c69f194f1ff4d79c743388131313a47",
+      "model_sha256": {
+        "detector": "c7fc0b607d603c88d33e02fa9986a787d527f8050b74d204fce40b365149541f",
+        "recognizer": "c1dad57daf61c104d4f0b6cb2387bc2c53ff397eaf948934e4a53a63babb859b",
+        "lane": "5207a4ea327cd770d5702d952a4050d3c51004e7cecdd60d8fc49933e813ab26",
+        "recognizer_reference_gate": "e9f543aba6df389015c537b8f456aeb1d2ec91a2bb5fcf8e3c7528a6ad023cb9"
+      },
+      "method": "ai_reviewed",
+      "human_confirmed": false
+    }
+  ],
+  "image_relpath_base": "processed/canonical/itas_mm_v1/localization",
+  "leakage_checks": {
+    "columns": [
+      "split_group_id",
+      "image_sha256",
+      "sample_key"
+    ],
+    "note": "V1 lineage components are exact-content groups, one per image SHA256; split_group_id is the stricter constraint group.",
+    "result": "PASS"
+  },
+  "frozen_test_policy": "TEST membership is frozen by frozen_sha256; never tune on TEST. AI label provenance changes are recorded separately.",
+  "test_revision": {
+    "prior_membership_sha256": "2167cb380ecae1185fc645767993364fd8ec143ac64b6a741598c340fb02979d",
+    "membership_changed": false,
+    "label_provenance_changed": true,
+    "ai_label_sha256": "583b944967e2d14db8ee42082f864343809bd9c115faf5ee3f0422be3a57b794"
+  },
+  "outputs_sha256": {
+    "samples.csv": "aa932f14246391b2599b21d523367ddd33077b264fce8e831475219e57b3d120",
+    "sources.csv": "c5c45c58c5a7e5663b3271e4a3f2748d642207c92934203fbc9e274d97733a6b",
+    "ai_review_labels.jsonl": "583b944967e2d14db8ee42082f864343809bd9c115faf5ee3f0422be3a57b794"
+  }
+}

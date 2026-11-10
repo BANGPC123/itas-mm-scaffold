@@ -1,81 +1,81 @@
-"""Integration test for the full pipeline.
-
-Perception and Context run for real (no external service needed). The
-Reasoning stage's Ollama calls and the Interaction stage's TTS call are
-mocked, since they depend on services (a running Ollama server, a system
-TTS backend) that are not guaranteed to be present in a CI environment.
-This test verifies the stages are wired together correctly, not that the
-external services themselves work — that is covered by manual smoke
-testing per README.md "Running the backend".
-"""
-from __future__ import annotations
-
-from unittest.mock import MagicMock, patch
-
+from unittest.mock import Mock
 import numpy as np
 import pytest
-
 from src.pipeline.orchestrator import Pipeline
-
+from src.context.sign_applicability import SignApplicability
+from src.context.zone_classifier import ZoneClassifier
+from src.utils.config import load_config
+from src.utils.types import LaneInfo,SignDetection
 
 @pytest.fixture
-def pipeline_with_mocked_externals():
-    with patch("src.reasoning.ollama_client.OllamaClient.embed") as mock_embed, patch(
-        "src.reasoning.ollama_client.OllamaClient.generate"
-    ) as mock_generate, patch(
-        "src.interaction.tts_engine.TtsEngine.synthesize"
-    ) as mock_tts:
-        mock_embed.return_value = [0.0] * 8
-        mock_generate.return_value = "Hãy giảm tốc độ do đang ở khu vực đô thị."
-        mock_tts.return_value = "data/processed/tts_output/guidance_test.wav"
+def pipeline():
+    p=Pipeline.__new__(Pipeline)
+    p.sign_detector=Mock();p.sign_detector.detect.return_value=[]
+    p.sign_recognizer=Mock();p.sign_recognizer.recognize.side_effect=lambda image,signs:signs
+    p.lane_detector=Mock();p.lane_detector.detect.return_value=LaneInfo([],backend='ufld_v2')
+    p.zone_classifier=ZoneClassifier(load_config('context'))
+    p.applicability=SignApplicability();p.current_vehicle='car'
+    p.tts_engine=Mock();p.rag_chain=None
+    return p
 
-        pipeline = Pipeline()
-        yield pipeline, mock_generate, mock_tts
-
-
-def test_pipeline_runs_end_to_end_with_no_signs_detected(pipeline_with_mocked_externals):
-    pipeline, mock_generate, mock_tts = pipeline_with_mocked_externals
-
-    # Blank image: no weights configured, so no signs will be detected —
-    # this exercises the "no detections" path through Reasoning.
-    blank_image = np.zeros((480, 640, 3), dtype=np.uint8)
-
-    result = pipeline.run(blank_image, latitude=10.7769, longitude=106.7009)
-
-    assert result.perception.signs == []
-    assert result.context.zone_label in {"Urban", "Suburban", "Highway"}
-    assert result.reasoning.guidance_text  # some text was produced
-    assert result.audio_path is not None
-    mock_tts.assert_called_once()
-
-
-def test_pipeline_skips_tts_when_synthesize_audio_is_false(pipeline_with_mocked_externals):
-    pipeline, mock_generate, mock_tts = pipeline_with_mocked_externals
-    blank_image = np.zeros((480, 640, 3), dtype=np.uint8)
-
-    result = pipeline.run(
-        blank_image, latitude=10.7769, longitude=106.7009, synthesize_audio=False
-    )
-
+def test_no_signs_do_not_trigger_legal_generation_or_speech(pipeline):
+    result=pipeline.run(np.zeros((100,100,3),np.uint8),10.7769,106.7009)
+    assert result.reasoning.retrieved_chunks==[]
     assert result.audio_path is None
-    mock_tts.assert_not_called()
+    pipeline.tts_engine.synthesize.assert_not_called()
+    assert result.annotated_image.startswith('data:image/jpeg;base64,')
+
+def test_tts_failure_preserves_visual_result(pipeline):
+    pipeline.sign_detector.detect.return_value=[SignDetection('P.130',.9,(10,10,50,50), panel_role='primary', label_verified=True, context_verified=True, placement='roadside', lane_scope='all')]
+    pipeline.tts_engine.synthesize.side_effect=RuntimeError('offline')
+    result=pipeline.run(np.zeros((100,100,3),np.uint8),10.7769,106.7009)
+    assert result.audio_path is None and result.annotated_image
+    assert any('trực tuyến' in w for w in result.warnings)
+    assert result.perception.signs[0].applicability=='applies'
+
+def test_ignored_sign_is_not_spoken(pipeline):
+    pipeline.sign_detector.detect.return_value=[SignDetection('P.130',.9,(10,10,50,50),allowed_vehicles=['motorcycle'],context_verified=True,label_verified=True)]
+    result=pipeline.run(np.zeros((100,100,3),np.uint8),10.7769,106.7009)
+    assert result.perception.signs[0].applicability=='ignored'
+    pipeline.tts_engine.synthesize.assert_not_called()
+
+def test_empty_input_is_rejected(pipeline):
+    with pytest.raises(ValueError):pipeline.run(np.zeros((0,0,3),np.uint8),10,106)
 
 
-def test_pipeline_uses_urban_zone_for_urban_coordinates(pipeline_with_mocked_externals):
-    pipeline, _, _ = pipeline_with_mocked_externals
-    blank_image = np.zeros((100, 100, 3), dtype=np.uint8)
+def test_road_roi_excludes_dashboard_before_models_and_keeps_coordinates(pipeline):
+    pipeline.sign_detector.detect.return_value = [SignDetection('P.130', .9, (10, 10, 30, 40))]
+    result = pipeline.run(np.zeros((100,100,3),np.uint8),10,106,False,road_bottom=.65,annotate=False)
+    assert pipeline.sign_detector.detect.call_args.args[0].shape == (65,100,3)
+    assert pipeline.lane_detector.detect.call_args.args[0].shape == (100,100,3)
+    assert result.perception.signs[0].bbox_xyxy == (10,10,30,40)
+    assert result.annotated_image is None
 
-    # Coordinates fall inside the placeholder Urban zone from configs/context.yaml.
-    result = pipeline.run(blank_image, latitude=10.7769, longitude=106.7009)
 
-    assert result.context.zone_label == "Urban"
+@pytest.mark.parametrize('bottom', [0, -.1, 1.1, float('nan')])
+def test_invalid_road_roi_is_rejected(pipeline, bottom):
+    with pytest.raises(ValueError):
+        pipeline.run(np.zeros((100,100,3),np.uint8),10,106,False,road_bottom=bottom)
 
 
-def test_pipeline_handles_empty_image_gracefully(pipeline_with_mocked_externals):
-    pipeline, _, _ = pipeline_with_mocked_externals
-    empty_image = np.zeros((0, 0, 3), dtype=np.uint8)
 
-    # Should not raise — lane detector returns no lines for an empty frame.
-    result = pipeline.run(empty_image, latitude=10.7769, longitude=106.7009)
+def test_background_rejected_advertisement_never_reaches_context_or_speech(pipeline):
+    fake = SignDetection('P.127', .99, (10, 10, 50, 50))
+    fake.recognition_source = 'background_rejected'
+    pipeline.sign_detector.detect.return_value=[fake]
+    result=pipeline.run(np.zeros((100,100,3),np.uint8),10.7769,106.7009,True)
+    assert result.perception.signs==[]
+    assert result.reasoning.speech_text==''
+    pipeline.tts_engine.synthesize.assert_not_called()
 
-    assert result.perception.lane.lane_lines == []
+
+
+def test_camera_mask_excludes_detection_before_recognition(pipeline):
+    pipeline.sign_detector.detect.return_value=[
+        SignDetection('P.127',.99,(20,20,40,40))]
+    result=pipeline.run(np.zeros((100,100,3),np.uint8),10,106,False,
+                        road_bottom=.65,exclude_rects=[[.1,.1,.5,.5]],annotate=False)
+    assert result.perception.signs==[]
+    assert result.reasoning.speech_text==''
+    assert pipeline.sign_recognizer.recognize.call_args.args[1]==[]
+    assert pipeline.lane_detector.detect.call_args.args[0].shape==(100,100,3)
