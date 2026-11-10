@@ -1,0 +1,191 @@
+{
+  "created_utc": "2026-11-02T16:57:33+00:00",
+  "source_commit": "f6bdf8f51c0171d480d17bb786a01aa56df6c86f",
+  "frozen_from": "output/lane_relax_20261102/frozen_samples.json",
+  "frozen_samples_sha256": "31d136e6b6c13e301471c0b70500b77a6d0ecb2507d8752374828332bdee7cf9",
+  "acceptance_frames": 30,
+  "diagnostic_frames": 2,
+  "human_gt": false,
+  "clips": {
+    "day": {
+      "source": "docs/demo/itas-mm_demo_video.mp4",
+      "sha256": "21b5f2889e5ac4bc6b6e13bb8c4ff01f1feeed084b05c90760b8c22e1926ff4a",
+      "bytes": 43516162,
+      "fps": 30.0,
+      "frame_count": 4200,
+      "max_seconds": 60,
+      "frames": [
+        {
+          "time_s": 2,
+          "source_frame": 60,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 6,
+          "source_frame": 180,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 10,
+          "source_frame": 300,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 14,
+          "source_frame": 420,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 18,
+          "source_frame": 540,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 22,
+          "source_frame": 660,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 26,
+          "source_frame": 780,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 30,
+          "source_frame": 900,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 34,
+          "source_frame": 1020,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 38,
+          "source_frame": 1140,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 42,
+          "source_frame": 1260,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 46,
+          "source_frame": 1380,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 50,
+          "source_frame": 1500,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 54,
+          "source_frame": 1620,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 58,
+          "source_frame": 1740,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 55,
+          "source_frame": 1650,
+          "role": "diagnostic_not_scored"
+        },
+        {
+          "time_s": 59,
+          "source_frame": 1770,
+          "role": "diagnostic_not_scored"
+        }
+      ]
+    },
+    "night": {
+      "source": "output/final_20261102/demo_clips/night_hanoi_YQl9c5gCjhg_30s_90s.mp4",
+      "sha256": "c22caa280981dbba4b738e6296a5d70550bce227143e89c3c57a2ced96791b21",
+      "bytes": 75524131,
+      "fps": 60.0,
+      "frame_count": 5400,
+      "max_seconds": 90,
+      "frames": [
+        {
+          "time_s": 3,
+          "source_frame": 180,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 9,
+          "source_frame": 540,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 15,
+          "source_frame": 900,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 21,
+          "source_frame": 1260,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 27,
+          "source_frame": 1620,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 33,
+          "source_frame": 1980,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 39,
+          "source_frame": 2340,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 45,
+          "source_frame": 2700,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 51,
+          "source_frame": 3060,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 57,
+          "source_frame": 3420,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 63,
+          "source_frame": 3780,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 69,
+          "source_frame": 4140,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 75,
+          "source_frame": 4500,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 81,
+          "source_frame": 4860,
+          "role": "acceptance"
+        },
+        {
+          "time_s": 87,
+          "source_frame": 5220,
+          "role": "acceptance"
+        }
+      ]
+    }
+  }
+}

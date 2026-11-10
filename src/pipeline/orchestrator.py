@@ -102,8 +102,10 @@ class Pipeline:
         # Offline video may reuse the previous lane result on alternate samples (lane is the
         # slowest stage and changes slowly); signs are still analysed on every sample.
         if not hasattr(self,'_reused_lane'):self._reused_lane={}
-        display_row_ratio=load_config('perception').get('offline_video_lane',{}).get('display_row_ratio',.5) if lane_simple else None
-        lane_key=(image.shape,road_bottom,lane_visual_roi,lane_display_mode,offline_video_quality,lane_simple,display_row_ratio)
+        lane_cfg=load_config('perception').get('offline_video_lane',{})
+        display_row_ratio=lane_cfg.get('display_row_ratio',.5) if lane_simple else None
+        lane_preprocess=(lane_cfg.get('lane_preprocess','none'),lane_cfg.get('lane_gamma',.8),lane_cfg.get('lane_clahe_clip',2.),lane_cfg.get('lane_clahe_tile',8)) if lane_simple else ('none',)
+        lane_key=(image.shape,road_bottom,lane_visual_roi,lane_display_mode,offline_video_quality,lane_simple,display_row_ratio,lane_preprocess)
         cached=self._reused_lane.get(stream_id) if reuse_lane and stream_id is not None and frame_timestamp is not None else None
         if cached is not None and cached[0]==lane_key and 0<frame_timestamp-cached[1]<=.4:
             import copy
@@ -112,6 +114,12 @@ class Pipeline:
             lane=self.lane_detector.detect(image,display_row_ratio=display_row_ratio) if lane_simple else self.lane_detector.detect(image)
             # Simple mode keeps the UFLD geometry: no YOLOPv2, screening, candidate overlay or surface veto.
             simple=lane_simple and lane.backend=='ufld_v2'
+            # Experiment: only the displayed curves come from a second UFLD forward on the processed frame.
+            display_source=None
+            if simple and lane_preprocess[0]!='none':
+                from src.perception.lane_preprocess import preprocess_for_lane
+                processed=preprocess_for_lane(image,lane_preprocess[0],gamma=lane_preprocess[1],clahe_clip=lane_preprocess[2],clahe_tile=lane_preprocess[3])
+                display_source=self.lane_detector.detect(processed,display_row_ratio=display_row_ratio)
             raw_ufld_hypotheses=list(lane.polylines) if offline_video_quality and lane.backend=='ufld_v2' else []
             if lane_visual_roi and lane.backend=='ufld_v2' and load_config('perception').get('lane_visual_fallback',{}).get('camera_aware',False):
                 from src.perception.camera_lane import CameraLaneVisual
@@ -168,7 +176,8 @@ class Pipeline:
             from src.perception.lane_display_quality import visual_polylines
             display_mode='candidate' if simple else lane_display_mode
             from src.utils.types import LaneInfo
-            display_lane=LaneInfo([],polylines=lane.relaxed_polylines) if simple else lane
+            display_geometry=lane if display_source is None else display_source
+            display_lane=LaneInfo([],polylines=display_geometry.relaxed_polylines) if simple else lane
             lane.display_polylines=lane.polylines if lane.backend=='camera_road_paint_visual' else visual_polylines(display_lane,image.shape,mode=display_mode)
             if stream_id is not None and lane.backend!='camera_road_paint_visual':
                 from src.perception.lane_temporal import LaneStreamPool
