@@ -1,0 +1,60 @@
+{
+  "summary": "D:\\DSP391m\\project\\itas-mm-scaffold\\output\\demo_20261114\\M13\\clips\\demo_video\\render\\summary.json",
+  "summary_sha256": "c1e50de59661892beab217b7e69e4380b42df1118572ca13734661a930924649",
+  "predictions": "D:\\DSP391m\\project\\itas-mm-scaffold\\output\\demo_20261114\\M13\\clips\\demo_video\\render\\predictions.jsonl",
+  "predictions_sha256": "929375e0da865a20961136bf8f85f9e872c8b3f1f07e195418aa9807b4fc4406",
+  "video": "D:\\DSP391m\\project\\itas-mm-scaffold\\output\\demo_20261114\\M13\\clips\\demo_video\\render\\test_video_offline_max.mp4",
+  "video_sha256": "a7a485333c02487ca150908c3b80154c7509198e99d22c28ec84366a9d7053ea",
+  "source_size": [
+    1280,
+    720
+  ],
+  "output_size": [
+    1280,
+    720
+  ],
+  "output_fps": 30.0,
+  "alerts": 10,
+  "frame_pairs": [
+    [
+      1280,
+      1265
+    ],
+    [
+      1370,
+      1355
+    ],
+    [
+      1960,
+      1945
+    ],
+    [
+      2830,
+      2815
+    ],
+    [
+      3080,
+      3065
+    ],
+    [
+      3170,
+      3155
+    ],
+    [
+      3350,
+      3335
+    ],
+    [
+      3530,
+      3515
+    ],
+    [
+      3990,
+      3975
+    ],
+    [
+      4170,
+      4155
+    ]
+  ]
+}

@@ -1,0 +1,24 @@
+[
+ {
+  "type": "debug",
+  "text": "[vite] connecting..."
+ },
+ {
+  "type": "debug",
+  "text": "[vite] connected."
+ },
+ {
+  "type": "info",
+  "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold"
+ },
+ {
+  "type": "log-error",
+  "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "url": "http://127.0.0.1:5173/favicon.ico"
+ },
+ {
+  "type": "log-error",
+  "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "url": "http://127.0.0.1:5173/favicon.ico"
+ }
+]

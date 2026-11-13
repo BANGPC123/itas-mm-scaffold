@@ -29,7 +29,9 @@ RUNTIME_FILES=['configs/perception.yaml','src/pipeline/orchestrator.py','src/uti
     'models/sign_recognizer/reference_gate_20261011_final.npz']
 
 
-def lane_status_message(view,lane_simple=False):
+def lane_status_message(view,lane_simple=False,lane_enabled=True):
+    # M12: lane stage off (offline_video_lane.enabled=false) -> no lane line at all.
+    if not lane_enabled:return None
     if view=='side_or_cabin':return 'Camera quay ngang/vào cabin: không gán biển trong gương cho hướng đi.'
     if lane_simple:return 'Làn: ứng viên UFLD-v2, chỉ để tham khảo, có thể sai.'
     return 'Vạch sơn quan sát được; không nối nét qua xe hoặc vùng thiếu bằng chứng.'
@@ -47,11 +49,12 @@ def draw_frame(frame,payload,lines,boxes,timestamp,font,fps,analysis_hz,lane_sim
         cv2.rectangle(frame,(x1,y1),(x2,y2),color,2)
         labels.append((x1,max(68,y1-22),display_name(sign['label']),color[::-1]))
     pil=Image.fromarray(cv2.cvtColor(frame,cv2.COLOR_BGR2RGB));draw=ImageDraw.Draw(pil)
-    draw.rectangle((0,0,w,57),fill=(15,23,34))
-    draw.text((10,3),f'ITAS-MM | {timestamp/60:.2f} phút | Video {fps:g} FPS | AI {analysis_hz:g} Hz | Ô tô con',font=font,fill='white')
     view=payload['lane'].get('camera_view','unknown')
-    message=lane_status_message(view,lane_simple)
-    draw.text((10,29),message,font=font,fill='white')
+    message=lane_status_message(view,lane_simple,lane_enabled=payload['lane'].get('backend')!='disabled')
+    # The dark header band is only as tall as its content: 57 px with a lane line, 30 px without (M12).
+    draw.rectangle((0,0,w,57 if message is not None else 29),fill=(15,23,34))  # PIL bounds are inclusive
+    draw.text((10,3),f'ITAS-MM | {timestamp/60:.2f} phút | Video {fps:g} FPS | AI {analysis_hz:g} Hz | Ô tô con',font=font,fill='white')
+    if message is not None:draw.text((10,29),message,font=font,fill='white')
     for x,y,text,color in labels:
         x=max(4,min(x,w-int(draw.textlength(text,font=font))-8))
         box=draw.textbbox((x,y),text,font=font)

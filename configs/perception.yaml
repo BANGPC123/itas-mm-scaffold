@@ -19,6 +19,8 @@ sign_detector:
   confidence_threshold: 0.35
   iou_threshold: 0.45
   device: "auto"
+  # M1.5(d) FP16 detector on CUDA. false = unchanged. Enable only after gate M1.5(d) passes.
+  half: false
   # Retained for the legacy grouping entry point; runtime uses applicability rules.
   compound_group_distance_px: 40
 
@@ -45,6 +47,8 @@ lane_visual_fallback:
 # Offline MP4 lane display. simple = UFLD-v2 polylines with light sanity filter and temporal
 # smoothing, no YOLOPv2 / surface veto / candidate overlay. precision = previous pipeline (rollback).
 offline_video_lane:
+  # M1: lane stage off by default (demo decision 13/11). false = no UFLD/YOLOPv2/SegFormer load or run.
+  enabled: false
   display: simple
   display_row_ratio: 0.5
   # Experiment (lane-only, simple display): preprocess the frame sent to UFLD for the displayed
@@ -99,3 +103,47 @@ supplementary_ocr:
   # Disabled in the final build (02/11/2026): the parser covers only time windows and vehicle
   # types, results are not shown in the UI, and night panels were unreadable in the demo clips.
   enabled: false
+
+# M2: forward-object warning (COCO YOLO11n + ByteTrack, single camera, no metric distance).
+# TTC here is a relative approach indicator (box growth), not a real time-to-collision.
+# Default false until the M2 gate passes. Rollback = keep false.
+forward_warning:
+  enabled: true
+  weights_path: models/lane/candidates/coco_yolo11n_20261011.pt
+  imgsz: 640
+  conf: 0.35
+  # M8.2: FP16 COCO inference on CUDA tested at 13.8 s vs 10.8 s FP32 on night 90 s (slower). Kept false.
+  half: false
+  # M8.3c: COCO runs on every 2nd analysis sample (3 Hz). Persist counts and ttc_k are halved so the
+  # hysteresis stays at the same wall-clock time (chu_y 6 samples at 6 Hz = 1.0 s -> 3 at 3 Hz; nguy_co 2 -> 1).
+  detect_every: 2
+  zone:
+    bottom_width_ratio: 0.50
+    top_width_ratio: 0.16
+    top_y_ratio: 0.55
+  chu_y_bottom_ratio: 0.80
+  chu_y_persist: 3
+  nguy_co_ttc_s: 2.0
+  nguy_co_persist: 1
+  ttc_k: 2
+  # M9: chu_y speech cooldowns (nguy_co is always spoken). Boxes and banner show every alert.
+  voice_cooldown_s: 8.0
+  voice_class_cooldown_s: 15.0
+  # M13.3: nguy_co cues are at least this far apart (seconds). One nguy_co cue per sample at most.
+  voice_nguy_gap_s: 2.0
+  # M13.5 filters. Each one has its own flag; set a flag to false to return to the M10 rule for that filter.
+  # Thresholds were chosen on the night clip (M11 v2 review). The demo video was not used for tuning.
+  # Replay numbers: output/demo_20261114/M13/THRESHOLDS.md.
+  rider_merge_enabled: true            # person whose bottom-centre lies inside a motorcycle box is dropped
+  nguy_zone_enabled: true              # nguy_co only inside the narrow zone and not touching the frame edge
+  nguy_zone_bottom_width_ratio: 0.36
+  nguy_zone_top_width_ratio: 0.12
+  nguy_edge_margin_ratio: 0.02
+  lateral_filter_enabled: true         # no alert while the box centre slides sideways fast
+  lateral_max_per_h: 0.25
+  track_class_reset_enabled: false     # tested on night: removes one hop_ly truck alert, so off
+  track_min_age_samples: 0             # tested on night: no effect, so off
+  nguy_co_enabled: true                # M13.6 switch (set false only if the demo review fails)
+  ttc_min_scale: 1.03
+  cooldown_track_s: 6.0
+  cooldown_global_s: 3.0

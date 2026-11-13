@@ -1,0 +1,753 @@
+{
+  "source_file": "docs\\demo\\itas-mm_demo_video.mp4",
+  "source_sha256": "21b5f2889e5ac4bc6b6e13bb8c4ff01f1feeed084b05c90760b8c22e1926ff4a",
+  "start_sec": 0.0,
+  "source_frames": 4200,
+  "output_frames": 4200,
+  "output_fps": 30.0,
+  "lane_every_samples": 2,
+  "offline_video_lane_display": "simple",
+  "decoded_frames": 4200,
+  "output_size": [
+    1280,
+    720
+  ],
+  "fps": 30.0,
+  "analysis_hz": 6.0,
+  "source_frame_interval": 5,
+  "sign_mode": "960+640, three-frame confirmation",
+  "models_finetuned_during_run": false,
+  "highres_1280_enabled": false,
+  "input_recording_datetime_known": false,
+  "auxiliary_research_enabled": false,
+  "counts": {
+    "samples": 840,
+    "known_signs": 420,
+    "uncertain_signs": 256,
+    "auxiliary_review_boxes": 0,
+    "lanes_displayed": 0,
+    "legal_speech_samples": 0,
+    "warnings": 2520,
+    "temporal_ufld_candidate_lines": 0
+  },
+  "speech_events": [
+    {
+      "t_seconds": 3.333,
+      "codes": [
+        "I.423",
+        "R.303"
+      ],
+      "text": "AI dự đoán có thể là biển I.423: Vị trí người đi bộ sang ngang; R.303: Nơi giao nhau chạy theo vòng xuyến. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+    },
+    {
+      "t_seconds": 16.5,
+      "codes": [
+        "R.302a"
+      ],
+      "text": "AI dự đoán có thể là biển R.302a: Hướng phải đi vòng chướng ngại vật. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+    },
+    {
+      "t_seconds": 19.5,
+      "codes": [],
+      "text": "Chú ý, ô tô phía trước",
+      "kind": "forward_chu_y"
+    },
+    {
+      "t_seconds": 22.167,
+      "codes": [
+        "R.302a",
+        "P.102"
+      ],
+      "text": "AI dự đoán có thể là biển R.302a: Hướng phải đi vòng chướng ngại vật; P.102: Cấm đi ngược chiều. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+    },
+    {
+      "t_seconds": 28.667,
+      "codes": [
+        "R.303"
+      ],
+      "text": "AI dự đoán có thể là biển R.303: Nơi giao nhau chạy theo vòng xuyến. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+    },
+    {
+      "t_seconds": 29.0,
+      "codes": [],
+      "text": "Cẩn thận, ô tô đang tiến gần",
+      "kind": "forward_nguy_co"
+    },
+    {
+      "t_seconds": 29.333,
+      "codes": [],
+      "text": "Cẩn thận, ô tô đang tiến gần",
+      "kind": "forward_nguy_co"
+    },
+    {
+      "t_seconds": 29.833,
+      "codes": [],
+      "text": "Cẩn thận, ô tô đang tiến gần",
+      "kind": "forward_nguy_co"
+    },
+    {
+      "t_seconds": 37.5,
+      "codes": [
+        "P.102"
+      ],
+      "text": "AI dự đoán có thể là biển P.102: Cấm đi ngược chiều. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+    },
+    {
+      "t_seconds": 37.833,
+      "codes": [],
+      "text": "Chú ý, người đi bộ phía trước",
+      "kind": "forward_chu_y"
+    },
+    {
+      "t_seconds": 40.833,
+      "codes": [],
+      "text": "Chú ý, xe máy phía trước",
+      "kind": "forward_chu_y"
+    },
+    {
+      "t_seconds": 43.833,
+      "codes": [],
+      "text": "Chú ý, người đi bộ phía trước",
+      "kind": "forward_chu_y"
+    },
+    {
+      "t_seconds": 46.833,
+      "codes": [],
+      "text": "Chú ý, xe máy phía trước",
+      "kind": "forward_chu_y"
+    },
+    {
+      "t_seconds": 49.333,
+      "codes": [
+        "I.423"
+      ],
+      "text": "AI dự đoán có thể là biển I.423: Vị trí người đi bộ sang ngang. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+    },
+    {
+      "t_seconds": 50.0,
+      "codes": [],
+      "text": "Chú ý, người đi bộ phía trước",
+      "kind": "forward_chu_y"
+    },
+    {
+      "t_seconds": 53.0,
+      "codes": [],
+      "text": "Chú ý, xe máy phía trước",
+      "kind": "forward_chu_y"
+    },
+    {
+      "t_seconds": 57.167,
+      "codes": [],
+      "text": "Cẩn thận, ô tô đang tiến gần",
+      "kind": "forward_nguy_co"
+    },
+    {
+      "t_seconds": 59.167,
+      "codes": [],
+      "text": "Cẩn thận, ô tô đang tiến gần",
+      "kind": "forward_nguy_co"
+    },
+    {
+      "t_seconds": 63.5,
+      "codes": [
+        "I.423",
+        "R.303"
+      ],
+      "text": "AI dự đoán có thể là biển I.423: Vị trí người đi bộ sang ngang; R.303: Nơi giao nhau chạy theo vòng xuyến. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+    },
+    {
+      "t_seconds": 65.333,
+      "codes": [],
+      "text": "Chú ý, xe máy phía trước",
+      "kind": "forward_chu_y"
+    },
+    {
+      "t_seconds": 71.833,
+      "codes": [],
+      "text": "Chú ý, ô tô phía trước",
+      "kind": "forward_chu_y"
+    },
+    {
+      "t_seconds": 73.167,
+      "codes": [
+        "R.302a",
+        "P.102"
+      ],
+      "text": "AI dự đoán có thể là biển R.302a: Hướng phải đi vòng chướng ngại vật; P.102: Cấm đi ngược chiều. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+    },
+    {
+      "t_seconds": 73.5,
+      "codes": [
+        "I.423"
+      ],
+      "text": "AI dự đoán có thể là biển I.423: Vị trí người đi bộ sang ngang. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+    },
+    {
+      "t_seconds": 94.333,
+      "codes": [],
+      "text": "Chú ý, xe máy phía trước",
+      "kind": "forward_chu_y"
+    },
+    {
+      "t_seconds": 94.5,
+      "codes": [
+        "R.303",
+        "I.423"
+      ],
+      "text": "AI dự đoán có thể là biển R.303: Nơi giao nhau chạy theo vòng xuyến; I.423: Vị trí người đi bộ sang ngang. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+    },
+    {
+      "t_seconds": 102.667,
+      "codes": [],
+      "text": "Chú ý, xe máy phía trước",
+      "kind": "forward_chu_y"
+    },
+    {
+      "t_seconds": 104.5,
+      "codes": [
+        "R.302a",
+        "P.102"
+      ],
+      "text": "AI dự đoán có thể là biển R.302a: Hướng phải đi vòng chướng ngại vật; P.102: Cấm đi ngược chiều. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+    },
+    {
+      "t_seconds": 105.667,
+      "codes": [
+        "I.423"
+      ],
+      "text": "AI dự đoán có thể là biển I.423: Vị trí người đi bộ sang ngang. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+    },
+    {
+      "t_seconds": 111.667,
+      "codes": [],
+      "text": "Chú ý, ô tô phía trước",
+      "kind": "forward_chu_y"
+    },
+    {
+      "t_seconds": 114.833,
+      "codes": [],
+      "text": "Chú ý, ô tô phía trước",
+      "kind": "forward_chu_y"
+    },
+    {
+      "t_seconds": 117.833,
+      "codes": [],
+      "text": "Chú ý, ô tô phía trước",
+      "kind": "forward_chu_y"
+    },
+    {
+      "t_seconds": 119.833,
+      "codes": [
+        "I.423"
+      ],
+      "text": "AI dự đoán có thể là biển I.423: Vị trí người đi bộ sang ngang. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+    },
+    {
+      "t_seconds": 130.333,
+      "codes": [],
+      "text": "Cẩn thận, ô tô đang tiến gần",
+      "kind": "forward_nguy_co"
+    },
+    {
+      "t_seconds": 135.333,
+      "codes": [],
+      "text": "Cẩn thận, ô tô đang tiến gần",
+      "kind": "forward_nguy_co"
+    },
+    {
+      "t_seconds": 137.333,
+      "codes": [
+        "I.423"
+      ],
+      "text": "AI dự đoán có thể là biển I.423: Vị trí người đi bộ sang ngang. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+    },
+    {
+      "t_seconds": 137.833,
+      "codes": [
+        "R.303"
+      ],
+      "text": "AI dự đoán có thể là biển R.303: Nơi giao nhau chạy theo vòng xuyến. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+    },
+    {
+      "t_seconds": 138.333,
+      "codes": [],
+      "text": "Chú ý, ô tô phía trước",
+      "kind": "forward_chu_y"
+    }
+  ],
+  "forward_warning": {
+    "enabled": true,
+    "alerts": [
+      {
+        "t": 19.5,
+        "track_id": 76,
+        "cls": "car",
+        "label_vi": "ô tô",
+        "level": "chu_y",
+        "ttc_proxy_s": 4.164,
+        "bbox_xyxy": [
+          579.6350708007812,
+          505.4409484863281,
+          714.8174438476562,
+          596.5927734375
+        ]
+      },
+      {
+        "t": 29.0,
+        "track_id": 166,
+        "cls": "car",
+        "label_vi": "ô tô",
+        "level": "nguy_co",
+        "ttc_proxy_s": 1.751,
+        "bbox_xyxy": [
+          763.093994140625,
+          500.5642395019531,
+          875.1388549804688,
+          570.2788696289062
+        ]
+      },
+      {
+        "t": 29.333,
+        "track_id": 202,
+        "cls": "car",
+        "label_vi": "ô tô",
+        "level": "nguy_co",
+        "ttc_proxy_s": 0.805,
+        "bbox_xyxy": [
+          745.730712890625,
+          497.74859619140625,
+          808.9829711914062,
+          559.6412963867188
+        ]
+      },
+      {
+        "t": 29.833,
+        "track_id": 207,
+        "cls": "car",
+        "label_vi": "ô tô",
+        "level": "nguy_co",
+        "ttc_proxy_s": 1.429,
+        "bbox_xyxy": [
+          796.0526123046875,
+          496.3578186035156,
+          882.794189453125,
+          578.4326171875
+        ]
+      },
+      {
+        "t": 37.833,
+        "track_id": 239,
+        "cls": "person",
+        "label_vi": "người đi bộ",
+        "level": "chu_y",
+        "ttc_proxy_s": null,
+        "bbox_xyxy": [
+          435.2418212890625,
+          481.9873046875,
+          507.2320861816406,
+          637.8094482421875
+        ]
+      },
+      {
+        "t": 40.833,
+        "track_id": 241,
+        "cls": "motorcycle",
+        "label_vi": "xe máy",
+        "level": "chu_y",
+        "ttc_proxy_s": null,
+        "bbox_xyxy": [
+          660.46728515625,
+          539.5819702148438,
+          722.7626342773438,
+          638.9032592773438
+        ]
+      },
+      {
+        "t": 43.833,
+        "track_id": 239,
+        "cls": "person",
+        "label_vi": "người đi bộ",
+        "level": "chu_y",
+        "ttc_proxy_s": null,
+        "bbox_xyxy": [
+          702.8480224609375,
+          480.6583557128906,
+          765.4588012695312,
+          606.3636474609375
+        ]
+      },
+      {
+        "t": 46.833,
+        "track_id": 241,
+        "cls": "motorcycle",
+        "label_vi": "xe máy",
+        "level": "chu_y",
+        "ttc_proxy_s": null,
+        "bbox_xyxy": [
+          696.1220703125,
+          534.9532470703125,
+          750.6452026367188,
+          622.740234375
+        ]
+      },
+      {
+        "t": 50.0,
+        "track_id": 239,
+        "cls": "person",
+        "label_vi": "người đi bộ",
+        "level": "chu_y",
+        "ttc_proxy_s": null,
+        "bbox_xyxy": [
+          664.0068969726562,
+          477.7553405761719,
+          716.8589477539062,
+          580.2198486328125
+        ]
+      },
+      {
+        "t": 53.0,
+        "track_id": 241,
+        "cls": "motorcycle",
+        "label_vi": "xe máy",
+        "level": "chu_y",
+        "ttc_proxy_s": null,
+        "bbox_xyxy": [
+          599.1541748046875,
+          536.3707275390625,
+          632.5172119140625,
+          586.1862182617188
+        ]
+      },
+      {
+        "t": 57.167,
+        "track_id": 303,
+        "cls": "car",
+        "label_vi": "ô tô",
+        "level": "nguy_co",
+        "ttc_proxy_s": 1.6,
+        "bbox_xyxy": [
+          800.2577514648438,
+          496.4661865234375,
+          932.2198486328125,
+          598.3095092773438
+        ]
+      },
+      {
+        "t": 59.167,
+        "track_id": 338,
+        "cls": "car",
+        "label_vi": "ô tô",
+        "level": "nguy_co",
+        "ttc_proxy_s": 1.349,
+        "bbox_xyxy": [
+          724.48486328125,
+          496.9660949707031,
+          801.1201782226562,
+          551.0172119140625
+        ]
+      },
+      {
+        "t": 65.333,
+        "track_id": 370,
+        "cls": "motorcycle",
+        "label_vi": "xe máy",
+        "level": "chu_y",
+        "ttc_proxy_s": null,
+        "bbox_xyxy": [
+          563.142333984375,
+          533.1837768554688,
+          595.6777954101562,
+          581.76513671875
+        ]
+      },
+      {
+        "t": 71.833,
+        "track_id": 390,
+        "cls": "car",
+        "label_vi": "ô tô",
+        "level": "chu_y",
+        "ttc_proxy_s": null,
+        "bbox_xyxy": [
+          402.2173156738281,
+          514.563720703125,
+          494.6516418457031,
+          576.8311767578125
+        ]
+      },
+      {
+        "t": 94.333,
+        "track_id": 559,
+        "cls": "motorcycle",
+        "label_vi": "xe máy",
+        "level": "chu_y",
+        "ttc_proxy_s": null,
+        "bbox_xyxy": [
+          719.1076049804688,
+          536.9205932617188,
+          757.2161865234375,
+          579.678955078125
+        ]
+      },
+      {
+        "t": 102.667,
+        "track_id": 590,
+        "cls": "motorcycle",
+        "label_vi": "xe máy",
+        "level": "chu_y",
+        "ttc_proxy_s": null,
+        "bbox_xyxy": [
+          835.8003540039062,
+          537.3660278320312,
+          895.4285888671875,
+          613.180419921875
+        ]
+      },
+      {
+        "t": 105.667,
+        "track_id": 390,
+        "cls": "car",
+        "label_vi": "ô tô",
+        "level": "chu_y",
+        "ttc_proxy_s": null,
+        "bbox_xyxy": [
+          452.5790100097656,
+          513.15185546875,
+          556.2935180664062,
+          589.068115234375
+        ]
+      },
+      {
+        "t": 111.667,
+        "track_id": 390,
+        "cls": "car",
+        "label_vi": "ô tô",
+        "level": "chu_y",
+        "ttc_proxy_s": null,
+        "bbox_xyxy": [
+          369.927734375,
+          498.8832702636719,
+          474.31451416015625,
+          580.966552734375
+        ]
+      },
+      {
+        "t": 114.833,
+        "track_id": 661,
+        "cls": "car",
+        "label_vi": "ô tô",
+        "level": "chu_y",
+        "ttc_proxy_s": 4.642,
+        "bbox_xyxy": [
+          775.6023559570312,
+          510.9169006347656,
+          849.27734375,
+          580.7697143554688
+        ]
+      },
+      {
+        "t": 117.833,
+        "track_id": 390,
+        "cls": "car",
+        "label_vi": "ô tô",
+        "level": "chu_y",
+        "ttc_proxy_s": null,
+        "bbox_xyxy": [
+          429.3570861816406,
+          501.5728454589844,
+          543.8265991210938,
+          580.2929077148438
+        ]
+      },
+      {
+        "t": 130.333,
+        "track_id": 390,
+        "cls": "car",
+        "label_vi": "ô tô",
+        "level": "nguy_co",
+        "ttc_proxy_s": 1.981,
+        "bbox_xyxy": [
+          496.7174072265625,
+          490.330078125,
+          595.5579833984375,
+          558.897216796875
+        ]
+      },
+      {
+        "t": 135.333,
+        "track_id": 741,
+        "cls": "car",
+        "label_vi": "ô tô",
+        "level": "nguy_co",
+        "ttc_proxy_s": 1.265,
+        "bbox_xyxy": [
+          736.6727905273438,
+          497.8677673339844,
+          803.4427490234375,
+          546.7766723632812
+        ]
+      },
+      {
+        "t": 138.333,
+        "track_id": 390,
+        "cls": "car",
+        "label_vi": "ô tô",
+        "level": "chu_y",
+        "ttc_proxy_s": 15.74,
+        "bbox_xyxy": [
+          273.27142333984375,
+          476.9624938964844,
+          561.622314453125,
+          674.390380859375
+        ]
+      }
+    ],
+    "speech": [
+      {
+        "t_seconds": 19.5,
+        "codes": [],
+        "text": "Chú ý, ô tô phía trước",
+        "kind": "forward_chu_y"
+      },
+      {
+        "t_seconds": 29.0,
+        "codes": [],
+        "text": "Cẩn thận, ô tô đang tiến gần",
+        "kind": "forward_nguy_co"
+      },
+      {
+        "t_seconds": 29.333,
+        "codes": [],
+        "text": "Cẩn thận, ô tô đang tiến gần",
+        "kind": "forward_nguy_co"
+      },
+      {
+        "t_seconds": 29.833,
+        "codes": [],
+        "text": "Cẩn thận, ô tô đang tiến gần",
+        "kind": "forward_nguy_co"
+      },
+      {
+        "t_seconds": 37.833,
+        "codes": [],
+        "text": "Chú ý, người đi bộ phía trước",
+        "kind": "forward_chu_y"
+      },
+      {
+        "t_seconds": 40.833,
+        "codes": [],
+        "text": "Chú ý, xe máy phía trước",
+        "kind": "forward_chu_y"
+      },
+      {
+        "t_seconds": 43.833,
+        "codes": [],
+        "text": "Chú ý, người đi bộ phía trước",
+        "kind": "forward_chu_y"
+      },
+      {
+        "t_seconds": 46.833,
+        "codes": [],
+        "text": "Chú ý, xe máy phía trước",
+        "kind": "forward_chu_y"
+      },
+      {
+        "t_seconds": 50.0,
+        "codes": [],
+        "text": "Chú ý, người đi bộ phía trước",
+        "kind": "forward_chu_y"
+      },
+      {
+        "t_seconds": 53.0,
+        "codes": [],
+        "text": "Chú ý, xe máy phía trước",
+        "kind": "forward_chu_y"
+      },
+      {
+        "t_seconds": 57.167,
+        "codes": [],
+        "text": "Cẩn thận, ô tô đang tiến gần",
+        "kind": "forward_nguy_co"
+      },
+      {
+        "t_seconds": 59.167,
+        "codes": [],
+        "text": "Cẩn thận, ô tô đang tiến gần",
+        "kind": "forward_nguy_co"
+      },
+      {
+        "t_seconds": 65.333,
+        "codes": [],
+        "text": "Chú ý, xe máy phía trước",
+        "kind": "forward_chu_y"
+      },
+      {
+        "t_seconds": 71.833,
+        "codes": [],
+        "text": "Chú ý, ô tô phía trước",
+        "kind": "forward_chu_y"
+      },
+      {
+        "t_seconds": 94.333,
+        "codes": [],
+        "text": "Chú ý, xe máy phía trước",
+        "kind": "forward_chu_y"
+      },
+      {
+        "t_seconds": 102.667,
+        "codes": [],
+        "text": "Chú ý, xe máy phía trước",
+        "kind": "forward_chu_y"
+      },
+      {
+        "t_seconds": 111.667,
+        "codes": [],
+        "text": "Chú ý, ô tô phía trước",
+        "kind": "forward_chu_y"
+      },
+      {
+        "t_seconds": 114.833,
+        "codes": [],
+        "text": "Chú ý, ô tô phía trước",
+        "kind": "forward_chu_y"
+      },
+      {
+        "t_seconds": 117.833,
+        "codes": [],
+        "text": "Chú ý, ô tô phía trước",
+        "kind": "forward_chu_y"
+      },
+      {
+        "t_seconds": 130.333,
+        "codes": [],
+        "text": "Cẩn thận, ô tô đang tiến gần",
+        "kind": "forward_nguy_co"
+      },
+      {
+        "t_seconds": 135.333,
+        "codes": [],
+        "text": "Cẩn thận, ô tô đang tiến gần",
+        "kind": "forward_nguy_co"
+      },
+      {
+        "t_seconds": 138.333,
+        "codes": [],
+        "text": "Chú ý, ô tô phía trước",
+        "kind": "forward_chu_y"
+      }
+    ],
+    "weights": "models/lane/candidates/coco_yolo11n_20261011.pt",
+    "imgsz": 640,
+    "conf": 0.35
+  },
+  "elapsed_seconds": 153.1012240005657,
+  "failures": [],
+  "profile_s": {
+    "fw_detect_s": 16.411,
+    "fw_detect_calls": 840,
+    "fw_draw_s": 2.98,
+    "fw_draw_calls": 4200
+  },
+  "video_sha256": "8965805ea288e1ab44012fb4e4511ad3576692b37169ddea2aab5b32be70b234",
+  "verified_full_decode": true,
+  "not_a_measured_field_accuracy": true
+}

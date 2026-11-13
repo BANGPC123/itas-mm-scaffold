@@ -1,0 +1,26 @@
+[
+  {
+    "label": "one_instance_alternating",
+    "calls": 12,
+    "total_s": 0.172,
+    "ms_per_call": 14.31,
+    "checksum": 40743.0
+  },
+  {
+    "label": "two_instances",
+    "calls": 12,
+    "total_s": 0.165,
+    "ms_per_call": 13.75,
+    "checksum": 40743.0
+  },
+  {
+    "label": "one_instance_alternating_again",
+    "calls": 12,
+    "total_s": 0.165,
+    "ms_per_call": 13.78,
+    "checksum": 40743.0
+  },
+  {
+    "boxes_identical": true
+  }
+]

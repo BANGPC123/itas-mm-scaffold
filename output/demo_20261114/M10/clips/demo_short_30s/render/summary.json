@@ -1,0 +1,92 @@
+{
+  "source_file": "docs\\demo\\itas-mm_demo_video.mp4",
+  "source_sha256": "21b5f2889e5ac4bc6b6e13bb8c4ff01f1feeed084b05c90760b8c22e1926ff4a",
+  "start_sec": 0.0,
+  "source_frames": 4200,
+  "output_frames": 900,
+  "output_fps": 30.0,
+  "lane_every_samples": 2,
+  "offline_video_lane_display": "simple",
+  "decoded_frames": 900,
+  "output_size": [
+    1280,
+    720
+  ],
+  "fps": 30.0,
+  "analysis_hz": 6.0,
+  "source_frame_interval": 5,
+  "sign_mode": "960+640, three-frame confirmation",
+  "models_finetuned_during_run": false,
+  "highres_1280_enabled": false,
+  "input_recording_datetime_known": false,
+  "auxiliary_research_enabled": false,
+  "counts": {
+    "samples": 180,
+    "known_signs": 104,
+    "uncertain_signs": 85,
+    "auxiliary_review_boxes": 0,
+    "lanes_displayed": 0,
+    "legal_speech_samples": 0,
+    "warnings": 540,
+    "temporal_ufld_candidate_lines": 0
+  },
+  "sign_cues": [
+    {
+      "t_seconds": 3.333,
+      "codes": [
+        "I.423",
+        "R.303"
+      ],
+      "text": "AI dự đoán có thể là biển I.423: Vị trí người đi bộ sang ngang; R.303: Nơi giao nhau chạy theo vòng xuyến. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+    },
+    {
+      "t_seconds": 16.5,
+      "codes": [
+        "R.302a"
+      ],
+      "text": "AI dự đoán có thể là biển R.302a: Hướng phải đi vòng chướng ngại vật. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+    },
+    {
+      "t_seconds": 22.167,
+      "codes": [
+        "R.302a",
+        "P.102"
+      ],
+      "text": "AI dự đoán có thể là biển R.302a: Hướng phải đi vòng chướng ngại vật; P.102: Cấm đi ngược chiều. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+    },
+    {
+      "t_seconds": 28.667,
+      "codes": [
+        "R.303"
+      ],
+      "text": "AI dự đoán có thể là biển R.303: Nơi giao nhau chạy theo vòng xuyến. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+    }
+  ],
+  "sign_speech_enabled": false,
+  "speech_events": [],
+  "forward_warning": {
+    "enabled": true,
+    "alerts": [],
+    "speech": [],
+    "spoken_cues": 0,
+    "spoken_per_minute": 0.0,
+    "voice": {
+      "cooldown_s": 8.0,
+      "class_cooldown_s": 15.0
+    },
+    "weights": "models/lane/candidates/coco_yolo11n_20261011.pt",
+    "imgsz": 640,
+    "conf": 0.35
+  },
+  "elapsed_seconds": 34.179950000718236,
+  "failures": [],
+  "profile_s": {
+    "fw_detect_s": 1.831,
+    "fw_detect_calls": 90,
+    "fw_draw_s": 0.408,
+    "fw_draw_calls": 900
+  },
+  "video_sha256": "bf2435619b863344c1a7803a714912cf27db41f9b25266802a18d24e0dd28b0a",
+  "verified_full_decode": true,
+  "not_a_measured_field_accuracy": true
+}

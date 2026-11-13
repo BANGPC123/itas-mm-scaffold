@@ -1,0 +1,236 @@
+{
+ "steps": [
+  {
+   "t": "2026-11-13T19:48:46.575Z",
+   "step": "screenshot",
+   "name": "01_home_video_tab.png"
+  },
+  {
+   "t": "2026-11-13T19:48:46.579Z",
+   "step": "nav",
+   "href": "http://127.0.0.1:8000/"
+  },
+  {
+   "t": "2026-11-13T19:48:47.638Z",
+   "step": "screenshot",
+   "name": "02_video_selected.png"
+  },
+  {
+   "t": "2026-11-13T19:48:47.642Z",
+   "step": "analyze clicked"
+  },
+  {
+   "t": "2026-11-13T19:48:51.699Z",
+   "step": "screenshot",
+   "name": "03_video_progress.png"
+  },
+  {
+   "t": "2026-11-13T19:49:22.006Z",
+   "step": "screenshot",
+   "name": "04_video_result.png"
+  },
+  {
+   "t": "2026-11-13T19:49:22.006Z",
+   "step": "result shown",
+   "done": true
+  },
+  {
+   "t": "2026-11-13T19:49:22.007Z",
+   "step": "forward list",
+   "heading": true,
+   "count": "2 cảnh báo",
+   "rows": [
+    "00:12\nChú ý\nxe máy\nCó đọc",
+    "00:15\nChú ý\nxe máy\nChỉ hiển thị"
+   ]
+  },
+  {
+   "t": "2026-11-13T19:49:22.894Z",
+   "step": "screenshot",
+   "name": "05_forward_list.png"
+  },
+  {
+   "t": "2026-11-13T19:49:35.081Z",
+   "step": "screenshot",
+   "name": "06_video_playing_12s.png"
+  },
+  {
+   "t": "2026-11-13T19:49:55.233Z",
+   "step": "screenshot",
+   "name": "07_video_playing_32s.png"
+  },
+  {
+   "t": 30,
+   "step": "video state",
+   "paused": true,
+   "ended": true
+  },
+  {
+   "t": "2026-11-13T19:49:55.248Z",
+   "step": "speech check",
+   "speech_status": 200,
+   "audio_url": "/pipeline/audio/897274ac4626fae33a48d0cd7ef0c5a4781ea9c11949f5870f3f5c1509165951.mp3",
+   "audio_status": 200,
+   "audio_bytes": 11276,
+   "content_type": "audio/mpeg"
+  },
+  {
+   "t": "2026-11-13T19:50:02.224Z",
+   "step": "screenshot",
+   "name": "08_image_result.png"
+  },
+  {
+   "t": "2026-11-13T19:50:03.403Z",
+   "step": "screenshot",
+   "name": "09_legal_lookup.png"
+  }
+ ],
+ "speech_texts_requested_by_ui": [
+  "Chú ý xe máy",
+  "Chú ý xe máy"
+ ],
+ "pipeline_responses": [
+  {
+   "url": "http://127.0.0.1:8000/pipeline/sign-catalog",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/start",
+   "status": 202,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/3e65cf06261140aabbcd323fb58f0396",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/3e65cf06261140aabbcd323fb58f0396",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/3e65cf06261140aabbcd323fb58f0396",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/3e65cf06261140aabbcd323fb58f0396",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/3e65cf06261140aabbcd323fb58f0396",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/3e65cf06261140aabbcd323fb58f0396",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/3e65cf06261140aabbcd323fb58f0396",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/3e65cf06261140aabbcd323fb58f0396",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/3e65cf06261140aabbcd323fb58f0396",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/3e65cf06261140aabbcd323fb58f0396/video",
+   "status": 206,
+   "mime": "video/mp4"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/3e65cf06261140aabbcd323fb58f0396/video",
+   "status": 206,
+   "mime": "video/mp4"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/3e65cf06261140aabbcd323fb58f0396/video",
+   "status": 206,
+   "mime": "video/mp4"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/3e65cf06261140aabbcd323fb58f0396/video",
+   "status": 206,
+   "mime": "video/mp4"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/speech",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/audio/897274ac4626fae33a48d0cd7ef0c5a4781ea9c11949f5870f3f5c1509165951.mp3",
+   "status": 206,
+   "mime": "audio/mpeg"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/speech",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/audio/897274ac4626fae33a48d0cd7ef0c5a4781ea9c11949f5870f3f5c1509165951.mp3",
+   "status": 200,
+   "mime": "audio/mpeg"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/run",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/forward-objects",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/legal-search",
+   "status": 200,
+   "mime": "application/json"
+  }
+ ],
+ "console": [
+  {
+   "type": "log-error",
+   "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+   "url": "http://127.0.0.1:8000/favicon.ico"
+  },
+  {
+   "type": "log-error",
+   "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+   "url": "http://127.0.0.1:8000/favicon.ico"
+  }
+ ],
+ "forward": {
+  "heading": true,
+  "count": "2 cảnh báo",
+  "rows": [
+   "00:12\nChú ý\nxe máy\nCó đọc",
+   "00:15\nChú ý\nxe máy\nChỉ hiển thị"
+  ]
+ },
+ "videoState": {
+  "t": 30,
+  "paused": true,
+  "ended": true
+ },
+ "speech": {
+  "speech_status": 200,
+  "audio_url": "/pipeline/audio/897274ac4626fae33a48d0cd7ef0c5a4781ea9c11949f5870f3f5c1509165951.mp3",
+  "audio_status": 200,
+  "audio_bytes": 11276,
+  "content_type": "audio/mpeg"
+ }
+}

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {formatTime,signGroup,badgeStyle,estimateRemaining,formatRemaining,videoRows,imageRows,hitLocator,shortExcerpt,errorMessage,cropRect} from './logic.js';
+import {formatTime,signGroup,badgeStyle,estimateRemaining,formatRemaining,videoRows,imageRows,hitLocator,shortExcerpt,errorMessage,cropRect,forwardRows,obstacleBoxes} from './logic.js';
 
 test('formatTime shows minutes and seconds', () => {
   assert.equal(formatTime(0), '00:00');
@@ -85,4 +85,27 @@ test('cropRect pads, scales and stays inside the image', () => {
   assert.equal(w, 80); assert.equal(h, 80); assert.equal(x, 0); assert.equal(y, 0);
   assert.equal(cropRect(null, 10, 10, 10, 10), null);
   assert.equal(cropRect([5, 5, 5, 9], 10, 10, 10, 10), null);
+});
+
+test('forwardRows formats time, level and speech state', () => {
+  const rows = forwardRows([
+    { t: 75.2, track_id: 3, cls: 'motorcycle', label_vi: 'xe máy', level: 'nguy_co', spoken: true },
+    { t: 12, track_id: 4, cls: 'car', label_vi: 'ô tô', level: 'chu_y', spoken: false },
+  ]);
+  assert.equal(rows[0].time, '01:15');
+  assert.equal(rows[0].levelLabel, 'Nguy cơ');
+  assert.equal(rows[0].spokenLabel, 'Có đọc');
+  assert.equal(rows[1].levelLabel, 'Chú ý');
+  assert.equal(rows[1].spokenLabel, 'Chỉ hiển thị');
+  assert.deepEqual(forwardRows(undefined), []);
+});
+
+test('obstacleBoxes returns percentage boxes and zone flag', () => {
+  const [box] = obstacleBoxes([{ bbox_xyxy: [320, 180, 640, 360], in_zone: true, label_vi: 'xe máy' }], [720, 1280]);
+  assert.equal(box.left, 25);
+  assert.equal(box.top, 25);
+  assert.equal(box.width, 25);
+  assert.equal(box.height, 25);
+  assert.equal(box.inZone, true);
+  assert.deepEqual(obstacleBoxes([], [0, 0]), []);
 });

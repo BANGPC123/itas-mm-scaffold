@@ -1,0 +1,98 @@
+{
+ "alerts": 5,
+ "by_level_cls": {
+  "nguy_co/person": 1,
+  "chu_y/truck": 2,
+  "chu_y/motorcycle": 1,
+  "chu_y/person": 1
+ },
+ "spoken": 3,
+ "spoken_per_minute": 2.0,
+ "alert_list": [
+  [
+   60.667,
+   342,
+   "person",
+   "nguy_co",
+   true
+  ],
+  [
+   71.0,
+   342,
+   "truck",
+   "chu_y",
+   true
+  ],
+  [
+   77.0,
+   342,
+   "truck",
+   "chu_y",
+   false
+  ],
+  [
+   80.333,
+   741,
+   "motorcycle",
+   "chu_y",
+   true
+  ],
+  [
+   86.333,
+   762,
+   "person",
+   "chu_y",
+   false
+  ]
+ ],
+ "review": {
+  "counts": {
+   "khong_hop_ly": 2,
+   "hop_ly": 2,
+   "khong_ro": 1,
+   "phieu_khong_khop": 4
+  },
+  "matches": [
+   [
+    60.667,
+    342,
+    "person",
+    "nguy_co",
+    "002",
+    "khong_hop_ly"
+   ],
+   [
+    71.0,
+    342,
+    "truck",
+    "chu_y",
+    "005",
+    "hop_ly"
+   ],
+   [
+    77.0,
+    342,
+    "truck",
+    "chu_y",
+    "007",
+    "hop_ly"
+   ],
+   [
+    80.333,
+    741,
+    "motorcycle",
+    "chu_y",
+    "008",
+    "khong_ro"
+   ],
+   [
+    86.333,
+    762,
+    "person",
+    "chu_y",
+    "009",
+    "khong_hop_ly"
+   ]
+  ]
+ }
+}

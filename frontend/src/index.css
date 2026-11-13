@@ -638,3 +638,11 @@ summary:focus-visible,
   max-width: 720px;
   margin: 0 auto;
 }
+
+/* M9: obstacle boxes on the image tab, positioned in percent of the displayed image. */
+.obstacle-wrap { position: relative; }
+.obstacle-box { position: absolute; border: 2px solid #9ca3af; pointer-events: none; box-sizing: border-box; }
+.obstacle-box-zone { border-color: #f97316; }
+.obstacle-box span { position: absolute; left: -2px; top: -1.4em; font-size: 12px; line-height: 1.2; padding: 1px 4px; color: #fff; background: rgba(17, 24, 39, 0.85); white-space: nowrap; }
+.badge-danger { background: #b91c1c; color: #fff; }
+.badge-caution { background: #c2410c; color: #fff; }

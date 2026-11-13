@@ -4,7 +4,7 @@ import UploadCard from "./UploadCard.jsx";
 import LegalLookup from "./LegalLookup.jsx";
 import { createVideoSpeech } from "./videoSpeech.js";
 import { takeDueEvents, handledBefore } from "./speechEvents.js";
-import { badgeStyle, estimateRemaining, formatRemaining, videoRows } from "./logic.js";
+import { badgeStyle, estimateRemaining, forwardRows, formatRemaining, videoRows } from "./logic.js";
 
 const ACTIVE = ["queued", "waiting_for_inference", "running"];
 
@@ -193,7 +193,11 @@ export default function VideoTab({ names }) {
   }
 
   const cues = job.speech_events || [];
-  const rows = videoRows(cues, names);
+  // M9: the sign list comes from sign_cues, which exist even when sign speech is off.
+  const rows = videoRows(job.sign_cues || [], names);
+  const forward = job.forward_warning;
+  const alerts = forwardRows(forward?.alerts);
+  const spokenAlerts = alerts.filter((row) => row.spoken).length;
   return (
     <div className="result">
       <section className="card">
@@ -234,6 +238,38 @@ export default function VideoTab({ names }) {
           {job.report_url && <p><a href={API + job.report_url}>Tải báo cáo kiểm chứng (JSON)</a></p>}
         </details>
       </section>
+
+      {forward?.enabled && (
+        <section className="card">
+          <div className="list-head">
+            <h2>Cảnh báo phía trước</h2>
+            <span className="count">{alerts.length} cảnh báo</span>
+          </div>
+          <p className="fine">
+            Khung cam: chú ý · khung đỏ: nguy cơ. Chỉ một số cảnh báo được đọc to ({spokenAlerts} câu
+            {forward.spoken_per_minute != null ? `, ${forward.spoken_per_minute} câu/phút` : ""}).
+            Bấm mốc thời gian để tua tới cảnh báo.
+          </p>
+          {alerts.length === 0 ? (
+            <p className="muted">Không có vật cản nào vào vùng đường đi trong video này.</p>
+          ) : (
+            <ul className="sign-list">
+              {alerts.map((row) => (
+                <li className="sign-row" key={row.key}>
+                  <button type="button" className="time-chip" onClick={() => seekTo(row.seconds)} aria-label={`Tua tới ${row.time}`}>
+                    {row.time}
+                  </button>
+                  <span className={row.levelLabel === "Nguy cơ" ? "badge badge-danger" : "badge badge-caution"}>{row.levelLabel}</span>
+                  <span className="sign-name">
+                    {row.label}
+                    <small className="muted">{row.spokenLabel}</small>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
 
       <section className="card">
         <div className="list-head">

@@ -1,0 +1,212 @@
+{
+  "source": "output\\final_20261102\\demo_clips\\night_hanoi_YQl9c5gCjhg_30s_90s.mp4",
+  "wall_seconds": 101.88,
+  "result": {
+    "source_file": "output\\final_20261102\\demo_clips\\night_hanoi_YQl9c5gCjhg_30s_90s.mp4",
+    "source_sha256": "c22caa280981dbba4b738e6296a5d70550bce227143e89c3c57a2ced96791b21",
+    "start_sec": 0.0,
+    "source_frames": 5400,
+    "output_frames": 2700,
+    "output_fps": 30.0,
+    "lane_every_samples": 2,
+    "offline_video_lane_display": "simple",
+    "decoded_frames": 2700,
+    "output_size": [
+      1280,
+      720
+    ],
+    "fps": 60.0,
+    "analysis_hz": 6.0,
+    "source_frame_interval": 10,
+    "sign_mode": "960+640, three-frame confirmation",
+    "models_finetuned_during_run": false,
+    "highres_1280_enabled": false,
+    "input_recording_datetime_known": false,
+    "auxiliary_research_enabled": false,
+    "counts": {
+      "samples": 540,
+      "known_signs": 65,
+      "uncertain_signs": 159,
+      "auxiliary_review_boxes": 0,
+      "lanes_displayed": 0,
+      "legal_speech_samples": 0,
+      "warnings": 1620,
+      "temporal_ufld_candidate_lines": 0
+    },
+    "sign_cues": [
+      {
+        "t_seconds": 3.167,
+        "codes": [
+          "P.112",
+          "W.245a"
+        ],
+        "text": "AI dự đoán có thể là biển P.112: Cấm người đi bộ; W.245a: Đi chậm. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+      },
+      {
+        "t_seconds": 13.167,
+        "codes": [
+          "P.117"
+        ],
+        "text": "AI dự đoán có thể là biển P.117: Hạn chế chiều cao. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+      },
+      {
+        "t_seconds": 40.333,
+        "codes": [
+          "P.127"
+        ],
+        "text": "AI dự đoán có thể là biển P.127: Tốc độ tối đa cho phép. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."
+      }
+    ],
+    "sign_speech_enabled": false,
+    "speech_events": [
+      {
+        "t_seconds": 60.667,
+        "codes": [],
+        "text": "Cẩn thận, người đi bộ phía trước",
+        "kind": "forward_nguy_co"
+      },
+      {
+        "t_seconds": 71.0,
+        "codes": [],
+        "text": "Chú ý xe tải",
+        "kind": "forward_chu_y"
+      },
+      {
+        "t_seconds": 80.333,
+        "codes": [],
+        "text": "Chú ý xe máy",
+        "kind": "forward_chu_y"
+      }
+    ],
+    "forward_warning": {
+      "enabled": true,
+      "alerts": [
+        {
+          "t": 60.667,
+          "track_id": 342,
+          "cls": "person",
+          "label_vi": "người đi bộ",
+          "level": "nguy_co",
+          "ttc_proxy_s": 0.94,
+          "bbox_xyxy": [
+            855.1493530273438,
+            593.0646362304688,
+            1071.0626220703125,
+            856.57421875
+          ],
+          "spoken": true,
+          "speech_text": "Cẩn thận, người đi bộ phía trước"
+        },
+        {
+          "t": 71.0,
+          "track_id": 342,
+          "cls": "truck",
+          "label_vi": "xe tải",
+          "level": "chu_y",
+          "ttc_proxy_s": 10.179,
+          "bbox_xyxy": [
+            770.0523071289062,
+            594.181640625,
+            1077.5804443359375,
+            878.0836791992188
+          ],
+          "spoken": true,
+          "speech_text": "Chú ý xe tải"
+        },
+        {
+          "t": 77.0,
+          "track_id": 342,
+          "cls": "truck",
+          "label_vi": "xe tải",
+          "level": "chu_y",
+          "ttc_proxy_s": null,
+          "bbox_xyxy": [
+            747.447998046875,
+            565.7060546875,
+            1095.1112060546875,
+            868.5811157226562
+          ],
+          "spoken": false,
+          "speech_text": null
+        },
+        {
+          "t": 80.333,
+          "track_id": 741,
+          "cls": "motorcycle",
+          "label_vi": "xe máy",
+          "level": "chu_y",
+          "ttc_proxy_s": 18.089,
+          "bbox_xyxy": [
+            1234.455810546875,
+            693.852783203125,
+            1597.4310302734375,
+            1075.7061767578125
+          ],
+          "spoken": true,
+          "speech_text": "Chú ý xe máy"
+        },
+        {
+          "t": 86.333,
+          "track_id": 762,
+          "cls": "person",
+          "label_vi": "người đi bộ",
+          "level": "chu_y",
+          "ttc_proxy_s": null,
+          "bbox_xyxy": [
+            1170.0504150390625,
+            552.3782958984375,
+            1399.9847412109375,
+            949.043701171875
+          ],
+          "spoken": false,
+          "speech_text": null
+        }
+      ],
+      "speech": [
+        {
+          "t_seconds": 60.667,
+          "codes": [],
+          "text": "Cẩn thận, người đi bộ phía trước",
+          "kind": "forward_nguy_co"
+        },
+        {
+          "t_seconds": 71.0,
+          "codes": [],
+          "text": "Chú ý xe tải",
+          "kind": "forward_chu_y"
+        },
+        {
+          "t_seconds": 80.333,
+          "codes": [],
+          "text": "Chú ý xe máy",
+          "kind": "forward_chu_y"
+        }
+      ],
+      "bbox_xyxy_coordinates": "source frame pixels (x1,y1,x2,y2) of the input video; output canvas is 1280x720",
+      "source_size": [
+        1920,
+        1080
+      ],
+      "spoken_cues": 3,
+      "spoken_per_minute": 2.0,
+      "voice": {
+        "cooldown_s": 8.0,
+        "class_cooldown_s": 15.0
+      },
+      "weights": "models/lane/candidates/coco_yolo11n_20261011.pt",
+      "imgsz": 640,
+      "conf": 0.35
+    },
+    "elapsed_seconds": 98.35301149999941,
+    "failures": [],
+    "profile_s": {
+      "fw_detect_s": 6.728,
+      "fw_detect_calls": 270,
+      "fw_draw_s": 1.043,
+      "fw_draw_calls": 2700
+    },
+    "video_sha256": "11de3fc191a4f135020bbaa8e884e8f5cdd0197f48cfcd2ebe2bb2e7992c1fd7",
+    "verified_full_decode": true,
+    "not_a_measured_field_accuracy": true
+  }
+}

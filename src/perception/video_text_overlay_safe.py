@@ -25,11 +25,13 @@ class SafeVideoTextOverlay(VideoTextOverlay):
         footer=self.footer(payload,w);footer_top=h-24*len(footer)-8 if footer else h
         header=f'ITAS-MM | {timestamp/60:.2f} phút | Video {self.fps:g} FPS | AI {self.analysis_hz:g} Hz | Ô tô con'
         view=payload['lane'].get('camera_view','unknown')
-        message=('Camera quay ngang/vào cabin: không gán biển trong gương cho hướng đi.' if view=='side_or_cabin'
+        # M12: no lane status line when the lane stage is disabled (backend 'disabled').
+        message=None if payload['lane'].get('backend')=='disabled' else (
+            'Camera quay ngang/vào cabin: không gán biển trong gương cho hướng đi.' if view=='side_or_cabin'
             else 'Chưa đủ bằng chứng hướng camera: không vẽ làn hoặc kết luận phạm vi biển.' if view=='unknown'
             else 'Vạch sơn quan sát được; không nối nét qua xe hoặc vùng thiếu bằng chứng.')
-        patches=[self.patch(t,(255,255,255)) for t in [header,message]]
-        width=min(w-20,max(p.shape[1] for p in patches));height=54
+        patches=[self.patch(t,(255,255,255)) for t in ([header] if message is None else [header,message])]
+        width=min(w-20,max(p.shape[1] for p in patches));height=54 if message is not None else 28
         candidates=[(10,4),(max(10,w-width-10),4),(10,max(4,footer_top-height-4)),(max(10,w-width-10),max(4,footer_top-height-4))]
         def obstruction(position):
             x,y=position

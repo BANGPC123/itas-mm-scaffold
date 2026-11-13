@@ -5,7 +5,7 @@ Provides exhaustive native-FPS video export and independent decode verification.
 No human lane GT claim, no automatic legal certainty from 59-class YOLO.
 """
 from __future__ import annotations
-import argparse,hashlib,json,math,subprocess,sys,time
+import argparse,hashlib,json,math,os,subprocess,sys,time
 from dataclasses import asdict
 from datetime import datetime,timedelta
 from pathlib import Path
@@ -66,6 +66,18 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
     out.mkdir(parents=True)
     cap.set(cv2.CAP_PROP_POS_FRAMES,skip)
     pipe=pipeline if pipeline is not None else Pipeline()
+    # M2 forward-object warning (flag forward_warning.enabled; default off).
+    from src.perception.forward_objects import ForwardObjectWarner,ForwardWarnConfig,CocoTracker,VoiceGate,forward_cues,merge_cues,draw_forward
+    fw_cfg=ForwardWarnConfig.from_dict(load_config('perception').get('forward_warning',{}))
+    fw_tracker=CocoTracker(fw_cfg) if fw_cfg.enabled else None
+    # Detection runs on every detect_every-th analysis sample; the warner's time step is the detection interval.
+    fw_warner=ForwardObjectWarner(fw_cfg,fps/step/max(1,fw_cfg.detect_every)) if fw_cfg.enabled else None
+    fw_alerts_all=[];fw_speech=[];fw_draw=[];fw_now=[]
+    voice=VoiceGate(fw_cfg)
+    # M9: sign speech is off by default (interaction.sign_speech.enabled). Sign list and legal lookup stay on.
+    sign_speech_on=bool(load_config('interaction').get('sign_speech',{}).get('enabled',False))
+    # M8 timing: wall seconds spent in forward detect and overlay (always counted, written to summary only with ITAS_PROFILE=1).
+    prof={'fw_detect_s':0.,'fw_detect_calls':0,'fw_draw_s':0.,'fw_draw_calls':0}
     pipeline_id='offline_simulation_'+hashlib.sha256(str(out).encode()).hexdigest()[:18]
     ffmpeg=imageio_ffmpeg.get_ffmpeg_exe()
     encoder=subprocess.Popen([ffmpeg,'-y','-loglevel','error','-f','rawvideo','-pix_fmt','bgr24',
@@ -130,6 +142,14 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
                     counters['temporal_ufld_candidate_lines']+=len(candidate_lines)
                     counters['legal_speech_samples']+=int(bool(result.reasoning.speech_text))
                     counters['warnings']+=len(result.warnings)
+                    fw_now=[]
+                    if fw_warner is not None and (counters['samples']-1)%fw_cfg.detect_every==0:
+                        _t=time.perf_counter()
+                        fw_dets=fw_tracker.detect(frame)
+                        prof['fw_detect_s']+=time.perf_counter()-_t;prof['fw_detect_calls']+=1
+                        fw_now=fw_warner.update(absolute,frame.shape[1],frame.shape[0],fw_dets)
+                        fw_alerts_all.extend(fw_now)
+                        fw_draw=fw_now
                     jsonl.write(json.dumps({
                         'timestamp':absolute,'source_frame':skip+index,
                         'signs':last_payload['signs'],'lane':last_payload['lane'],
@@ -138,15 +158,23 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
                         'context':result.reasoning.car_summary,
                         'speech':result.reasoning.speech_text,
                         'latency_ms':result.timings_ms,
+                        'forward_alerts':fw_now,
                     },ensure_ascii=False)+'\n')
                     # Output timeline starts at 0, so the cue time is the output frame index.
-                    speech_events.extend(video_speech_events(signs,index/fps,announced))
+                    sign_events_now=video_speech_events(signs,index/fps,announced)
+                    speech_events.extend(sign_events_now)
+                    if fw_now:
+                        fw_speech.extend(forward_cues(fw_now,sign_speech_on and bool(sign_events_now),index/fps,gate=voice))
                 else:
                     lines,boxes=motion.advance(canvas)
                     _,aux_boxes=aux_motion.advance(canvas)
                     candidate_lines,_=candidate_motion.advance(canvas)
                 rendered=draw_frame(canvas,last_payload,lines,boxes,
                                     absolute,font,out_fps,fps/step,lane_simple=lane_simple)
+                if fw_warner is not None:
+                    _t=time.perf_counter()
+                    rendered=draw_forward(rendered,fw_draw,fw_cfg,font,src_wh=(sw,sh))  # M13.1: boxes are in source pixels
+                    prof['fw_draw_s']+=time.perf_counter()-_t;prof['fw_draw_calls']+=1
                 if candidate_lines:
                     for poly in candidate_lines:
                         if len(poly)>=2:
@@ -207,8 +235,17 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
         'sign_mode':('960+640+1280' if highres_rescue else '960+640')+', three-frame confirmation',
         'models_finetuned_during_run':False,'highres_1280_enabled':bool(highres_rescue),'input_recording_datetime_known':recorded_at is not None,
         'auxiliary_research_enabled':include_auxiliary,'counts':counters,
-        'speech_events':group_speech_events(speech_events),
+        'sign_cues':group_speech_events(speech_events),
+        'sign_speech_enabled':sign_speech_on,
+        'speech_events':merge_cues(group_speech_events(speech_events) if sign_speech_on else [],fw_speech),
+        'forward_warning':{'enabled':fw_cfg.enabled,'alerts':fw_alerts_all,'speech':fw_speech,
+            'bbox_xyxy_coordinates':'source frame pixels (x1,y1,x2,y2) of the input video; output canvas is '+f'{w}x{h}',
+            'source_size':[sw,sh],
+            'spoken_cues':len(fw_speech),'spoken_per_minute':round(len(fw_speech)/max(1e-9,written/out_fps/60),2),
+            'voice':{'cooldown_s':fw_cfg.voice_cooldown_s,'class_cooldown_s':fw_cfg.voice_class_cooldown_s},
+            'weights':fw_cfg.weights_path,'imgsz':fw_cfg.imgsz,'conf':fw_cfg.conf},
         'elapsed_seconds':time.perf_counter()-started,'failures':failures,
+        **({'profile_s':{k:round(v,3) if isinstance(v,float) else v for k,v in prof.items()}} if os.environ.get('ITAS_PROFILE')=='1' else {}),
         'video_sha256':file_sha256(video),'verified_full_decode':verified,
         'not_a_measured_field_accuracy':True}
     (out/'summary.json').write_text(json.dumps(scan,ensure_ascii=False,indent=2),encoding='utf8')

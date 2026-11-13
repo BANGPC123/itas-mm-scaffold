@@ -55,14 +55,16 @@ class VideoTextOverlay:
             cv2.rectangle(frame,(x1,y1),(x2,y2),color,2)
             patch=self.patch(display_name(sign['label']),color)
             labels.append((patch,max(4,min(x1,w-patch.shape[1]-8)),max(68,y1-22)))
-        frame[:57]=dark
-        header=f'ITAS-MM | {timestamp/60:.2f} phút | Video {self.fps:g} FPS | AI {self.analysis_hz:g} Hz | Ô tô con'
-        self.stamp(frame,self.patch(header,(255,255,255)),10,4)
         view=payload['lane'].get('camera_view','unknown')
-        message=('Camera quay ngang/vào cabin: không gán biển trong gương cho hướng đi.' if view=='side_or_cabin'
+        # M12: no lane status line when the lane stage is disabled (backend 'disabled').
+        message=None if payload['lane'].get('backend')=='disabled' else (
+            'Camera quay ngang/vào cabin: không gán biển trong gương cho hướng đi.' if view=='side_or_cabin'
             else 'Chưa đủ bằng chứng hướng camera: không vẽ làn hoặc kết luận phạm vi biển.' if view=='unknown'
             else 'Vạch sơn quan sát được; không nối nét qua xe hoặc vùng thiếu bằng chứng.')
-        self.stamp(frame,self.patch(message,(255,255,255)),10,30)
+        frame[:57 if message is not None else 30]=dark
+        header=f'ITAS-MM | {timestamp/60:.2f} phút | Video {self.fps:g} FPS | AI {self.analysis_hz:g} Hz | Ô tô con'
+        self.stamp(frame,self.patch(header,(255,255,255)),10,4)
+        if message is not None:self.stamp(frame,self.patch(message,(255,255,255)),10,30)
         for patch,x,y in labels:self.stamp(frame,patch,x,y)
         footer=self.footer(payload,w)
         if footer:

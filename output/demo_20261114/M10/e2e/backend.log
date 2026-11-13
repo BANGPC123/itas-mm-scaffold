@@ -1,0 +1,104 @@
+INFO:     Started server process [128552]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:61755 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61759 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54134 - "GET /pipeline/sign-catalog HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58349 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54134 - "GET /pipeline/sign-catalog HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58349 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59665 - "POST /pipeline/offline-video/start HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:59665 - "GET /pipeline/offline-video/jobs/331d2099444b48d9a320b27962469585 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59665 - "GET /pipeline/offline-video/jobs/331d2099444b48d9a320b27962469585 HTTP/1.1" 200 OK
+OFFLINE_VIDEO_PROGRESS {"encoded_source_frames": 300, "expected": 900, "samples": 60, "elapsed_seconds": 8.9}
+INFO:     127.0.0.1:59665 - "GET /pipeline/offline-video/jobs/331d2099444b48d9a320b27962469585 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59665 - "GET /pipeline/offline-video/jobs/331d2099444b48d9a320b27962469585 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59665 - "GET /pipeline/offline-video/jobs/331d2099444b48d9a320b27962469585 HTTP/1.1" 200 OK
+OFFLINE_VIDEO_PROGRESS {"encoded_source_frames": 600, "expected": 900, "samples": 120, "elapsed_seconds": 20.3}
+INFO:     127.0.0.1:59665 - "GET /pipeline/offline-video/jobs/331d2099444b48d9a320b27962469585 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59665 - "GET /pipeline/offline-video/jobs/331d2099444b48d9a320b27962469585 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59665 - "GET /pipeline/offline-video/jobs/331d2099444b48d9a320b27962469585 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59665 - "GET /pipeline/offline-video/jobs/331d2099444b48d9a320b27962469585 HTTP/1.1" 200 OK
+OFFLINE_VIDEO_PROGRESS {"encoded_source_frames": 900, "expected": 900, "samples": 180, "elapsed_seconds": 31.5}
+OFFLINE_VIDEO_RESULT {"source_file": "D:\\DSP391m\\project\\itas-mm-scaffold\\output\\offline_video_jobs\\331d2099444b48d9a320b27962469585\\source.mp4", "source_sha256": "f0e4ce37ce48bc42ba1f075e97bc5d057d3b74aeb087e999c6ec2e4189daf041", "start_sec": 0.0, "source_frames": 900, "output_frames": 900, "output_fps": 30.0, "lane_every_samples": 2, "offline_video_lane_display": "simple", "decoded_frames": 900, "output_size": [1280, 720], "fps": 30.0, "analysis_hz": 6.0, "source_frame_interval": 5, "sign_mode": "960+640, three-frame confirmation", "models_finetuned_during_run": false, "highres_1280_enabled": false, "input_recording_datetime_known": false, "auxiliary_research_enabled": false, "counts": {"samples": 180, "known_signs": 103, "uncertain_signs": 71, "auxiliary_review_boxes": 0, "lanes_displayed": 0, "legal_speech_samples": 0, "warnings": 540, "temporal_ufld_candidate_lines": 0}, "sign_cues": [{"t_seconds": 1.333, "codes": ["I.423"], "text": "AI dự đoán có thể là biển I.423: Vị trí người đi bộ sang ngang. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."}, {"t_seconds": 15.5, "codes": ["I.423", "R.303"], "text": "AI dự đoán có thể là biển I.423: Vị trí người đi bộ sang ngang; R.303: Nơi giao nhau chạy theo vòng xuyến. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."}, {"t_seconds": 25.167, "codes": ["R.302a", "P.102"], "text": "AI dự đoán có thể là biển R.302a: Hướng phải đi vòng chướng ngại vật; P.102: Cấm đi ngược chiều. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."}, {"t_seconds": 25.5, "codes": ["I.423"], "text": "AI dự đoán có thể là biển I.423: Vị trí người đi bộ sang ngang. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."}], "sign_speech_enabled": false, "speech_events": [{"t_seconds": 0.667, "codes": [], "text": "Chú ý người đi bộ", "kind": "forward_chu_y"}, {"t_seconds": 12.667, "codes": [], "text": "Cẩn thận, xe phía trước tiến gần", "kind": "forward_nguy_co"}], "forward_warning": {"enabled": true, "alerts": [{"t": 0.667, "track_id": 2, "cls": "person", "label_vi": "người đi bộ", "level": "chu_y", "ttc_proxy_s": 16.019, "bbox_xyxy": [678.6189575195312, 485.3611145019531, 734.7341918945312, 593.6596069335938], "spoken": true, "speech_text": "Chú ý người đi bộ"}, {"t": 12.667, "track_id": 62, "cls": "car", "label_vi": "ô tô", "level": "nguy_co", "ttc_proxy_s": 1.54, "bbox_xyxy": [793.3600463867188, 496.1206359863281, 915.66162109375, 582.123779296875], "spoken": true, "speech_text": "Cẩn thận, xe phía trước tiến gần"}, {"t": 17.333, "track_id": 87, "cls": "motorcycle", "label_vi": "xe máy", "level": "chu_y", "ttc_proxy_s": null, "bbox_xyxy": [562.7861938476562, 533.6748046875, 595.7382202148438, 582.1505126953125], "spoken": false, "speech_text": null}, {"t": 23.667, "track_id": 108, "cls": "car", "label_vi": "ô tô", "level": "chu_y", "ttc_proxy_s": null, "bbox_xyxy": [405.2747802734375, 513.197509765625, 485.94097900390625, 576.3031616210938], "spoken": false, "speech_text": null}], "speech": [{"t_seconds": 0.667, "codes": [], "text": "Chú ý người đi bộ", "kind": "forward_chu_y"}, {"t_seconds": 12.667, "codes": [], "text": "Cẩn thận, xe phía trước tiến gần", "kind": "forward_nguy_co"}], "spoken_cues": 2, "spoken_per_minute": 4.0, "voice": {"cooldown_s": 8.0, "class_cooldown_s": 15.0}, "weights": "models/lane/candidates/coco_yolo11n_20261011.pt", "imgsz": 640, "conf": 0.35}, "elapsed_seconds": 32.3414400992915, "failures": [], "video_sha256": "7c1750da010f9e988faadccccdb83bf494877a83e2544f4b7630f5a2dda3fc11", "verified_full_decode": true, "not_a_measured_field_accuracy": true}
+INFO:     127.0.0.1:59665 - "GET /pipeline/offline-video/jobs/331d2099444b48d9a320b27962469585 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49884 - "GET /pipeline/offline-video/jobs/331d2099444b48d9a320b27962469585/video HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:63109 - "GET /pipeline/offline-video/jobs/331d2099444b48d9a320b27962469585/video HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:63109 - "GET /pipeline/offline-video/jobs/331d2099444b48d9a320b27962469585/video HTTP/1.1" 206 Partial Content
+2026-11-13 20:04:42 | ERROR    | asyncio | Exception in callback _ProactorBasePipeTransport._call_connection_lost(None)
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost(None)>
+Traceback (most recent call last):
+  File "D:\miniconda\envs\itas-mm\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "D:\miniconda\envs\itas-mm\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+INFO:     127.0.0.1:61603 - "GET /pipeline/offline-video/jobs/331d2099444b48d9a320b27962469585/video HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:65488 - "GET /pipeline/offline-video/jobs/331d2099444b48d9a320b27962469585/video HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:59665 - "OPTIONS /pipeline/speech HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59665 - "POST /pipeline/speech HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58545 - "GET /pipeline/audio/b386e9446fb1cd7c139e7774366dee5e7befbe5c38c6a29a8d1408a9226b57d8.mp3 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:60349 - "POST /pipeline/speech HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57017 - "GET /pipeline/audio/a3e5d04840d8aeba19465e949052694c0d09cd52dfc88598ee6a93e4dbf655fa.mp3 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:63906 - "POST /pipeline/run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63906 - "POST /pipeline/forward-objects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63906 - "OPTIONS /pipeline/legal-search HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63906 - "POST /pipeline/legal-search HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61937 - "GET /pipeline/sign-catalog HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64253 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61937 - "GET /pipeline/sign-catalog HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64253 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64253 - "POST /pipeline/offline-video/start HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:64253 - "GET /pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64253 - "GET /pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595 HTTP/1.1" 200 OK
+OFFLINE_VIDEO_PROGRESS {"encoded_source_frames": 300, "expected": 900, "samples": 60, "elapsed_seconds": 8.5}
+INFO:     127.0.0.1:64253 - "GET /pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64253 - "GET /pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64253 - "GET /pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595 HTTP/1.1" 200 OK
+OFFLINE_VIDEO_PROGRESS {"encoded_source_frames": 600, "expected": 900, "samples": 120, "elapsed_seconds": 19.4}
+INFO:     127.0.0.1:64253 - "GET /pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64253 - "GET /pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64253 - "GET /pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595 HTTP/1.1" 200 OK
+OFFLINE_VIDEO_PROGRESS {"encoded_source_frames": 900, "expected": 900, "samples": 180, "elapsed_seconds": 30.8}
+INFO:     127.0.0.1:64253 - "GET /pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595 HTTP/1.1" 200 OK
+OFFLINE_VIDEO_RESULT {"source_file": "D:\\DSP391m\\project\\itas-mm-scaffold\\output\\offline_video_jobs\\e1f402bffb6944d69c0565310ff45595\\source.mp4", "source_sha256": "f0e4ce37ce48bc42ba1f075e97bc5d057d3b74aeb087e999c6ec2e4189daf041", "start_sec": 0.0, "source_frames": 900, "output_frames": 900, "output_fps": 30.0, "lane_every_samples": 2, "offline_video_lane_display": "simple", "decoded_frames": 900, "output_size": [1280, 720], "fps": 30.0, "analysis_hz": 6.0, "source_frame_interval": 5, "sign_mode": "960+640, three-frame confirmation", "models_finetuned_during_run": false, "highres_1280_enabled": false, "input_recording_datetime_known": false, "auxiliary_research_enabled": false, "counts": {"samples": 180, "known_signs": 103, "uncertain_signs": 71, "auxiliary_review_boxes": 0, "lanes_displayed": 0, "legal_speech_samples": 0, "warnings": 540, "temporal_ufld_candidate_lines": 0}, "sign_cues": [{"t_seconds": 1.333, "codes": ["I.423"], "text": "AI dự đoán có thể là biển I.423: Vị trí người đi bộ sang ngang. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."}, {"t_seconds": 15.5, "codes": ["I.423", "R.303"], "text": "AI dự đoán có thể là biển I.423: Vị trí người đi bộ sang ngang; R.303: Nơi giao nhau chạy theo vòng xuyến. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."}, {"t_seconds": 25.167, "codes": ["R.302a", "P.102"], "text": "AI dự đoán có thể là biển R.302a: Hướng phải đi vòng chướng ngại vật; P.102: Cấm đi ngược chiều. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."}, {"t_seconds": 25.5, "codes": ["I.423"], "text": "AI dự đoán có thể là biển I.423: Vị trí người đi bộ sang ngang. Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng."}], "sign_speech_enabled": false, "speech_events": [{"t_seconds": 0.667, "codes": [], "text": "Chú ý người đi bộ", "kind": "forward_chu_y"}, {"t_seconds": 12.667, "codes": [], "text": "Cẩn thận, xe phía trước tiến gần", "kind": "forward_nguy_co"}], "forward_warning": {"enabled": true, "alerts": [{"t": 0.667, "track_id": 2, "cls": "person", "label_vi": "người đi bộ", "level": "chu_y", "ttc_proxy_s": 16.019, "bbox_xyxy": [678.6189575195312, 485.3611145019531, 734.7341918945312, 593.6596069335938], "spoken": true, "speech_text": "Chú ý người đi bộ"}, {"t": 12.667, "track_id": 62, "cls": "car", "label_vi": "ô tô", "level": "nguy_co", "ttc_proxy_s": 1.54, "bbox_xyxy": [793.3600463867188, 496.1206359863281, 915.66162109375, 582.123779296875], "spoken": true, "speech_text": "Cẩn thận, xe phía trước tiến gần"}, {"t": 17.333, "track_id": 87, "cls": "motorcycle", "label_vi": "xe máy", "level": "chu_y", "ttc_proxy_s": null, "bbox_xyxy": [562.7861938476562, 533.6748046875, 595.7382202148438, 582.1505126953125], "spoken": false, "speech_text": null}, {"t": 23.667, "track_id": 108, "cls": "car", "label_vi": "ô tô", "level": "chu_y", "ttc_proxy_s": null, "bbox_xyxy": [405.2747802734375, 513.197509765625, 485.94097900390625, 576.3031616210938], "spoken": false, "speech_text": null}], "speech": [{"t_seconds": 0.667, "codes": [], "text": "Chú ý người đi bộ", "kind": "forward_chu_y"}, {"t_seconds": 12.667, "codes": [], "text": "Cẩn thận, xe phía trước tiến gần", "kind": "forward_nguy_co"}], "spoken_cues": 2, "spoken_per_minute": 4.0, "voice": {"cooldown_s": 8.0, "class_cooldown_s": 15.0}, "weights": "models/lane/candidates/coco_yolo11n_20261011.pt", "imgsz": 640, "conf": 0.35}, "elapsed_seconds": 31.520170499570668, "failures": [], "video_sha256": "7c1750da010f9e988faadccccdb83bf494877a83e2544f4b7630f5a2dda3fc11", "verified_full_decode": true, "not_a_measured_field_accuracy": true}
+INFO:     127.0.0.1:64253 - "GET /pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54979 - "GET /pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595/video HTTP/1.1" 206 Partial Content
+2026-11-13 20:06:19 | ERROR    | asyncio | Exception in callback _ProactorBasePipeTransport._call_connection_lost(None)
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost(None)>
+Traceback (most recent call last):
+  File "D:\miniconda\envs\itas-mm\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "D:\miniconda\envs\itas-mm\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+INFO:     127.0.0.1:58810 - "GET /pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595/video HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:58810 - "GET /pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595/video HTTP/1.1" 206 Partial Content
+2026-11-13 20:06:19 | ERROR    | asyncio | Exception in callback _ProactorBasePipeTransport._call_connection_lost(None)
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost(None)>
+Traceback (most recent call last):
+  File "D:\miniconda\envs\itas-mm\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "D:\miniconda\envs\itas-mm\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+INFO:     127.0.0.1:56450 - "GET /pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595/video HTTP/1.1" 206 Partial Content
+2026-11-13 20:06:19 | ERROR    | asyncio | Exception in callback _ProactorBasePipeTransport._call_connection_lost(None)
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost(None)>
+Traceback (most recent call last):
+  File "D:\miniconda\envs\itas-mm\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "D:\miniconda\envs\itas-mm\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+INFO:     127.0.0.1:53044 - "GET /pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595/video HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:64253 - "OPTIONS /pipeline/speech HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64253 - "POST /pipeline/speech HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60166 - "GET /pipeline/audio/b386e9446fb1cd7c139e7774366dee5e7befbe5c38c6a29a8d1408a9226b57d8.mp3 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:56325 - "POST /pipeline/speech HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51551 - "GET /pipeline/audio/a3e5d04840d8aeba19465e949052694c0d09cd52dfc88598ee6a93e4dbf655fa.mp3 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:53406 - "POST /pipeline/run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53406 - "POST /pipeline/forward-objects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53406 - "OPTIONS /pipeline/legal-search HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53406 - "POST /pipeline/legal-search HTTP/1.1" 200 OK

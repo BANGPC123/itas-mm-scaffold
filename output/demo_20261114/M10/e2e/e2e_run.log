@@ -1,0 +1,16 @@
+screenshot {"name":"01_home_video_tab.png"}
+nav {"hash":"http://127.0.0.1:5173/"}
+screenshot {"name":"02_video_selected.png"}
+analyze clicked {}
+screenshot {"name":"03_video_progress.png"}
+screenshot {"name":"04_video_result.png"}
+result shown {"done":true}
+screenshot {"name":"05_video_playing_15s.png"}
+screenshot {"name":"06_video_playing_33s.png"}
+video state {"t":30,"paused":true,"ended":true}
+seek nguy row {"seek":"00:12\nNguy cơ\nô tô\nCó đọc"}
+screenshot {"name":"07_forward_list_seek.png"}
+screenshot {"name":"08_image_result.png"}
+image state {"obstacleBoxes":4,"zoneBoxes":3,"readButton":false,"signRows":11}
+screenshot {"name":"09_legal_lookup.png"}
+done {"speech_requests":3,"console_entries":5}

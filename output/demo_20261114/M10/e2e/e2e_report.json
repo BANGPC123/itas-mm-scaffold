@@ -1,0 +1,449 @@
+{
+ "steps": [
+  {
+   "t": "2026-11-13T13:05:43.683Z",
+   "step": "screenshot",
+   "name": "01_home_video_tab.png"
+  },
+  {
+   "t": "2026-11-13T13:05:43.686Z",
+   "step": "nav",
+   "hash": "http://127.0.0.1:5173/"
+  },
+  {
+   "t": "2026-11-13T13:05:44.737Z",
+   "step": "screenshot",
+   "name": "02_video_selected.png"
+  },
+  {
+   "t": "2026-11-13T13:05:44.742Z",
+   "step": "analyze clicked"
+  },
+  {
+   "t": "2026-11-13T13:05:49.820Z",
+   "step": "screenshot",
+   "name": "03_video_progress.png"
+  },
+  {
+   "t": "2026-11-13T13:06:22.143Z",
+   "step": "screenshot",
+   "name": "04_video_result.png"
+  },
+  {
+   "t": "2026-11-13T13:06:22.143Z",
+   "step": "result shown",
+   "done": true
+  },
+  {
+   "t": "2026-11-13T13:06:37.353Z",
+   "step": "screenshot",
+   "name": "05_video_playing_15s.png"
+  },
+  {
+   "t": "2026-11-13T13:06:55.534Z",
+   "step": "screenshot",
+   "name": "06_video_playing_33s.png"
+  },
+  {
+   "t": 30,
+   "step": "video state",
+   "paused": true,
+   "ended": true
+  },
+  {
+   "t": "2026-11-13T13:06:55.540Z",
+   "step": "seek nguy row",
+   "seek": "00:12\nNguy cơ\nô tô\nCó đọc"
+  },
+  {
+   "t": "2026-11-13T13:06:57.230Z",
+   "step": "screenshot",
+   "name": "07_forward_list_seek.png"
+  },
+  {
+   "t": "2026-11-13T13:07:04.241Z",
+   "step": "screenshot",
+   "name": "08_image_result.png"
+  },
+  {
+   "t": "2026-11-13T13:07:04.243Z",
+   "step": "image state",
+   "obstacleBoxes": 4,
+   "zoneBoxes": 3,
+   "readButton": false,
+   "signRows": 11
+  },
+  {
+   "t": "2026-11-13T13:07:05.404Z",
+   "step": "screenshot",
+   "name": "09_legal_lookup.png"
+  }
+ ],
+ "speech_texts": [
+  "Chú ý người đi bộ",
+  null,
+  "Cẩn thận, xe phía trước tiến gần"
+ ],
+ "console": [
+  {
+   "type": "debug",
+   "text": "[vite] connecting..."
+  },
+  {
+   "type": "debug",
+   "text": "[vite] connected."
+  },
+  {
+   "type": "info",
+   "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold"
+  },
+  {
+   "type": "log-error",
+   "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+   "url": "http://127.0.0.1:5173/favicon.ico"
+  },
+  {
+   "type": "log-error",
+   "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+   "url": "http://127.0.0.1:5173/favicon.ico"
+  }
+ ],
+ "network_speech_and_pipeline": [
+  {
+   "kind": "request",
+   "t": 5090270.176813,
+   "url": "http://localhost:8000/pipeline/sign-catalog",
+   "method": "GET"
+  },
+  {
+   "kind": "request",
+   "t": 5090270.177212,
+   "url": "http://localhost:8000/pipeline/sign-catalog",
+   "method": "GET"
+  },
+  {
+   "kind": "response",
+   "t": 5090270.185767,
+   "url": "http://localhost:8000/pipeline/sign-catalog",
+   "status": 200
+  },
+  {
+   "kind": "response",
+   "t": 5090270.187282,
+   "url": "http://localhost:8000/pipeline/sign-catalog",
+   "status": 200
+  },
+  {
+   "kind": "request",
+   "t": 5090273.707208,
+   "url": "http://localhost:8000/pipeline/offline-video/start",
+   "method": "POST"
+  },
+  {
+   "kind": "response",
+   "t": 5090273.819387,
+   "url": "http://localhost:8000/pipeline/offline-video/start",
+   "status": 202
+  },
+  {
+   "kind": "request",
+   "t": 5090277.331756,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595",
+   "method": "GET"
+  },
+  {
+   "kind": "response",
+   "t": 5090277.3371,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595",
+   "status": 200
+  },
+  {
+   "kind": "request",
+   "t": 5090280.830347,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595",
+   "method": "GET"
+  },
+  {
+   "kind": "response",
+   "t": 5090280.836015,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595",
+   "status": 200
+  },
+  {
+   "kind": "request",
+   "t": 5090284.330014,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595",
+   "method": "GET"
+  },
+  {
+   "kind": "response",
+   "t": 5090284.333729,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595",
+   "status": 200
+  },
+  {
+   "kind": "request",
+   "t": 5090287.82992,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595",
+   "method": "GET"
+  },
+  {
+   "kind": "response",
+   "t": 5090287.834847,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595",
+   "status": 200
+  },
+  {
+   "kind": "request",
+   "t": 5090291.329322,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595",
+   "method": "GET"
+  },
+  {
+   "kind": "response",
+   "t": 5090291.33399,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595",
+   "status": 200
+  },
+  {
+   "kind": "request",
+   "t": 5090294.82951,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595",
+   "method": "GET"
+  },
+  {
+   "kind": "response",
+   "t": 5090294.834998,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595",
+   "status": 200
+  },
+  {
+   "kind": "request",
+   "t": 5090298.329801,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595",
+   "method": "GET"
+  },
+  {
+   "kind": "response",
+   "t": 5090298.342186,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595",
+   "status": 200
+  },
+  {
+   "kind": "request",
+   "t": 5090301.831507,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595",
+   "method": "GET"
+  },
+  {
+   "kind": "response",
+   "t": 5090301.835606,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595",
+   "status": 200
+  },
+  {
+   "kind": "request",
+   "t": 5090305.336802,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595",
+   "method": "GET"
+  },
+  {
+   "kind": "response",
+   "t": 5090305.341408,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595",
+   "status": 200
+  },
+  {
+   "kind": "request",
+   "t": 5090308.830188,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595",
+   "method": "GET"
+  },
+  {
+   "kind": "response",
+   "t": 5090308.834188,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595",
+   "status": 200
+  },
+  {
+   "kind": "request",
+   "t": 5090308.860621,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595/video",
+   "method": "GET"
+  },
+  {
+   "kind": "response",
+   "t": 5090308.869808,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595/video",
+   "status": 206
+  },
+  {
+   "kind": "request",
+   "t": 5090308.871458,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595/video",
+   "method": "GET"
+  },
+  {
+   "kind": "failed",
+   "t": 5090308.871763,
+   "error": "net::ERR_ABORTED"
+  },
+  {
+   "kind": "response",
+   "t": 5090308.882096,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595/video",
+   "status": 206
+  },
+  {
+   "kind": "request",
+   "t": 5090308.89728,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595/video",
+   "method": "GET"
+  },
+  {
+   "kind": "response",
+   "t": 5090308.907309,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595/video",
+   "status": 206
+  },
+  {
+   "kind": "failed",
+   "t": 5090308.923993,
+   "error": "net::ERR_ABORTED"
+  },
+  {
+   "kind": "request",
+   "t": 5090311.128612,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595/video",
+   "method": "GET"
+  },
+  {
+   "kind": "response",
+   "t": 5090311.133142,
+   "url": "http://localhost:8000/pipeline/offline-video/jobs/e1f402bffb6944d69c0565310ff45595/video",
+   "status": 206
+  },
+  {
+   "kind": "request",
+   "t": 5090311.913509,
+   "url": "http://localhost:8000/pipeline/speech",
+   "method": "POST",
+   "post": "{\"text\":\"Chú ý người đi bộ\"}"
+  },
+  {
+   "kind": "request",
+   "t": 5090311.914468,
+   "url": "http://localhost:8000/pipeline/speech",
+   "method": "OPTIONS"
+  },
+  {
+   "kind": "response",
+   "t": 5090311.916091,
+   "url": "http://localhost:8000/pipeline/speech",
+   "status": 200
+  },
+  {
+   "kind": "response",
+   "t": 5090311.917683,
+   "url": "http://localhost:8000/pipeline/speech",
+   "status": 200
+  },
+  {
+   "kind": "request",
+   "t": 5090311.91838,
+   "url": "http://localhost:8000/pipeline/audio/b386e9446fb1cd7c139e7774366dee5e7befbe5c38c6a29a8d1408a9226b57d8.mp3",
+   "method": "GET"
+  },
+  {
+   "kind": "response",
+   "t": 5090311.937915,
+   "url": "http://localhost:8000/pipeline/audio/b386e9446fb1cd7c139e7774366dee5e7befbe5c38c6a29a8d1408a9226b57d8.mp3",
+   "status": 206
+  },
+  {
+   "kind": "request",
+   "t": 5090323.87797,
+   "url": "http://localhost:8000/pipeline/speech",
+   "method": "POST",
+   "post": "{\"text\":\"Cẩn thận, xe phía trước tiến gần\"}"
+  },
+  {
+   "kind": "response",
+   "t": 5090323.881688,
+   "url": "http://localhost:8000/pipeline/speech",
+   "status": 200
+  },
+  {
+   "kind": "request",
+   "t": 5090323.88311,
+   "url": "http://localhost:8000/pipeline/audio/a3e5d04840d8aeba19465e949052694c0d09cd52dfc88598ee6a93e4dbf655fa.mp3",
+   "method": "GET"
+  },
+  {
+   "kind": "response",
+   "t": 5090323.888662,
+   "url": "http://localhost:8000/pipeline/audio/a3e5d04840d8aeba19465e949052694c0d09cd52dfc88598ee6a93e4dbf655fa.mp3",
+   "status": 206
+  },
+  {
+   "kind": "request",
+   "t": 5090348.043496,
+   "url": "http://localhost:8000/pipeline/run",
+   "method": "POST"
+  },
+  {
+   "kind": "response",
+   "t": 5090348.161103,
+   "url": "http://localhost:8000/pipeline/run",
+   "status": 200
+  },
+  {
+   "kind": "request",
+   "t": 5090348.163619,
+   "url": "http://localhost:8000/pipeline/forward-objects",
+   "method": "POST"
+  },
+  {
+   "kind": "response",
+   "t": 5090348.278977,
+   "url": "http://localhost:8000/pipeline/forward-objects",
+   "status": 200
+  },
+  {
+   "kind": "request",
+   "t": 5090353.216375,
+   "url": "http://localhost:8000/pipeline/legal-search",
+   "method": "OPTIONS"
+  },
+  {
+   "kind": "request",
+   "t": 5090353.215243,
+   "url": "http://localhost:8000/pipeline/legal-search",
+   "method": "POST",
+   "post": "{\"query\":\"I.423 Vị trí người đi bộ sang ngang\",\"top_k\":2}"
+  },
+  {
+   "kind": "response",
+   "t": 5090353.219299,
+   "url": "http://localhost:8000/pipeline/legal-search",
+   "status": 200
+  },
+  {
+   "kind": "response",
+   "t": 5090353.22472,
+   "url": "http://localhost:8000/pipeline/legal-search",
+   "status": 200
+  }
+ ],
+ "imageState": {
+  "obstacleBoxes": 4,
+  "zoneBoxes": 3,
+  "readButton": false,
+  "signRows": 11
+ },
+ "videoState": {
+  "t": 30,
+  "paused": true,
+  "ended": true
+ }
+}

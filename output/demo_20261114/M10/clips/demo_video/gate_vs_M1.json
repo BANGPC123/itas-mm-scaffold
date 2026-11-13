@@ -1,0 +1,13 @@
+{
+  "baseline_samples": 840,
+  "candidate_samples": 840,
+  "sample_count_equal": true,
+  "box_label_mismatch_samples": [],
+  "applicability_mismatch_samples": [],
+  "speech_equal": false,
+  "baseline_speech_events": 15,
+  "candidate_speech_events": 7,
+  "box_label_mismatch_count": 0,
+  "applicability_mismatch_count": 0,
+  "gate_boxes_labels_100pct": true
+}

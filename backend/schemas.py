@@ -86,6 +86,7 @@ class PipelineRunResponse(BaseModel):
     context: ZoneResponse
     reasoning: ReasoningResponse
     audio_url: str | None
+    sign_speech_enabled: bool = False
     warnings: list[str]
     timings_ms: dict[str,float]
     annotated_image: str | None
