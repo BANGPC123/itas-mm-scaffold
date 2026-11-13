@@ -44,15 +44,14 @@ Quyết định `nguy_co_enabled`: giữ `true`, vì video demo không có cản
 
 Clip đêm (nguồn 1920x1080): viền box trong video trùng bbox đã scale ở 5/5 cảnh báo; vị trí chưa scale chỉ 0.00–0.06. Đây là bằng chứng cho M13.1.
 
-### 0.6 Clip live 22 s (M12)
+### 0.6 Clip live 30 s (M12)
 
-- File: `output/demo_20261114/M12/live_118s/render/test_video_offline_max.mp4`, `start_sec = 118`, dài 22 s, xử lý 19.1 s.
-- Hai câu được đọc, cả hai là ô tô trong làn xe mình phía trước (hop_ly):
-  - 0:00.67 (118.7 s của video gốc): chấm bổ sung của tôi, không có trong review v3.
-  - 0:21.0 (139 s của video gốc): hop_ly theo review v3.
-- Cảnh báo 133.0 s không được đọc (gate giọng). Cảnh báo ở 133 s và 139 s là hop_ly theo review v3.
-- Nhịp: 2 câu trong 22 s = 5.45 câu/phút. Con số này cao vì clip ngắn, không đại diện cho cả video.
-- Clip live cũ 110 s (`M12/live_110s/`) có câu ở 0:00.67 là ô tô làn trái (sai) nên không dùng.
+- File: `output/demo_20261114/M12/live_30s/render/test_video_offline_max.mp4`, `start_sec = 30`, dài 30 s, xử lý 24.9 s. Kết quả đã kiểm tra `verified_full_decode = true`.
+- Hai cảnh báo, một câu được đọc (2.0 câu/phút trong 30 s). Đối chiếu từng cảnh báo với review độc lập `M11/v3/demo_video/review_sheet.csv` (commit 665310f, nhánh audit) theo thời điểm và bbox:
+  - 42.667 s (clip 12.7 s), xe máy trong làn xe mình phía trước, **được đọc** ("Chú ý xe máy"): v3 = hop_ly, bbox khớp.
+  - 45.667 s (clip 15.7 s), xe máy cùng làn, không đọc: v3 = hop_ly, bbox khớp.
+- Track ID trong clip khác video gốc (tracker khởi động lại ở đầu clip); bbox và thời điểm khớp chính xác.
+- Clip 118 s (`M12/live_118s/`) bị loại: cảnh báo 118.667 s là cùng chiếc ô tô làn trái của track 330 ở 117.667 s, v3 chấm khong_hop_ly. Clip 110 s (`M12/live_110s/`) cũng bị loại vì câu ở 0.67 s là ô tô làn trái.
 
 ### 0.7 Chưa làm / chưa đo
 

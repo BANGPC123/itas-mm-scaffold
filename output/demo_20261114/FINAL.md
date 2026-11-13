@@ -135,6 +135,7 @@ Nhánh: `work/demo-20261114`. Chưa push, chưa merge main. Commit cục bộ, m
 | M13.6 | b02663d | Render demo và đêm với cấu hình M13; review v3; quyết định nguy_co |
 | M13 READY | d67a491 | Ghi hash vào `M13/READY_FOR_REVIEW.txt` |
 | M12 | 09d4a42 | Trung vị latency 3 lần; clip live; cập nhật RESULTS và DEMO_SCRIPT |
+| M12 | af4d050 | Prewarm 14/14 câu; clip live 118 s (đã bỏ, xem dưới) |
 
 ### Gate và quyết định
 
@@ -149,7 +150,8 @@ Nhánh: `work/demo-20261114`. Chưa push, chưa merge main. Commit cục bộ, m
 - Holdout video demo, theo review độc lập `M11/v3` (commit `665310f`, nhánh audit): 15 → 10 cảnh báo; khong_hop_ly 8 → 5; hop_ly 6 → 5; không có nguy_co. AI-reviewed, chưa đo recall.
 - Đêm 90 s (in-sample, dùng để chỉnh ngưỡng): 9 → 5 cảnh báo; khong_hop_ly 6 → 2; hop_ly 2 → 2.
 - Giọng cảnh báo: 14/14 câu prewarm có audio, 0.91–1.87 s (`M12/PREWARM.md`).
-- Clip live: `M12/live_118s`, start 118 s, 22 s. Hai câu đọc, cả hai là ô tô trong làn phía trước (hợp lý). Một câu (0.67 s) là chấm bổ sung của tôi, không có trong review v3. Clip 110 s bị bỏ vì câu 0.67 s là ô tô làn trái.
+- Clip live: `M12/live_30s`, start 30 s, 30 s. Một câu được đọc ("Chú ý xe máy" ở 42.667 s), hop_ly theo v3. Hai cảnh báo đều khớp v3 theo thời điểm và bbox.
+- Bỏ `M12/live_118s`: câu 118.667 s là cùng chiếc ô tô làn trái của track 330 ở 117.667 s, v3 chấm khong_hop_ly. Tôi đã sai khi tự chấm 118.667 s là hợp lý; không chấm lại ca đã có verdict độc lập. Bỏ `M12/live_110s`: câu ở 0.67 s là ô tô làn trái.
 
 ### Rollback (configs/perception.yaml, không xóa code)
 
@@ -164,4 +166,4 @@ Nhánh: `work/demo-20261114`. Chưa push, chưa merge main. Commit cục bộ, m
 - Latency clip đêm 90 s chưa đạt (97.5 s).
 - Không có nhãn người nên chưa đo độ chính xác hay recall.
 - Bộ lọc chỉnh trên clip đêm; độ nhạy lateral đã ghi trong `M13/THRESHOLDS.md`.
-- Nhịp câu nói trên clip live 22 s là 5.45 câu/phút, vì clip ngắn; không đại diện cho cả video.
+- Clip live 30 s chỉ có 1 câu được đọc trong 30 s (2.0 câu/phút). Clip này không đại diện cho cả video.
