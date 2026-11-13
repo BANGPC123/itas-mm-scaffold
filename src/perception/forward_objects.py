@@ -221,19 +221,42 @@ def merge_cues(sign_cues: list[dict], forward: list[dict], busy_s: float = 2.0) 
     return sorted(out, key=lambda c: c['t_seconds'])
 
 
+_ZONE_CACHE: dict = {}
+
+
+def _zone_geometry(h: int, w: int, cfg: ForwardWarnConfig):
+    """Zone polygon and its bounding rectangle, cached per frame size and zone settings (M8.1)."""
+    import numpy as np
+    key = (h, w, cfg.bottom_width_ratio, cfg.top_width_ratio, cfg.top_y_ratio)
+    geom = _ZONE_CACHE.get(key)
+    if geom is None:
+        zone = np.array([[int(w * (0.5 - cfg.bottom_width_ratio / 2)), h - 1],
+                         [int(w * (0.5 - cfg.top_width_ratio / 2)), int(cfg.top_y_ratio * h)],
+                         [int(w * (0.5 + cfg.top_width_ratio / 2)), int(cfg.top_y_ratio * h)],
+                         [int(w * (0.5 + cfg.bottom_width_ratio / 2)), h - 1]], np.int32)
+        x0, y0 = int(zone[:, 0].min()), int(zone[:, 1].min())
+        x1, y1 = int(zone[:, 0].max()) + 1, h
+        geom = (x0, y0, x1, y1, zone - np.array([x0, y0], np.int32))
+        if len(_ZONE_CACHE) > 8:
+            _ZONE_CACHE.clear()
+        _ZONE_CACHE[key] = geom
+    return geom
+
+
 def draw_forward(img, alerts: list[dict], cfg: ForwardWarnConfig, font):
-    """Overlay: zone trapezoid (faint), object boxes orange (chu_y) / red (nguy_co) with Vietnamese labels."""
+    """Overlay: zone trapezoid (faint), object boxes orange (chu_y) / red (nguy_co) with Vietnamese labels.
+
+    The tint is blended only inside the zone's bounding rectangle (M8.1); pixels outside it were never
+    tinted, so the result inside the rectangle is the same as the former full-frame blend."""
     import cv2
     import numpy as np
     from PIL import Image, ImageDraw
     h, w = img.shape[:2]
-    zone = np.array([[int(w * (0.5 - cfg.bottom_width_ratio / 2)), h - 1],
-                     [int(w * (0.5 - cfg.top_width_ratio / 2)), int(cfg.top_y_ratio * h)],
-                     [int(w * (0.5 + cfg.top_width_ratio / 2)), int(cfg.top_y_ratio * h)],
-                     [int(w * (0.5 + cfg.bottom_width_ratio / 2)), h - 1]], np.int32)
-    overlay = img.copy()
-    cv2.fillPoly(overlay, [zone], (255, 255, 0))
-    img[:] = cv2.addWeighted(overlay, 0.12, img, 0.88, 0)
+    x0, y0, x1, y1, local = _zone_geometry(h, w, cfg)
+    sub = img[y0:y1, x0:x1]
+    tint = sub.copy()
+    cv2.fillPoly(tint, [local], (255, 255, 0))
+    sub[:] = cv2.addWeighted(tint, 0.12, sub, 0.88, 0)
     if not alerts:
         return img
     pil = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))

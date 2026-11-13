@@ -98,3 +98,29 @@ def test_merge_pushes_overlapping_sign_cues_apart_without_shared_start():
     assert len(set(starts)) == len(starts)
     assert min(starts) >= 11.5
     assert [c['text'] for c in out if 'kind' not in c] == ['a', 'b']
+
+
+def test_draw_forward_rect_blend_matches_full_frame_reference():
+    """M8.1: blending only inside the zone rectangle gives the same pixels as the former full-frame blend."""
+    import cv2
+    import numpy as np
+    from src.perception.forward_objects import ForwardWarnConfig, draw_forward
+    cfg = ForwardWarnConfig(enabled=True)
+    rng = np.random.default_rng(0)
+    frame = rng.integers(0, 255, size=(144, 256, 3), dtype=np.uint8)
+    h, w = frame.shape[:2]
+    zone = np.array([[int(w * (0.5 - cfg.bottom_width_ratio / 2)), h - 1],
+                     [int(w * (0.5 - cfg.top_width_ratio / 2)), int(cfg.top_y_ratio * h)],
+                     [int(w * (0.5 + cfg.top_width_ratio / 2)), int(cfg.top_y_ratio * h)],
+                     [int(w * (0.5 + cfg.bottom_width_ratio / 2)), h - 1]], np.int32)
+    ref = frame.copy()
+    overlay = ref.copy()
+    cv2.fillPoly(overlay, [zone], (255, 255, 0))
+    ref[:] = cv2.addWeighted(overlay, 0.12, ref, 0.88, 0)
+    out = draw_forward(frame.copy(), [], cfg, None)
+    x0, y0 = int(zone[:, 0].min()), int(zone[:, 1].min())
+    # Inside the bounding rectangle: identical to the reference blend.
+    assert np.array_equal(out[y0:, x0:int(zone[:, 0].max()) + 1], ref[y0:, x0:int(zone[:, 0].max()) + 1])
+    # Outside the rectangle: untouched.
+    assert np.array_equal(out[:y0], frame[:y0])
+    assert np.array_equal(out[:, :x0], frame[:, :x0])
