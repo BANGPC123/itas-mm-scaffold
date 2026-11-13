@@ -26,6 +26,8 @@ class SignDetector:
         self.video_multiscale = sd_cfg.get('video_multiscale', False)
         self.secondary_image_size = sd_cfg.get('secondary_image_size', 640)
         self.device = sd_cfg["device"]
+        # M1.5(d): FP16 inference, only on CUDA. Default false = previous behaviour.
+        self.half = bool(sd_cfg.get("half", False))
         if self.device == "auto":
             import torch
             self.device = "0" if torch.cuda.is_available() else "cpu"
@@ -110,6 +112,7 @@ class SignDetector:
             iou=self.iou_threshold,
             device=self.device,
             imgsz=self.image_size,
+            **({"half": True} if self.half and str(self.device) not in ("cpu",) else {}),
             verbose=False,
         )
         detections: list[SignDetection] = []

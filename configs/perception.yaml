@@ -19,6 +19,8 @@ sign_detector:
   confidence_threshold: 0.35
   iou_threshold: 0.45
   device: "auto"
+  # M1.5(d) FP16 detector on CUDA. false = unchanged. Enable only after gate M1.5(d) passes.
+  half: false
   # Retained for the legacy grouping entry point; runtime uses applicability rules.
   compound_group_distance_px: 40
 
