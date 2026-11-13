@@ -95,7 +95,18 @@ Khi trình bày, giữ bối cảnh prototype streaming của báo cáo cuối v
 | M11 v2 / gộp - nguy_co | 0/6 (0,0%) | 6 cảnh báo | `output/demo_20261114/M11/v2/counts.json::all.nguy_co` | khớp nguồn |
 | M11 v2 / gộp - mọi mức | 8/24 (33,3%) | 24 cảnh báo | `output/demo_20261114/M11/v2/counts.json::all.all` | khớp nguồn |
 
-V3 sẽ bổ sung sau khi có M13. Chỉ dùng `demo_video` holdout cho kết luận chính. `night_90s` là dev đã dùng để chỉnh ngưỡng.
+| Nội dung | Giá trị | n | File nguồn và dòng hoặc key | Trạng thái |
+| --- | --- | --- | --- | --- |
+| M13 / night_90s (dev) - cue giọng cảnh báo | 2,00 câu/phút | 3 cue / 5 cảnh báo, 90 s | `output/demo_20261114/M13/clips/night_90s/render/summary.json::forward_warning.spoken_per_minute / spoken_cues / alerts; output_frames / output_fps` | khớp nguồn |
+| M11 v3 / night_90s (dev) - chu_y | 2/4 (50,0%) | 4 cảnh báo | `output/demo_20261114/M11/v3/counts.json::night_90s.chu_y` | khớp nguồn |
+| M11 v3 / night_90s (dev) - nguy_co | 0/1 (0,0%) | 1 cảnh báo | `output/demo_20261114/M11/v3/counts.json::night_90s.nguy_co` | khớp nguồn |
+| M11 v3 / night_90s (dev) - mọi mức | 2/5 (40,0%) | 5 cảnh báo | `output/demo_20261114/M11/v3/counts.json::night_90s.all` | khớp nguồn |
+| M13 / demo_video (holdout) - cue giọng cảnh báo | 2,57 câu/phút | 6 cue / 10 cảnh báo, 140 s | `output/demo_20261114/M13/clips/demo_video/render/summary.json::forward_warning.spoken_per_minute / spoken_cues / alerts; output_frames / output_fps` | khớp nguồn |
+| M11 v3 / demo_video (holdout) - chu_y | 5/10 (50,0%) | 10 cảnh báo | `output/demo_20261114/M11/v3/counts.json::demo_video.chu_y` | khớp nguồn |
+| M11 v3 / demo_video (holdout) - nguy_co | 0/0 (không xác định) | 0 cảnh báo | `output/demo_20261114/M11/v3/counts.json::demo_video.nguy_co` | khớp nguồn |
+| M11 v3 / demo_video (holdout) - mọi mức | 5/10 (50,0%) | 10 cảnh báo | `output/demo_20261114/M11/v3/counts.json::demo_video.all` | khớp nguồn |
+
+Chỉ dùng video demo holdout cho kết luận chính. Clip đêm là dev đã dùng để chỉnh ngưỡng. Kết quả v3 là **AI-reviewed, chưa đo recall**. [Rà soát M11 v3](FORWARD_REVIEW.md#v3---render-m13).
 
 ## Không đưa lên slide
 
