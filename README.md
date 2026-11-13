@@ -1,6 +1,12 @@
 # ITAS-MM — Bản cuối (02/11/2026)
 
-> Bản cuối nằm ở nhánh **`work/final-20261102`**. Nhánh mặc định `main` là bản cũ, chưa có các thay đổi cuối.
+> Bản demo 14/11 nằm ở nhánh **`work/demo-20261114`** (chưa merge `main`). Bản 02/11 vẫn ở nhánh **`work/final-20261102`**. Nhánh `main` chưa có các thay đổi này.
+
+## Thay đổi bản demo 14/11
+
+- **Lane tắt mặc định** (`configs/perception.yaml: offline_video_lane.enabled: false`). Biển báo không phụ thuộc làn; biển cần làn để xác định hiệu lực ra trạng thái "chưa xác định". Đặt `true` để bật lại.
+- **Cảnh báo vật cản phía trước** (`forward_warning.enabled`): YOLO COCO + ByteTrack, chỉ là chỉ báo tương đối trên một camera, không đo khoảng cách mét và không phải thời gian va chạm thật. Đặt `false` để tắt.
+- **Cờ đã thử và giữ tắt:** `sign_detector.video_multiscale` và `video_image_size` (detector 640 đơn), `sign_detector.half` (FP16). Kết quả đo nằm trong `output/demo_20261114/M1/M1_5.md`.
 
 Web cuối chỉ còn hai luồng: **tải lên video MP4** hoặc **tải lên ảnh** (JPG/PNG). Hệ thống xử lý tệp rồi hiển thị kết quả. Chế độ live và camera đã bỏ khỏi giao diện cuối; phần live/camera trong các mục bên dưới là lịch sử của các bản trước.
 
