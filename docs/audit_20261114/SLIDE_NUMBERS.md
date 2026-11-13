@@ -114,6 +114,18 @@ Khi trình bày, giữ bối cảnh prototype streaming của báo cáo cuối v
 
 Chỉ dùng video demo holdout cho kết luận chính. Clip đêm là dev đã dùng để chỉnh ngưỡng. Kết quả v3 là **AI-reviewed, chưa đo recall**. [Rà soát M11 v3](FORWARD_REVIEW.md#v3---render-m13).
 
+## Biển báo trên video demo M15
+
+**AI-reviewed, không phải nhãn người.** Chỉ một video demo, chưa đo recall. Nhóm uncertain dùng mã ứng viên thô để đối chiếu.
+
+| Nội dung | Giá trị | n | File nguồn và dòng hoặc key | Trạng thái |
+| --- | --- | --- | --- | --- |
+| Known - đúng mã | 27/28 (96,4%) | 28 nhóm | `output/demo_20261114/M15/scored/counts.json::verdicts.known.dung_ma / known_n` | khớp nguồn |
+| Uncertain - phân bố | `dung_ma` 11, `sai_ma` 1, `khong_phai_bien` 3, `khong_ro` 14 | 29 nhóm | `output/demo_20261114/M15/scored/counts.json::verdicts.uncertain / uncertain_n` | khớp nguồn |
+| Uncertain - cặp nhầm mã thô | I.409 sang I.423, 1 ca | 29 nhóm | `output/demo_20261114/M15/scored/counts.json::confusion_pairs` | khớp nguồn |
+
+[Phương pháp và phiếu M15](SIGN_REVIEW.md)
+
 ## Không đưa lên slide
 
 | Nội dung | Giá trị | n | File nguồn và dòng hoặc key | Trạng thái |
