@@ -33,3 +33,36 @@ Nguồn: [phiếu clip đêm](../../output/demo_20261114/M11/v1/night_90s/review
 ### Lớp phủ trong render
 
 Một số box cảnh báo gốc của clip đêm lệch xuống phải so với box trong metadata đã quy đổi. Ví dụ dòng 004, ảnh sự kiện cho thấy box cam gốc ở phần đường bên phải, còn khung xanh quy đổi bao xe bán tải ở giữa. Phiếu đánh giá vị trí vật theo bbox metadata. Nguồn ảnh 004_event.jpg và sources.json của clip đêm.
+
+## v2 - Render M10
+
+Nguồn: [phiếu clip đêm](../../output/demo_20261114/M11/v2/night_90s/review_sheet.csv), [phiếu video demo](../../output/demo_20261114/M11/v2/demo_video/review_sheet.csv), [phiếu clip ngắn](../../output/demo_20261114/M11/v2/demo_short_30s/review_sheet.csv), [bảng đếm](../../output/demo_20261114/M11/v2/counts.json). Dùng luật chấm đã ghi ở đầu báo cáo. Clip ngắn không có cảnh báo trong cả summary và predictions. Vì mẫu số bằng 0, tỷ lệ của clip ngắn không xác định.
+
+| Clip | Mức | Hợp lý / tổng | Tỷ lệ | Không hợp lý | Không rõ |
+| --- | --- | ---: | ---: | ---: | ---: |
+| night_90s | chu_y | 2/4 | 50,0% | 1 | 1 |
+| night_90s | nguy_co | 0/5 | 0,0% | 5 | 0 |
+| night_90s | Mọi mức | 2/9 | 22,2% | 6 | 1 |
+| demo_video | chu_y | 6/14 | 42,9% | 7 | 1 |
+| demo_video | nguy_co | 0/1 | 0,0% | 1 | 0 |
+| demo_video | Mọi mức | 6/15 | 40,0% | 8 | 1 |
+| demo_short_30s | chu_y | 0/0 | không xác định | 0 | 0 |
+| demo_short_30s | nguy_co | 0/0 | không xác định | 0 | 0 |
+| demo_short_30s | Mọi mức | 0/0 | không xác định | 0 | 0 |
+| Gộp ba clip | chu_y | 8/18 | 44,4% | 8 | 2 |
+| Gộp ba clip | nguy_co | 0/6 | 0,0% | 6 | 0 |
+| Gộp ba clip | Mọi mức | 8/24 | 33,3% | 14 | 2 |
+
+### Ca không hợp lý tiêu biểu
+
+- Clip đêm, 21,667 s, track 110, nguy_co. Box bám người ngồi lái xe máy, nhưng cảnh báo ghi người đi bộ. Nguồn dòng 001 của phiếu clip đêm.
+- Clip đêm, 63,333 s, track 615, nguy_co. Bbox quy đổi chỉ bao phần dưới đuôi SUV đỏ ở luồng trái. Nguồn dòng 003 và ảnh 003_event.jpg của clip đêm.
+- Video demo, 60,667 s, track 281, nguy_co. Ô tô bạc ở sát bó vỉa, phía bên kia vạch làn. Nguồn dòng 006 của phiếu video demo.
+
+Box gốc của clip đêm v2 vẫn lệch xuống phải ở các ca như track 342 tại 71,000 s. Khung xanh quy đổi đánh dấu xe bán tải phía trước. Nguồn ảnh 005_event.jpg và sources.json của clip đêm v2.
+
+Tỷ lệ gộp v2 cao hơn v1 trên cảnh báo đã phát. Số sự kiện và mức cảnh báo giữa hai render thay đổi. Phép rà soát này chưa đo recall và chưa có nhãn người. Nguồn hai bảng đếm.
+
+### Đối chiếu dữ liệu render
+
+Lần trích v2 đầu tiên dừng khi so toàn bộ trường JSON vì summary M10 thêm hai trường giọng nói sau khi ghi predictions. Script bỏ qua đúng hai trường đó khi so, rồi kiểm tra toàn bộ metadata cảnh báo còn lại và số dòng. Nguồn v2-extract.log, v2-extract-verified.log và sources.json từng clip.

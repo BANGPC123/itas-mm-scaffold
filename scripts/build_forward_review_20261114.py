@@ -48,7 +48,9 @@ def source_size(summary: dict) -> tuple[int, int]:
 
 
 def event_key(alert: dict) -> str:
-    return json.dumps(alert, sort_keys=True, ensure_ascii=False)
+    # The renderer adds voice fields after writing the prediction row.
+    metadata = {key: value for key, value in alert.items() if key not in {"spoken", "speech_text"}}
+    return json.dumps(metadata, sort_keys=True, ensure_ascii=False)
 
 
 def matched_events(path: Path, alerts: list[dict]) -> list[tuple[dict, int]]:
