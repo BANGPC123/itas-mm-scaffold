@@ -9,10 +9,11 @@ from src.pipeline.orchestrator import Pipeline
 
 def main():
     src, out, start = Path(sys.argv[1]), Path(sys.argv[2]), float(sys.argv[3])
+    seconds = float(sys.argv[4]) if len(sys.argv) > 4 else 30.
     out.mkdir(parents=True, exist_ok=True)
     t0 = time.perf_counter()
     result = render(src, out / 'render', analysis_hz=6., pipeline=Pipeline(), output_fps_cap=30, lane_every=2,
-                    max_seconds=30., start_second=start)
+                    max_seconds=seconds, start_second=start)
     wall = time.perf_counter() - t0
     (out / 'baseline_meta.json').write_text(json.dumps({'source': str(src), 'start_sec': start,
         'wall_seconds': round(wall, 2), 'result': result}, ensure_ascii=False, default=str, indent=2), encoding='utf-8')

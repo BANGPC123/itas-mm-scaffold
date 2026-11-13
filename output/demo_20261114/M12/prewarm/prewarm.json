@@ -1,0 +1,106 @@
+{
+  "provider": "vieneu-onnx",
+  "voice": "vieneu-HaiDang",
+  "total_seconds": 7.9,
+  "sentences": [
+    {
+      "text": "Cẩn thận, người đi bộ phía trước",
+      "file": "data/processed/tts_output/0be9bcec5e4839aeba21201af42959b2eee98a144da4094f1ac6f44b3c78ccfe.mp3",
+      "bytes": 21932,
+      "duration_s": 1.8,
+      "seconds": 0.11
+    },
+    {
+      "text": "Cẩn thận, xe đạp phía trước",
+      "file": "data/processed/tts_output/98ffc2b3d02f78c6a2e58d2c6ebfb27feacec8940986cf87d42f0e9bbcda23df.mp3",
+      "bytes": 20780,
+      "duration_s": 1.7,
+      "seconds": 0.54
+    },
+    {
+      "text": "Cẩn thận, ô tô phía trước",
+      "file": "data/processed/tts_output/570df48f0604417d152902bb0ba87830ae94a721e562662bfcc1708b37555016.mp3",
+      "bytes": 21932,
+      "duration_s": 1.8,
+      "seconds": 0.5
+    },
+    {
+      "text": "Cẩn thận, xe máy phía trước",
+      "file": "data/processed/tts_output/e68e148e6f04123cd574ef4d9d2f94ebc188f9d3657c3f530567321f597235d3.mp3",
+      "bytes": 19916,
+      "duration_s": 1.63,
+      "seconds": 0.48
+    },
+    {
+      "text": "Cẩn thận, xe buýt phía trước",
+      "file": "data/processed/tts_output/dea51a6348b6c4bdb9f7a1a4d238ac20dbd244d27c5d8e35f19a0622f2f7f002.mp3",
+      "bytes": 22796,
+      "duration_s": 1.87,
+      "seconds": 0.55
+    },
+    {
+      "text": "Cẩn thận, xe tải phía trước",
+      "file": "data/processed/tts_output/aa9f5dbb12b51d22cb2067b2081eab3bca4d08f5723e80633d07c5e72bfb82f7.mp3",
+      "bytes": 19052,
+      "duration_s": 1.56,
+      "seconds": 0.47
+    },
+    {
+      "text": "Cẩn thận, phương tiện phía trước",
+      "file": "data/processed/tts_output/203e593af050f25e3563eda775cbd9a913fedb264ad70cb6204f834ae6fbb0bb.mp3",
+      "bytes": 17036,
+      "duration_s": 1.39,
+      "seconds": 0.46
+    },
+    {
+      "text": "Chú ý người đi bộ",
+      "file": "data/processed/tts_output/b386e9446fb1cd7c139e7774366dee5e7befbe5c38c6a29a8d1408a9226b57d8.mp3",
+      "bytes": 13292,
+      "duration_s": 1.08,
+      "seconds": 0.02
+    },
+    {
+      "text": "Chú ý xe đạp",
+      "file": "data/processed/tts_output/6bb0804f1b7736f30745546601135cd7cad25c99c515fbc6c7653d1f3a7a087c.mp3",
+      "bytes": 12140,
+      "duration_s": 0.98,
+      "seconds": 0.02
+    },
+    {
+      "text": "Chú ý ô tô",
+      "file": "data/processed/tts_output/ff581edc74761a86c391be0bcb66f6ee496fa3f85e01d7916eaed0983098852b.mp3",
+      "bytes": 11276,
+      "duration_s": 0.91,
+      "seconds": 0.02
+    },
+    {
+      "text": "Chú ý xe máy",
+      "file": "data/processed/tts_output/897274ac4626fae33a48d0cd7ef0c5a4781ea9c11949f5870f3f5c1509165951.mp3",
+      "bytes": 11276,
+      "duration_s": 0.91,
+      "seconds": 0.02
+    },
+    {
+      "text": "Chú ý xe buýt",
+      "file": "data/processed/tts_output/ae9619df5396b701274952bbd5b9f89938f2d4c647996663a0d7082ba0c78faa.mp3",
+      "bytes": 11276,
+      "duration_s": 0.91,
+      "seconds": 0.02
+    },
+    {
+      "text": "Chú ý xe tải",
+      "file": "data/processed/tts_output/11b7e4f356c045273d26d80c563a533e87f02fa1b40402dcd28cb2f5d0dc79c9.mp3",
+      "bytes": 12140,
+      "duration_s": 0.98,
+      "seconds": 0.02
+    },
+    {
+      "text": "Chú ý phương tiện",
+      "file": "data/processed/tts_output/56bce3c48e46999e0ec93e33849a81b8885af2eaeccfe42be13f63aa0c4363f9.mp3",
+      "bytes": 11276,
+      "duration_s": 0.91,
+      "seconds": 0.31
+    }
+  ],
+  "all_nonempty": true
+}

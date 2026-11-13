@@ -118,3 +118,50 @@ Chưa làm:
 - Chưa kiểm tra giọng đọc có phát ra âm thanh không. Trình duyệt headless chạy với `--autoplay-policy`, nhưng log không có sự kiện phát âm.
 - Trình duyệt headless đầu tiên bị dừng khi lỗi script. Tiến trình Chrome đó còn sống, không kill được vì lệnh bị từ chối tự động. Cần đóng tay nếu còn thấy trong Task Manager.
 - `RESULTS.md`, `DEMO_SCRIPT.md` và bảng review cảnh báo (`M11`) chưa cập nhật theo số mới ngoài mục này.
+
+## Vòng 3 (M13, M12) - 14/11
+
+Nhánh: `work/demo-20261114`. Chưa push, chưa merge main. Commit cục bộ, mã milestone trong message.
+
+### Commit
+
+| Mã | Hash | Nội dung |
+|---|---|---|
+| M13.1 | 062ab3f | Box cảnh báo được scale từ khung nguồn 1920x1080 sang canvas 1280x720; bbox nguồn giữ trong metadata |
+| M13.2 | bf0aa8e | Câu nguy_co đọc theo label_vi (không còn "xe phía trước" cho người đi bộ hoặc xe máy); prewarm lại |
+| M13.3 | fab8fc6 | Tối đa 1 câu nguy_co mỗi mẫu, cách nhau tối thiểu 2 s |
+| M13.4 | e6c0c87 | `M13/ERROR_ANALYSIS.md`: phân loại 14 ca khong_hop_ly của M11 v2, viết trước khi sửa lọc |
+| M13.5 | 868e3e4 | Bộ lọc, mỗi bộ một cờ; chỉnh ngưỡng trên clip đêm; `M13/THRESHOLDS.md` |
+| M13.6 | b02663d | Render demo và đêm với cấu hình M13; review v3; quyết định nguy_co |
+| M13 READY | d67a491 | Ghi hash vào `M13/READY_FOR_REVIEW.txt` |
+| M12 | 09d4a42 | Trung vị latency 3 lần; clip live; cập nhật RESULTS và DEMO_SCRIPT |
+
+### Gate và quyết định
+
+- Biển: nhãn và box trùng M10 100% theo mẫu (đêm 540/540, demo 840/840).
+- Box: trên clip đêm, viền trong video trùng bbox đã scale ở 5/5 cảnh báo (vị trí chưa scale 0.00–0.06).
+- `nguy_co_enabled`: giữ `true`. Không có cảnh báo nguy_co nào trên video demo để tắt. Nguồn `M13/NGUY_CO_DECISION.md`.
+- Không chỉnh ngưỡng sau khi xem video demo. Clip đêm chỉ dùng để chỉnh ngưỡng (in-sample).
+
+### Số liệu
+
+- Latency (trung vị 3 lần): video demo 140 s, elapsed 119.3 s, wall 122.7 s. Đêm 90 s, elapsed 97.5 s, wall 101.5 s. Đêm 90 s chưa đạt mục tiêu 90 s.
+- Holdout video demo, theo review độc lập `M11/v3` (commit `665310f`, nhánh audit): 15 → 10 cảnh báo; khong_hop_ly 8 → 5; hop_ly 6 → 5; không có nguy_co. AI-reviewed, chưa đo recall.
+- Đêm 90 s (in-sample, dùng để chỉnh ngưỡng): 9 → 5 cảnh báo; khong_hop_ly 6 → 2; hop_ly 2 → 2.
+- Giọng cảnh báo: 14/14 câu prewarm có audio, 0.91–1.87 s (`M12/PREWARM.md`).
+- Clip live: `M12/live_118s`, start 118 s, 22 s. Hai câu đọc, cả hai là ô tô trong làn phía trước (hợp lý). Một câu (0.67 s) là chấm bổ sung của tôi, không có trong review v3. Clip 110 s bị bỏ vì câu 0.67 s là ô tô làn trái.
+
+### Rollback (configs/perception.yaml, không xóa code)
+
+- `forward_warning.enabled: false`: tắt toàn bộ cảnh báo vật cản.
+- `forward_warning.nguy_co_enabled: false`: chỉ tắt nguy_co, giữ chu_y.
+- `rider_merge_enabled`, `nguy_zone_enabled`, `lateral_filter_enabled`: tắt từng bộ lọc (mặc định bật).
+- `track_class_reset_enabled`, `track_min_age_samples`: đang tắt, đã thử trên clip đêm.
+- `voice_nguy_gap_s`: khoảng cách tối thiểu giữa hai câu nguy_co (mặc định 2 s).
+
+### Chưa làm
+
+- Latency clip đêm 90 s chưa đạt (97.5 s).
+- Không có nhãn người nên chưa đo độ chính xác hay recall.
+- Bộ lọc chỉnh trên clip đêm; độ nhạy lateral đã ghi trong `M13/THRESHOLDS.md`.
+- Nhịp câu nói trên clip live 22 s là 5.45 câu/phút, vì clip ngắn; không đại diện cho cả video.
