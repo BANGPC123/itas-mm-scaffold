@@ -66,3 +66,37 @@ Tỷ lệ gộp v2 cao hơn v1 trên cảnh báo đã phát. Số sự kiện v�
 ### Đối chiếu dữ liệu render
 
 Lần trích v2 đầu tiên dừng khi so toàn bộ trường JSON vì summary M10 thêm hai trường giọng nói sau khi ghi predictions. Script bỏ qua đúng hai trường đó khi so, rồi kiểm tra toàn bộ metadata cảnh báo còn lại và số dòng. Nguồn v2-extract.log, v2-extract-verified.log và sources.json từng clip.
+
+## v3 - Render M13
+
+**Kết luận trên holdout demo_video:** v3 có 5/10 (50,0%) cảnh báo hợp lý, tất cả ở mức `chu_y`. Tổng số cảnh báo giảm từ 15 ở v2 xuống 10 ở v3. Số ca hợp lý giảm từ 6 xuống 5 dù tỷ lệ tăng từ 40,0% lên 50,0%. V3 không phát `nguy_co` trên holdout, nên chưa có mẫu để đánh giá mức này. Nguồn [đếm v2](../../output/demo_20261114/M11/v2/counts.json) và [đếm v3](../../output/demo_20261114/M11/v3/counts.json).
+
+**Clip đêm là dev**, đã dùng để chỉnh ngưỡng theo `output/demo_20261114/M13/THRESHOLDS.md` trong repo chính. Kết quả v3 của clip đêm là 2/5 (40,0%) hợp lý, trong đó ca `nguy_co` duy nhất tại 60,667 s, track 342, gán người lái xe máy thành người đi bộ. Nguồn [phiếu dev](../../output/demo_20261114/M11/v3/night_90s/review_sheet.csv).
+
+### So sánh v1, v2, v3 trên hai clip
+
+| Bản | Clip | Vai trò | chu_y hợp lý | nguy_co hợp lý | Mọi mức hợp lý |
+| --- | --- | --- | --- | --- | --- |
+| v1 | night_90s | dev | 3/6 (50,0%) | 0/2 (0,0%) | 3/8 (37,5%) |
+| v1 | demo_video | holdout | 4/16 (25,0%) | 0/7 (0,0%) | 4/23 (17,4%) |
+| v2 | night_90s | dev | 2/4 (50,0%) | 0/5 (0,0%) | 2/9 (22,2%) |
+| v2 | demo_video | holdout | 6/14 (42,9%) | 0/1 (0,0%) | 6/15 (40,0%) |
+| v3 | night_90s | dev | 2/4 (50,0%) | 0/1 (0,0%) | 2/5 (40,0%) |
+| v3 | demo_video | holdout | 5/10 (50,0%) | 0/0 (không xác định) | 5/10 (50,0%) |
+
+Nguồn [v1](../../output/demo_20261114/M11/v1/counts.json), [v2](../../output/demo_20261114/M11/v2/counts.json), [v3](../../output/demo_20261114/M11/v3/counts.json). AI-reviewed, chưa đo recall. Tỷ lệ dùng toàn bộ cảnh báo đã phát, gồm cả ca không rõ.
+
+### Box vẽ trên video
+
+- **night_90s, dev:** 5/5 box khớp bbox metadata sau khi quy đổi từ nguồn 1920x1080 sang canvas 1280x720. [Đối chiếu cạnh](../../output/demo_20261114/M11/v3/night_90s/overlay_evidence.json) · [Ví dụ frame gốc](../../output/demo_20261114/M11/v3/night_90s/002_native.jpg)
+- **demo_video, holdout:** 10/10 box khớp. Nguồn và canvas cùng kích thước 1280x720. [Đối chiếu cạnh](../../output/demo_20261114/M11/v3/demo_video/overlay_evidence.json) · [Ví dụ frame gốc](../../output/demo_20261114/M11/v3/demo_video/010_native.jpg)
+
+Kiểm tra trên frame giải mã trước khi vẽ khung xanh đánh dấu. Mỗi cạnh được đối chiếu theo màu viền trong dải ±4 px quanh bbox đã quy đổi và xem lại trực quan. Hai file `overlay_evidence.json` lưu kết quả theo sự kiện. Ở M10, phép kiểm tra đối chứng cho 0/9 box đêm khớp và 15/15 box video demo khớp. Nguồn `v3-overlay-control.log`.
+
+### Ca không hợp lý tiêu biểu trên holdout
+
+- 65,333 s, track 307, xe máy đã qua vạch sang đường và còn xa. Nguồn dòng 003.
+- 102,667 s, track 500, box ôm người lái xe máy nhưng nhãn là người đi bộ. Nguồn dòng 005.
+- 111,667 s và 117,667 s, track 330, ô tô giữ làn bên trái. Nguồn dòng 007 và 008.
+
+Nguồn [phiếu holdout](../../output/demo_20261114/M11/v3/demo_video/review_sheet.csv).
