@@ -63,10 +63,18 @@ Clip đêm (nguồn 1920x1080): viền box trong video trùng bbox đã scale �
   - Yêu cầu giọng đọc kiểm tra trực tiếp: 200, audio 200, 11276 byte.
   - Console: không có lỗi JavaScript. Chỉ có 404 của `favicon.ico` (2 lần). Hai yêu cầu video bị hủy (`ERR_ABORTED`) do trình phát tua, không phải lỗi app.
   - Tra cứu luật (tab Video, biển P.102): hiển thị nguồn QCVN 41:2024/BGTVT Điều 74 (`M12/e2e_final/e2e_legal_video_report.json`, `shots/10_video_sign_legal_lookup.png`).
-  - Tab Ảnh (`photo_61s.jpg`): hiện các khung vật cản (ô tô, người đi bộ). **Chỉ 1 biển phát hiện và không nhận dạng được** ("Chưa nhận dạng", 38%). Bước tra cứu trên tab Ảnh không chạy được. Khác với M10 (11 biển trên cùng ảnh). Nguyên nhân chưa xác nhận; giả thuyết: `start.ps1` không đặt `ITAS_WARMUP=1` (M10 có đặt). Chưa thử lại.
+  - Tab Ảnh (`photo_61s.jpg`, lúc đó): 0 nhận dạng, 1 phát hiện ("Chưa nhận dạng"). Không do `ITAS_WARMUP` (xem M14 bên dưới). Số "11 biển" của M10 là đo sai, vì selector cũng khớp tab Video ẩn.
 - **Chưa xác nhận loa.** Headless không có thiết bị âm thanh; chỉ xác nhận yêu cầu và nội dung audio.
 - Ảnh chụp: `output/demo_20261114/M12/e2e_final/shots/` (01 đến 10). Kết quả UI: `ui_result.mp4` và `shots/ui_result_5s_header.jpg` (header không có dòng làn).
 - Backend đã dừng; cổng 8000 và 9333 đã trống.
+
+### 0.9 Tab Ảnh và ITAS_WARMUP (M14)
+
+- Nguyên nhân tab Ảnh không nhận dạng biển trên `photo_61s.jpg`: hộp biển 15.6 × 30 px nhỏ hơn `min_short_side` 32 của ảnh (`configs/perception.yaml:86`). Không phải do thiếu warmup: 3 lần không warmup và 3 lần warmup cho cùng kết quả. `REPRO.md` trong `output/demo_20261114/M14/`.
+- Số "11 biển" của M10 là đo sai: selector `.sign-list .sign-row` khớp cả tab Video đang ẩn. Kết quả thật là 0 nhận dạng, 1 phát hiện.
+- `start.ps1` đặt `ITAS_WARMUP=1`: khởi động 10.2 s; upload đầu tiên 0.1 s (không warmup: 33.3 s).
+- Ảnh demo: `output/demo_20261114/M14/demo_photo.jpg` (frame 105.667 s của video demo, I.423, nhận dạng 95%, cạnh ngắn 38 px). E2E tab Ảnh và tra cứu luật: `M14/e2e_image/` (`shots/01`-`03`, `e2e_image_report.json`). Tra cứu hiện QCVN 41:2024/BGTVT Điều 84.
+- Chưa xác nhận loa.
 
 ### 0.7 Chưa làm / chưa đo
 
@@ -74,7 +82,7 @@ Clip đêm (nguồn 1920x1080): viền box trong video trùng bbox đã scale �
 - Không có nhãn người nên chưa đo độ chính xác hay recall của cảnh báo.
 - Bộ lọc chỉnh trên clip đêm (in-sample). Độ nhạy lateral: xem `M13/THRESHOLDS.md`.
 - Không có số so sánh latency với M10 (144 s) trong mục này. Số M10 chỉ có ở phần cũ bên dưới.
-- Tab Ảnh trong E2E không nhận dạng biển (xem 0.8). Cần kiểm tra lại có `ITAS_WARMUP=1` hay không.
+- Tab Ảnh: đã thay ảnh demo bằng `M14/demo_photo.jpg` (có biển nhận dạng được, xem mục 0.9).
 - Chưa xác nhận loa phát ra âm thanh.
 
 ---

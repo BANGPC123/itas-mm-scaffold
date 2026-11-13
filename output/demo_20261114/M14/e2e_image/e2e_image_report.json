@@ -1,0 +1,75 @@
+{
+ "steps": [
+  {
+   "t": "2026-11-13T20:08:05.757Z",
+   "step": "nav",
+   "href": "http://127.0.0.1:8000/"
+  },
+  {
+   "t": "2026-11-13T20:08:07.628Z",
+   "step": "screenshot",
+   "name": "01_image_selected.png"
+  },
+  {
+   "t": "2026-11-13T20:08:08.646Z",
+   "step": "image analysed",
+   "got": true,
+   "seconds": 1
+  },
+  {
+   "t": "2026-11-13T20:08:11.749Z",
+   "step": "screenshot",
+   "name": "02_image_result.png"
+  },
+  {
+   "t": "2026-11-13T20:08:11.751Z",
+   "step": "image rows",
+   "rows": [
+    "I.423 Vị trí người đi bộ sang ngang Độ tin cậy 95% Quy định"
+   ],
+   "counter": "1 nhận dạng · 1 phát hiện"
+  },
+  {
+   "t": "2026-11-13T20:08:11.754Z",
+   "step": "chip clicked",
+   "clicked": "Quy định"
+  },
+  {
+   "t": "2026-11-13T20:08:14.370Z",
+   "step": "screenshot",
+   "name": "03_image_legal_lookup.png"
+  }
+ ],
+ "image_sign_rows": [
+  "I.423 Vị trí người đi bộ sang ngang Độ tin cậy 95% Quy định"
+ ],
+ "image_counter": "1 nhận dạng · 1 phát hiện",
+ "lookup_rows": [
+  "I.423 Vị trí người đi bộ sang ngang Độ tin cậy 95% Ẩn quy định QCVN 41:2024/BGTVT Điều 84. Tổ chức thực hiện 137 Hình E.22b – Biển số I.422b E.23a Biển số I.423(a,b) \"Vị trí người đi bộ sang ngang\" a) Để chỉ dẫn người đi bộ và người tham gia giao thông biết vị trí dành cho người đi bộ sang ngang, đặt biển số I.423 (a,b) \"Vị trí người đi bộ sang ngang\". b) Biển này được sử dụng độc lập ở những vị trí sang ngang, đ ường không có tổ chức điều khiển giao thông hoặc có… Mở văn bản nguồn Xem thêm 1 đoạn Chưa kiểm tra hiệu lực pháp lý."
+ ],
+ "lookup_ok": true,
+ "speech_requests_by_ui": 0,
+ "pipeline_responses": [
+  {
+   "url": "http://127.0.0.1:8000/pipeline/sign-catalog",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/run",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/forward-objects",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/legal-search",
+   "status": 200,
+   "mime": "application/json"
+  }
+ ],
+ "console": []
+}

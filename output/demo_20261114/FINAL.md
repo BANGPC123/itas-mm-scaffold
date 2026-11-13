@@ -107,6 +107,7 @@ Các bước đã chạy:
 2. Danh sách "Cảnh báo phía trước" hiện 4 cảnh báo, trong đó 2 có "Có đọc" (`07_forward_list_seek.png`). Bấm mốc 00:12 tua đúng vị trí.
 3. Yêu cầu giọng đọc qua mạng: `Chú ý người đi bộ`, `Cẩn thận, xe phía trước tiến gần`, và một yêu cầu thứ ba không lấy được nội dung (postData không có trong log). Không có yêu cầu giọng cho biển báo.
 4. Tab Ảnh: ảnh khung 61 s của video demo. Có 4 khung vật cản (3 trong vùng). Không có nút "Đọc kết quả" khi giọng biển tắt. Danh sách biển có 11 dòng.
+   - **Đính chính (M14):** số "11" là đo sai. Selector `.sign-list .sign-row` khớp cả tab Video đang ẩn (`VideoTab.jsx:256,283`, `App.jsx:79-80`). Kết quả thật của tab Ảnh trên ảnh này là 0 nhận dạng, 1 phát hiện (`M10/screens/08_image_result.png`).
 5. Tra cứu luật từ dòng biển đầu tiên (`09_legal_lookup.png`).
 
 Console: chỉ có lỗi 404 của `favicon.ico`. Không có lỗi JavaScript và không có lỗi mạng ngoài 404 đó.
@@ -173,11 +174,12 @@ Nhánh: `work/demo-20261114`. Chưa push, chưa merge main. Commit cục bộ, m
 | Mã | Hash | Nội dung |
 |---|---|---|
 | Tiêu đề làn | dd041ef | Không có dòng làn khi lane tắt; header 30 px; test cả hai trạng thái |
-| Render, E2E, docs | (xem git log sau commit) | `M12/header_fix/demo_video`, `M12/live_30s_v2`, `M12/e2e_final`; RESULTS mục 0.8; DEMO_SCRIPT |
+| Render, E2E, docs | 3f6a337 | `M12/header_fix/demo_video`, `M12/live_30s_v2`, `M12/e2e_final`; RESULTS mục 0.8; DEMO_SCRIPT |
 
 - Gate header: biển 840/840 và forward alerts 840/840 trùng `M13/clips/demo_video`. Ảnh: `M12/header_fix/check/`.
 - `live_30s_v2`: cảnh báo giống `live_30s` (00:12 đọc, 00:15 không đọc, cùng bbox).
 - E2E trên app khởi động bằng `start.ps1`: danh sách cảnh báo hiện; yêu cầu giọng "Chú ý xe máy" 200, audio 11276 byte; console không có lỗi JS (chỉ favicon 404); tra cứu P.102 hiện nguồn QCVN 41:2024/BGTVT Điều 74. Ảnh chụp trong `M12/e2e_final/shots/`.
 - Chưa xác nhận loa phát ra âm thanh.
-- Tab Ảnh: ảnh thử không nhận dạng biển nào (khác M10). Chưa xác định nguyên nhân (giả thuyết chưa kiểm: `ITAS_WARMUP` không được đặt khi chạy `start.ps1`).
+- Tab Ảnh, `photo_61s.jpg`: 0 nhận dạng, 1 phát hiện. Không phải do `ITAS_WARMUP`: cả hai chế độ ra cùng kết quả; nguyên nhân là hộp 16 px dưới `min_short_side` 32 của ảnh (xem `M14/REPRO.md`).
+- Đính chính: "signRows 11" của M10 là đo sai (đếm cả tab Video ẩn), xem mục Vòng 3b trên.
 - Đã tắt backend (cổng 8000); không có Chrome headless cổng 9333 nào còn chạy.

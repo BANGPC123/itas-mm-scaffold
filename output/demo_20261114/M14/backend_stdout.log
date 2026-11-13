@@ -1,0 +1,21 @@
+INFO:     127.0.0.1:61510 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61512 - "POST /pipeline/run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61513 - "POST /pipeline/run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61514 - "POST /pipeline/run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61515 - "POST /pipeline/run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61516 - "POST /pipeline/run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61517 - "POST /pipeline/run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61518 - "POST /pipeline/run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61519 - "POST /pipeline/run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61520 - "POST /pipeline/run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61521 - "POST /pipeline/run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61522 - "POST /pipeline/run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51853 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51853 - "GET /assets/index-DCZLNSfA.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64217 - "GET /assets/index-BC4sEJfR.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51853 - "GET /pipeline/sign-catalog HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64217 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55268 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56978 - "POST /pipeline/run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56978 - "POST /pipeline/forward-objects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56978 - "POST /pipeline/legal-search HTTP/1.1" 200 OK
