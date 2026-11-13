@@ -1,0 +1,2 @@
+﻿ITAS_WARMUP at launch = []
+ready=True start_seconds=10.2

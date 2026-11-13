@@ -6,7 +6,8 @@ $root = 'D:\DSP391m\project\itas-mm-scaffold'
 $out = Join-Path $root "output\demo_20261114\M14\$Mode"
 New-Item -ItemType Directory -Force -Path $out | Out-Null
 $photo = Join-Path $root 'output\demo_20261114\M12\e2e_final\photo_61s.jpg'
-if ($Mode -eq 'warm') { $env:ITAS_WARMUP = '1' } else { Remove-Item Env:ITAS_WARMUP -ErrorAction SilentlyContinue }
+if ($Mode -eq 'warm') { $env:ITAS_WARMUP = '1' } elseif ($Mode -eq 'cold') { Remove-Item Env:ITAS_WARMUP -ErrorAction SilentlyContinue }
+# Any other mode: leave the environment alone, so start.ps1 alone decides ITAS_WARMUP.
 "ITAS_WARMUP at launch = [$env:ITAS_WARMUP]" | Out-File (Join-Path $out 'startup.txt') -Encoding utf8
 
 $t0 = Get-Date
