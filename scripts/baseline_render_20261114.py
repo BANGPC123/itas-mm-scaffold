@@ -10,7 +10,8 @@ def main():
     src, out = Path(sys.argv[1]), Path(sys.argv[2])
     out.mkdir(parents=True, exist_ok=True)  # render() needs a NEW subdir
     t0 = time.perf_counter()
-    result = render(src, out / "render", analysis_hz=6., pipeline=Pipeline(), output_fps_cap=30, lane_every=2)
+    max_s = float(sys.argv[3]) if len(sys.argv) > 3 else None
+    result = render(src, out / "render", analysis_hz=6., pipeline=Pipeline(), output_fps_cap=30, lane_every=2, max_seconds=max_s)
     wall = time.perf_counter() - t0
     (out / 'baseline_meta.json').write_text(json.dumps({
         'source': str(src), 'wall_seconds': round(wall, 2),
