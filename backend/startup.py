@@ -20,6 +20,9 @@ def warmup_product(pipeline, speech, *, root=None):
     for code, name in NAMES_VI.items():
         speech.synthesize(f'AI dự đoán có thể là biển {code}: {name}. '
                           'Đây chỉ là nhận diện tham khảo, chưa xác minh điều kiện áp dụng.')
+    from src.perception.forward_objects import prewarm_texts
+    for text in prewarm_texts():
+        speech.synthesize(text)
     report = {'speech_provider': speech.provider, 'speech_cache_seconds': time.perf_counter() - voice_started,
               'cpu_blas_threads':1}
     # A separate stream warms the camera models; no user tracking state survives.

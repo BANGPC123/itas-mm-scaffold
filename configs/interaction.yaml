@@ -1,3 +1,7 @@
+# M9: sign speech off (decision 13/11). Sign list, thumbnails and legal lookup stay on.
+sign_speech:
+  enabled: false
+
 tts:
   engine: vieneu-onnx
   voice_id: vieneu-HaiDang

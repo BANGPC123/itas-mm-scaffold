@@ -112,3 +112,35 @@ export function cropRect(box, imageWidth, imageHeight, frameWidth, frameHeight, 
   const y = Math.min(Math.max(0, cy - side / 2), imageHeight - side);
   return [x, y, side, side];
 }
+
+// Rows for the forward-warning list (M9). spoken = the cue was read aloud; boxes and banner show every alert.
+export function forwardRows(alerts) {
+  return (alerts || []).map((alert, index) => ({
+    key: `${alert.t}-${alert.track_id}-${index}`,
+    seconds: alert.t,
+    time: formatTime(alert.t),
+    levelLabel: alert.level === "nguy_co" ? "Nguy cơ" : "Chú ý",
+    label: alert.label_vi || alert.cls || "phương tiện",
+    spoken: Boolean(alert.spoken),
+    spokenLabel: alert.spoken ? "Có đọc" : "Chỉ hiển thị",
+  }));
+}
+
+// Obstacle boxes for the image tab (M9), in percent of the frame so they scale with the displayed image.
+export function obstacleBoxes(objects, frameShape) {
+  const height = Number(frameShape?.[0]);
+  const width = Number(frameShape?.[1]);
+  if (!width || !height) return [];
+  return (objects || []).map((object, index) => {
+    const [x1, y1, x2, y2] = object.bbox_xyxy;
+    return {
+      key: index,
+      left: (100 * x1) / width,
+      top: (100 * y1) / height,
+      width: (100 * (x2 - x1)) / width,
+      height: (100 * (y2 - y1)) / height,
+      inZone: Boolean(object.in_zone),
+      label: object.label_vi || object.cls,
+    };
+  });
+}

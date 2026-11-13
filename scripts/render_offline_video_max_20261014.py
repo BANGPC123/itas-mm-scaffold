@@ -67,12 +67,15 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
     cap.set(cv2.CAP_PROP_POS_FRAMES,skip)
     pipe=pipeline if pipeline is not None else Pipeline()
     # M2 forward-object warning (flag forward_warning.enabled; default off).
-    from src.perception.forward_objects import ForwardObjectWarner,ForwardWarnConfig,CocoTracker,forward_cues,merge_cues,draw_forward
+    from src.perception.forward_objects import ForwardObjectWarner,ForwardWarnConfig,CocoTracker,VoiceGate,forward_cues,merge_cues,draw_forward
     fw_cfg=ForwardWarnConfig.from_dict(load_config('perception').get('forward_warning',{}))
     fw_tracker=CocoTracker(fw_cfg) if fw_cfg.enabled else None
     # Detection runs on every detect_every-th analysis sample; the warner's time step is the detection interval.
     fw_warner=ForwardObjectWarner(fw_cfg,fps/step/max(1,fw_cfg.detect_every)) if fw_cfg.enabled else None
     fw_alerts_all=[];fw_speech=[];fw_draw=[];fw_now=[]
+    voice=VoiceGate(fw_cfg)
+    # M9: sign speech is off by default (interaction.sign_speech.enabled). Sign list and legal lookup stay on.
+    sign_speech_on=bool(load_config('interaction').get('sign_speech',{}).get('enabled',False))
     # M8 timing: wall seconds spent in forward detect and overlay (always counted, written to summary only with ITAS_PROFILE=1).
     prof={'fw_detect_s':0.,'fw_detect_calls':0,'fw_draw_s':0.,'fw_draw_calls':0}
     pipeline_id='offline_simulation_'+hashlib.sha256(str(out).encode()).hexdigest()[:18]
@@ -161,7 +164,7 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
                     sign_events_now=video_speech_events(signs,index/fps,announced)
                     speech_events.extend(sign_events_now)
                     if fw_now:
-                        fw_speech.extend(forward_cues(fw_now,bool(sign_events_now),index/fps))
+                        fw_speech.extend(forward_cues(fw_now,sign_speech_on and bool(sign_events_now),index/fps,gate=voice))
                 else:
                     lines,boxes=motion.advance(canvas)
                     _,aux_boxes=aux_motion.advance(canvas)
@@ -232,8 +235,12 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
         'sign_mode':('960+640+1280' if highres_rescue else '960+640')+', three-frame confirmation',
         'models_finetuned_during_run':False,'highres_1280_enabled':bool(highres_rescue),'input_recording_datetime_known':recorded_at is not None,
         'auxiliary_research_enabled':include_auxiliary,'counts':counters,
-        'speech_events':merge_cues(group_speech_events(speech_events),fw_speech),
+        'sign_cues':group_speech_events(speech_events),
+        'sign_speech_enabled':sign_speech_on,
+        'speech_events':merge_cues(group_speech_events(speech_events) if sign_speech_on else [],fw_speech),
         'forward_warning':{'enabled':fw_cfg.enabled,'alerts':fw_alerts_all,'speech':fw_speech,
+            'spoken_cues':len(fw_speech),'spoken_per_minute':round(len(fw_speech)/max(1e-9,written/out_fps/60),2),
+            'voice':{'cooldown_s':fw_cfg.voice_cooldown_s,'class_cooldown_s':fw_cfg.voice_class_cooldown_s},
             'weights':fw_cfg.weights_path,'imgsz':fw_cfg.imgsz,'conf':fw_cfg.conf},
         'elapsed_seconds':time.perf_counter()-started,'failures':failures,
         **({'profile_s':{k:round(v,3) if isinstance(v,float) else v for k,v in prof.items()}} if os.environ.get('ITAS_PROFILE')=='1' else {}),

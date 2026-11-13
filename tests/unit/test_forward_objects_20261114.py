@@ -124,3 +124,42 @@ def test_draw_forward_rect_blend_matches_full_frame_reference():
     # Outside the rectangle: untouched.
     assert np.array_equal(out[:y0], frame[:y0])
     assert np.array_equal(out[:, :x0], frame[:, :x0])
+
+
+def test_m9_speech_texts_are_short_and_fixed():
+    from src.perception.forward_objects import NGUY_CO_TEXT, prewarm_texts, speech_text
+    assert speech_text('chu_y', 'motorcycle') == 'Chú ý xe máy'
+    assert speech_text('chu_y', 'person') == 'Chú ý người đi bộ'
+    assert speech_text('nguy_co', 'car') == NGUY_CO_TEXT == 'Cẩn thận, xe phía trước tiến gần'
+    texts = prewarm_texts()
+    assert NGUY_CO_TEXT in texts and 'Chú ý xe máy' in texts
+    assert all(len(t.split()) <= 9 for t in texts)
+
+
+def test_m9_voice_gate_cooldowns():
+    from src.perception.forward_objects import VoiceGate
+    cfg = ForwardWarnConfig(enabled=True, voice_cooldown_s=8.0, voice_class_cooldown_s=15.0)
+    g = VoiceGate(cfg)
+    assert g.decide('chu_y', 'car', 10.0) is True          # first chu_y spoken
+    assert g.decide('chu_y', 'bus', 12.0) is False         # global 8 s cooldown
+    assert g.decide('chu_y', 'car', 19.0) is False         # global ok, class 15 s not elapsed
+    assert g.decide('chu_y', 'bus', 19.0) is True          # other class after global cooldown
+    assert g.decide('chu_y', 'car', 26.5) is False         # global: only 7.5 s since the bus cue at 19 s
+    assert g.decide('chu_y', 'car', 27.5) is True          # global 8.5 s, class 17.5 s: both elapsed
+    assert g.decide('nguy_co', 'motorcycle', 27.0) is True  # nguy_co always spoken
+
+
+def test_m9_forward_cues_one_chu_y_per_sample_and_flags():
+    from src.perception.forward_objects import VoiceGate, forward_cues
+    cfg = ForwardWarnConfig(enabled=True)
+    gate = VoiceGate(cfg)
+    alerts = [{'level': 'chu_y', 'cls': 'car'}, {'level': 'chu_y', 'cls': 'bus'}, {'level': 'nguy_co', 'cls': 'truck'}]
+    cues = forward_cues(alerts, False, 5.0, gate=gate)
+    kinds = [c['kind'] for c in cues]
+    assert kinds.count('forward_nguy_co') == 1 and kinds.count('forward_chu_y') == 1
+    assert [a['spoken'] for a in alerts] == [True, False, True]
+    assert alerts[1]['speech_text'] is None and alerts[0]['speech_text'] == 'Chú ý ô tô'
+    # Sign cue spoken in the same sample: chu_y is not spoken and the gate is not consulted.
+    alerts2 = [{'level': 'chu_y', 'cls': 'motorcycle'}]
+    assert forward_cues(alerts2, True, 30.0, gate=gate) == []
+    assert alerts2[0]['spoken'] is False

@@ -33,6 +33,8 @@ class ForwardWarnConfig:
     ttc_min_scale: float = 1.03
     cooldown_track_s: float = 6.0
     cooldown_global_s: float = 3.0
+    voice_cooldown_s: float = 8.0      # M9: minimum gap between any two chu_y spoken cues
+    voice_class_cooldown_s: float = 15.0  # M9: minimum gap between chu_y cues for the same vehicle class
 
     @classmethod
     def from_dict(cls, d: dict | None) -> 'ForwardWarnConfig':
@@ -142,12 +144,44 @@ class ForwardObjectWarner:
         return alerts
 
 
+NGUY_CO_TEXT = 'Cẩn thận, xe phía trước tiến gần'
+
+
 def speech_text(level: str, cls_name: str) -> str:
-    """Fixed cue sentences. Never use collision words."""
-    vi = COCO_VI.get(cls_name, 'phương tiện')
+    """Short fixed cue sentences (under 2 s). Never use collision words.
+
+    M9: nguy_co uses one fixed sentence; chu_y names the class ("Chú ý xe máy")."""
     if level == 'nguy_co':
-        return f'Cẩn thận, {vi} đang tiến gần'
-    return f'Chú ý, {vi} phía trước'
+        return NGUY_CO_TEXT
+    return f"Chú ý {COCO_VI.get(cls_name, 'phương tiện')}"
+
+
+def prewarm_texts() -> list[str]:
+    """Every sentence the warner can speak; synthesized once at server start (M9)."""
+    return [NGUY_CO_TEXT] + [f'Chú ý {vi}' for vi in COCO_VI.values()]
+
+
+class VoiceGate:
+    """Decides which chu_y alerts are spoken. nguy_co is always spoken and resets the cooldowns."""
+
+    def __init__(self, cfg: ForwardWarnConfig):
+        self.global_s = cfg.voice_cooldown_s
+        self.class_s = cfg.voice_class_cooldown_s
+        self.last_any = -1e9
+        self.last_cls: dict[str, float] = {}
+
+    def decide(self, level: str, cls_name: str, t_s: float) -> bool:
+        if level == 'nguy_co':
+            self.last_any = t_s
+            self.last_cls[cls_name] = t_s
+            return True
+        if t_s - self.last_any < self.global_s:
+            return False
+        if t_s - self.last_cls.get(cls_name, -1e9) < self.class_s:
+            return False
+        self.last_any = t_s
+        self.last_cls[cls_name] = t_s
+        return True
 
 
 PRIORITY = {'nguy_co': 3, 'chu_y': 1}
@@ -184,6 +218,22 @@ class CocoTracker:
             for tr in trackers:
                 tr.reset()
 
+    def detect_still(self, frame):
+        """M9: single image, no tracker state. Returns boxes with a zone flag for the image tab."""
+        results = self.model.predict(frame, imgsz=self.cfg.imgsz, conf=self.cfg.conf, classes=self.classes,
+                                     verbose=False, device=None if self.device == 'auto' else self.device)
+        h, w = frame.shape[:2]
+        out = []
+        for r in results:
+            for box in (r.boxes if r.boxes is not None else []):
+                x1, y1, x2, y2 = box.xyxy[0].tolist()
+                cls = int(box.cls.item())
+                name = COCO_CLASSES.get(cls, str(cls))
+                out.append({'cls': name, 'label_vi': COCO_VI.get(name, name), 'conf': round(float(box.conf.item()), 3),
+                            'bbox_xyxy': [x1, y1, x2, y2],
+                            'in_zone': in_zone(((x1 + x2) / 2.0, float(y2)), w, h, self.cfg)})
+        return out
+
     def detect(self, frame):
         results = self.model.track(frame, persist=True, tracker='bytetrack.yaml', imgsz=self.cfg.imgsz,
                                    conf=self.cfg.conf, classes=self.classes, verbose=False,
@@ -201,14 +251,29 @@ class CocoTracker:
         return out
 
 
-def forward_cues(alerts: list[dict], sign_present: bool, t_s: float) -> list[dict]:
-    """Speech cues for one sample. nguy_co always spoken; chu_y only if no traffic-sign cue this sample."""
-    cues = [{'t_seconds': round(t_s, 3), 'codes': [], 'text': speech_text('nguy_co', a['cls']),
-             'kind': 'forward_nguy_co'} for a in alerts if a['level'] == 'nguy_co']
-    chu = [a for a in alerts if a['level'] == 'chu_y']
-    if chu and not sign_present:
-        cues.append({'t_seconds': round(t_s, 3), 'codes': [], 'text': speech_text('chu_y', chu[0]['cls']),
-                     'kind': 'forward_chu_y'})
+def forward_cues(alerts: list[dict], sign_present: bool, t_s: float, gate: 'VoiceGate | None' = None) -> list[dict]:
+    """Speech cues for one sample. Sets alert['spoken'] and alert['speech_text'] in place.
+
+    nguy_co is always spoken. chu_y is spoken only when no sign cue is spoken this sample and the
+    gate (M9 cooldowns) allows it. Without a gate, chu_y is spoken whenever sign_present is False."""
+    cues = []
+    chu_taken = False
+    for a in alerts:
+        a['spoken'] = False
+        a['speech_text'] = None
+        if a['level'] == 'nguy_co':
+            ok = True if gate is None else gate.decide('nguy_co', a['cls'], t_s)
+        elif sign_present or chu_taken:
+            ok = False  # one chu_y cue per sample; the gate is not asked for the others
+        else:
+            ok = True if gate is None else gate.decide('chu_y', a['cls'], t_s)
+            chu_taken = ok
+        if not ok:
+            continue
+        a['spoken'] = True
+        a['speech_text'] = speech_text(a['level'], a['cls'])
+        kind = 'forward_nguy_co' if a['level'] == 'nguy_co' else 'forward_chu_y'
+        cues.append({'t_seconds': round(t_s, 3), 'codes': [], 'text': a['speech_text'], 'kind': kind})
     return cues
 
 

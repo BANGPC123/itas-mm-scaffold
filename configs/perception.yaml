@@ -126,6 +126,9 @@ forward_warning:
   nguy_co_ttc_s: 2.0
   nguy_co_persist: 1
   ttc_k: 2
+  # M9: chu_y speech cooldowns (nguy_co is always spoken). Boxes and banner show every alert.
+  voice_cooldown_s: 8.0
+  voice_class_cooldown_s: 15.0
   ttc_min_scale: 1.03
   cooldown_track_s: 6.0
   cooldown_global_s: 3.0

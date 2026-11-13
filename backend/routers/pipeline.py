@@ -28,6 +28,16 @@ def get_inference_worker():
     # ASGI worker thread. The nonblocking inference lock still rejects backlog.
     return ThreadPoolExecutor(max_workers=1,thread_name_prefix='itas-perception')
 
+def sign_speech_enabled():
+    # M9: sign speech off by default; read per request so a config change needs no code edit.
+    return bool(load_config('interaction').get('sign_speech', {}).get('enabled', False))
+
+@lru_cache(maxsize=1)
+def get_coco_detector():
+    # M9 image tab obstacle boxes: COCO predict mode, separate from the video tracker.
+    from src.perception.forward_objects import CocoTracker, ForwardWarnConfig
+    return CocoTracker(ForwardWarnConfig.from_dict(load_config('perception').get('forward_warning', {})))
+
 class SpeechRequest(BaseModel):
     text:str=Field(min_length=1,max_length=1200)
 
@@ -304,7 +314,7 @@ def run_pipeline(image:UploadFile=File(...),latitude:float=Form(...,ge=-90,le=90
         if auxiliary_sign_review:temporal['auxiliary_sign_review']=True
         if offline_video_quality:temporal['offline_video_quality']=True
         if observed_at is not None:temporal['observed_at']=observed_at
-        result=get_inference_worker().submit(get_pipeline().run,decoded,latitude,longitude,synthesize_audio,
+        result=get_inference_worker().submit(get_pipeline().run,decoded,latitude,longitude,synthesize_audio and sign_speech_enabled(),
             road_bottom=road_bottom,annotate=annotate,**temporal).result()
     except Exception as exc:
         import logging
@@ -320,8 +330,29 @@ def run_pipeline(image:UploadFile=File(...),latitude:float=Form(...,ge=-90,le=90
     response['perception']['lane_center_offset_px']=result.perception.lane.lane_center_offset_px
     response['reasoning']['retrieved_chunk_count']=len(result.reasoning.retrieved_chunks)
     response['audio_url']='/pipeline/audio/'+Path(result.audio_path).name if result.audio_path else None
+    response['sign_speech_enabled']=sign_speech_enabled()
     response.pop('audio_path',None)
     return response
+
+@router.post('/forward-objects')
+def forward_objects(image:UploadFile=File(...)):
+    # M9: obstacle boxes for the image tab (COCO, no tracking, no speech). Off when forward_warning.enabled is false.
+    if not load_config('perception').get('forward_warning', {}).get('enabled', False):
+        return {'enabled': False, 'objects': []}
+    contents = image.file.read(10*1024*1024+1)
+    if len(contents) > 10*1024*1024:raise HTTPException(413,'Ảnh vượt quá 10 MB.')
+    decoded = cv2.imdecode(np.frombuffer(contents, dtype=np.uint8), cv2.IMREAD_COLOR)
+    if decoded is None:raise HTTPException(400,'Không đọc được ảnh.')
+    if decoded.shape[0]*decoded.shape[1]>8_000_000:raise HTTPException(413,'Ảnh vượt quá 8 megapixel.')
+    if not lock.acquire(blocking=False):raise HTTPException(429,'Đang xử lý khung hình trước. Vui lòng thử lại.')
+    try:
+        objects = get_inference_worker().submit(get_coco_detector().detect_still, decoded).result()
+    except Exception as exc:
+        import logging
+        logging.getLogger(__name__).exception('Obstacle detection failed')
+        raise HTTPException(503,'Chưa thể phát hiện vật cản. Kiểm tra nhật ký máy chủ.') from exc
+    finally:lock.release()
+    return {'enabled': True, 'frame_shape': list(decoded.shape), 'objects': objects}
 
 class ReviewedSign(BaseModel):
     label:str=Field(max_length=80)

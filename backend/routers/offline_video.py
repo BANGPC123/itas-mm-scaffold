@@ -88,6 +88,13 @@ def _read_job(job_id):
            'temporal_confirmation':True,
            'human_labeled_accuracy_available':False}
         state['speech_events']=report.get('speech_events',[])
+        # M9: sign list is separate from speech; older reports fall back to their speech events.
+        state['sign_cues']=report.get('sign_cues',report.get('speech_events',[]))
+        state['sign_speech_enabled']=bool(report.get('sign_speech_enabled',False))
+        fw=report.get('forward_warning',{})
+        state['forward_warning']={'enabled':bool(fw.get('enabled')),'alerts':[
+            {k:a.get(k) for k in ('t','track_id','cls','label_vi','level','ttc_proxy_s','spoken','speech_text')}
+            for a in fw.get('alerts',[])],'spoken_per_minute':fw.get('spoken_per_minute'),'voice':fw.get('voice')}
     return state
 
 
