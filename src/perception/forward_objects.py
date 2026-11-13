@@ -20,6 +20,8 @@ class ForwardWarnConfig:
     weights_path: str = 'models/lane/candidates/coco_yolo11n_20261011.pt'
     imgsz: int = 640
     conf: float = 0.35
+    half: bool = False                 # M8.2: FP16 COCO inference, only on CUDA. false = previous behaviour.
+    detect_every: int = 1              # M8.3c: run COCO on every n-th analysis sample (1 = every sample)
     bottom_width_ratio: float = 0.50   # trapezoid base width, fraction of frame width
     top_width_ratio: float = 0.16      # trapezoid top width
     top_y_ratio: float = 0.55          # top edge of the zone, fraction of H measured from the top
@@ -170,6 +172,10 @@ class CocoTracker:
         self.model = YOLO(cfg.weights_path)
         self.device = device
         self.classes = list(COCO_CLASSES)
+        self.half = False
+        if cfg.half:
+            import torch
+            self.half = bool(torch.cuda.is_available()) and device != 'cpu'
 
     def reset_job(self):
         predictor = getattr(self.model, 'predictor', None)
@@ -181,7 +187,8 @@ class CocoTracker:
     def detect(self, frame):
         results = self.model.track(frame, persist=True, tracker='bytetrack.yaml', imgsz=self.cfg.imgsz,
                                    conf=self.cfg.conf, classes=self.classes, verbose=False,
-                                   device=None if self.device == 'auto' else self.device)
+                                   device=None if self.device == 'auto' else self.device,
+                                   **({'half': True} if self.half else {}))
         out = []
         for r in results:
             if r.boxes is None or len(r.boxes) == 0:

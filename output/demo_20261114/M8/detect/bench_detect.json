@@ -1,0 +1,26 @@
+[
+  {
+    "variant": "fp32",
+    "ms_per_frame": 16.48,
+    "total_s": 3.96,
+    "dets_sum": 786
+  },
+  {
+    "variant": "fp16",
+    "ms_per_frame": 17.31,
+    "total_s": 4.15,
+    "dets_sum": 789
+  },
+  {
+    "variant": "fp32_prescale640",
+    "ms_per_frame": 17.99,
+    "total_s": 4.32,
+    "dets_sum": 851
+  },
+  {
+    "variant": "fp32_again",
+    "ms_per_frame": 15.71,
+    "total_s": 3.77,
+    "dets_sum": 786
+  }
+]

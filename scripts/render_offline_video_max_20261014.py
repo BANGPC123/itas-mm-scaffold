@@ -70,7 +70,8 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
     from src.perception.forward_objects import ForwardObjectWarner,ForwardWarnConfig,CocoTracker,forward_cues,merge_cues,draw_forward
     fw_cfg=ForwardWarnConfig.from_dict(load_config('perception').get('forward_warning',{}))
     fw_tracker=CocoTracker(fw_cfg) if fw_cfg.enabled else None
-    fw_warner=ForwardObjectWarner(fw_cfg,fps/step) if fw_cfg.enabled else None
+    # Detection runs on every detect_every-th analysis sample; the warner's time step is the detection interval.
+    fw_warner=ForwardObjectWarner(fw_cfg,fps/step/max(1,fw_cfg.detect_every)) if fw_cfg.enabled else None
     fw_alerts_all=[];fw_speech=[];fw_draw=[];fw_now=[]
     # M8 timing: wall seconds spent in forward detect and overlay (always counted, written to summary only with ITAS_PROFILE=1).
     prof={'fw_detect_s':0.,'fw_detect_calls':0,'fw_draw_s':0.,'fw_draw_calls':0}
@@ -139,7 +140,7 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
                     counters['legal_speech_samples']+=int(bool(result.reasoning.speech_text))
                     counters['warnings']+=len(result.warnings)
                     fw_now=[]
-                    if fw_warner is not None:
+                    if fw_warner is not None and (counters['samples']-1)%fw_cfg.detect_every==0:
                         _t=time.perf_counter()
                         fw_dets=fw_tracker.detect(frame)
                         prof['fw_detect_s']+=time.perf_counter()-_t;prof['fw_detect_calls']+=1

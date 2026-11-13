@@ -112,15 +112,20 @@ forward_warning:
   weights_path: models/lane/candidates/coco_yolo11n_20261011.pt
   imgsz: 640
   conf: 0.35
+  # M8.2: FP16 COCO inference on CUDA tested at 13.8 s vs 10.8 s FP32 on night 90 s (slower). Kept false.
+  half: false
+  # M8.3c: COCO runs on every 2nd analysis sample (3 Hz). Persist counts and ttc_k are halved so the
+  # hysteresis stays at the same wall-clock time (chu_y 6 samples at 6 Hz = 1.0 s -> 3 at 3 Hz; nguy_co 2 -> 1).
+  detect_every: 2
   zone:
     bottom_width_ratio: 0.50
     top_width_ratio: 0.16
     top_y_ratio: 0.55
   chu_y_bottom_ratio: 0.80
-  chu_y_persist: 6
+  chu_y_persist: 3
   nguy_co_ttc_s: 2.0
-  nguy_co_persist: 2
-  ttc_k: 3
+  nguy_co_persist: 1
+  ttc_k: 2
   ttc_min_scale: 1.03
   cooldown_track_s: 6.0
   cooldown_global_s: 3.0
