@@ -45,6 +45,8 @@ lane_visual_fallback:
 # Offline MP4 lane display. simple = UFLD-v2 polylines with light sanity filter and temporal
 # smoothing, no YOLOPv2 / surface veto / candidate overlay. precision = previous pipeline (rollback).
 offline_video_lane:
+  # M1: lane stage off by default (demo decision 13/11). false = no UFLD/YOLOPv2/SegFormer load or run.
+  enabled: false
   display: simple
   display_row_ratio: 0.5
   # Experiment (lane-only, simple display): preprocess the frame sent to UFLD for the displayed
