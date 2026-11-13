@@ -1,0 +1,186 @@
+{
+ "steps": [
+  {
+   "t": "2026-11-13T20:15:16.189Z",
+   "step": "screenshot",
+   "name": "01_home.png"
+  },
+  {
+   "t": "2026-11-13T20:15:47.543Z",
+   "step": "screenshot",
+   "name": "02_video_result.png"
+  },
+  {
+   "t": "2026-11-13T20:15:47.544Z",
+   "step": "video forward list",
+   "vDone": true,
+   "forward": {
+    "count": "2 cảnh báo",
+    "rows": [
+     "00:12 Chú ý xe máy Có đọc",
+     "00:15 Chú ý xe máy Chỉ hiển thị"
+    ]
+   }
+  },
+  {
+   "t": "2026-11-13T20:15:48.430Z",
+   "step": "screenshot",
+   "name": "03_forward_list.png"
+  },
+  {
+   "t": "2026-11-13T20:15:48.446Z",
+   "step": "speech check",
+   "speech_status": 200,
+   "audio_status": 200,
+   "audio_bytes": 11276,
+   "content_type": "audio/mpeg"
+  },
+  {
+   "t": "2026-11-13T20:15:54.395Z",
+   "step": "screenshot",
+   "name": "04_image_result.png"
+  },
+  {
+   "t": "2026-11-13T20:15:54.396Z",
+   "step": "image rows",
+   "iDone": true,
+   "imgRows": [
+    "I.423 Vị trí người đi bộ sang ngang Độ tin cậy 95% Quy định"
+   ],
+   "imgCounter": "1 nhận dạng · 1 phát hiện"
+  },
+  {
+   "t": "2026-11-13T20:15:57.067Z",
+   "step": "screenshot",
+   "name": "05_image_legal_lookup.png"
+  },
+  {
+   "t": "2026-11-13T20:15:57.067Z",
+   "step": "image lookup",
+   "clicked": "Quy định",
+   "lookupOk": true,
+   "head": "I.423 Vị trí người đi bộ sang ngang Độ tin cậy 95% Ẩn quy định QCVN 41:2024/BGTVT Điều 84. Tổ chức thực hiện 137 Hình E.22b – Biển số I.422b E.23a Biển số I.423"
+  }
+ ],
+ "video": {
+  "vDone": true,
+  "forward": {
+   "count": "2 cảnh báo",
+   "rows": [
+    "00:12 Chú ý xe máy Có đọc",
+    "00:15 Chú ý xe máy Chỉ hiển thị"
+   ]
+  },
+  "speech": {
+   "speech_status": 200,
+   "audio_status": 200,
+   "audio_bytes": 11276,
+   "content_type": "audio/mpeg"
+  }
+ },
+ "image": {
+  "iDone": true,
+  "imgRows": [
+   "I.423 Vị trí người đi bộ sang ngang Độ tin cậy 95% Quy định"
+  ],
+  "imgCounter": "1 nhận dạng · 1 phát hiện",
+  "clicked": "Quy định",
+  "lookupOk": true,
+  "lookup": [
+   "I.423 Vị trí người đi bộ sang ngang Độ tin cậy 95% Ẩn quy định QCVN 41:2024/BGTVT Điều 84. Tổ chức thực hiện 137 Hình E.22b – Biển số I.422b E.23a Biển số I.423(a,b) \"Vị trí người đi bộ sang ngang\" a) Để chỉ dẫn người đi bộ và người tham gia giao thông biết vị trí dành cho người đi bộ sang ngang, đặt biển số I.423 (a,b) \"Vị trí người đi bộ sang ngang\". b) Biển này được sử dụng độc lập ở những vị trí sang ngang, đ ường không có tổ chức điều khiển giao thông hoặc có… Mở văn bản nguồn Xem thêm 1 đoạn Chưa kiểm tra hiệu lực pháp lý."
+  ]
+ },
+ "network": [
+  {
+   "url": "http://127.0.0.1:8000/pipeline/sign-catalog",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/start",
+   "status": 202,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/8155411671014d1f8daae0f707ee4614",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/8155411671014d1f8daae0f707ee4614",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/8155411671014d1f8daae0f707ee4614",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/8155411671014d1f8daae0f707ee4614",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/8155411671014d1f8daae0f707ee4614",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/8155411671014d1f8daae0f707ee4614",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/8155411671014d1f8daae0f707ee4614",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/8155411671014d1f8daae0f707ee4614",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/8155411671014d1f8daae0f707ee4614/video",
+   "status": 206,
+   "mime": "video/mp4"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/8155411671014d1f8daae0f707ee4614/video",
+   "status": 206,
+   "mime": "video/mp4"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/offline-video/jobs/8155411671014d1f8daae0f707ee4614/video",
+   "status": 206,
+   "mime": "video/mp4"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/speech",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/audio/897274ac4626fae33a48d0cd7ef0c5a4781ea9c11949f5870f3f5c1509165951.mp3",
+   "status": 200,
+   "mime": "audio/mpeg"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/run",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/forward-objects",
+   "status": 200,
+   "mime": "application/json"
+  },
+  {
+   "url": "http://127.0.0.1:8000/pipeline/legal-search",
+   "status": 200,
+   "mime": "application/json"
+  }
+ ],
+ "console": []
+}
