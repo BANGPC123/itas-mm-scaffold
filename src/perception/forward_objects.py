@@ -35,6 +35,7 @@ class ForwardWarnConfig:
     cooldown_global_s: float = 3.0
     voice_cooldown_s: float = 8.0      # M9: minimum gap between any two chu_y spoken cues
     voice_class_cooldown_s: float = 15.0  # M9: minimum gap between chu_y cues for the same vehicle class
+    voice_nguy_gap_s: float = 2.0      # M13.3: minimum gap between two nguy_co cues (one cue lasts < 2 s)
 
     @classmethod
     def from_dict(cls, d: dict | None) -> 'ForwardWarnConfig':
@@ -167,11 +168,17 @@ class VoiceGate:
     def __init__(self, cfg: ForwardWarnConfig):
         self.global_s = cfg.voice_cooldown_s
         self.class_s = cfg.voice_class_cooldown_s
+        self.nguy_gap_s = cfg.voice_nguy_gap_s
         self.last_any = -1e9
+        self.last_nguy = -1e9
         self.last_cls: dict[str, float] = {}
 
     def decide(self, level: str, cls_name: str, t_s: float) -> bool:
         if level == 'nguy_co':
+            # M13.3: nguy_co is not cut off by chu_y, but two nguy_co cues never overlap.
+            if t_s - self.last_nguy < self.nguy_gap_s:
+                return False
+            self.last_nguy = t_s
             self.last_any = t_s
             self.last_cls[cls_name] = t_s
             return True
@@ -257,13 +264,23 @@ def forward_cues(alerts: list[dict], sign_present: bool, t_s: float, gate: 'Voic
     nguy_co is always spoken. chu_y is spoken only when no sign cue is spoken this sample and the
     gate (M9 cooldowns) allows it. Without a gate, chu_y is spoken whenever sign_present is False."""
     cues = []
-    chu_taken = False
     for a in alerts:
         a['spoken'] = False
         a['speech_text'] = None
+    # M13.3: at most one nguy_co cue per sample, the most urgent one (smallest TTC proxy). Others are shown only.
+    nguy = [a for a in alerts if a['level'] == 'nguy_co']
+    if nguy:
+        best = min(nguy, key=lambda a: (a.get('ttc_proxy_s') is None, a.get('ttc_proxy_s') or 0.0))
+        if gate is None or gate.decide('nguy_co', best['cls'], t_s):
+            best['spoken'] = True
+            best['speech_text'] = speech_text('nguy_co', best['cls'])
+            cues.append({'t_seconds': round(t_s, 3), 'codes': [], 'text': best['speech_text'],
+                         'kind': 'forward_nguy_co'})
+    chu_taken = False
+    for a in alerts:
         if a['level'] == 'nguy_co':
-            ok = True if gate is None else gate.decide('nguy_co', a['cls'], t_s)
-        elif sign_present or chu_taken:
+            continue
+        if sign_present or chu_taken:
             ok = False  # one chu_y cue per sample; the gate is not asked for the others
         else:
             ok = True if gate is None else gate.decide('chu_y', a['cls'], t_s)
@@ -272,8 +289,7 @@ def forward_cues(alerts: list[dict], sign_present: bool, t_s: float, gate: 'Voic
             continue
         a['spoken'] = True
         a['speech_text'] = speech_text(a['level'], a['cls'])
-        kind = 'forward_nguy_co' if a['level'] == 'nguy_co' else 'forward_chu_y'
-        cues.append({'t_seconds': round(t_s, 3), 'codes': [], 'text': a['speech_text'], 'kind': kind})
+        cues.append({'t_seconds': round(t_s, 3), 'codes': [], 'text': a['speech_text'], 'kind': 'forward_chu_y'})
     return cues
 
 

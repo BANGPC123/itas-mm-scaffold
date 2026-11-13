@@ -168,9 +168,11 @@ def test_m9_forward_cues_one_chu_y_per_sample_and_flags():
     alerts = [{'level': 'chu_y', 'cls': 'car'}, {'level': 'chu_y', 'cls': 'bus'}, {'level': 'nguy_co', 'cls': 'truck'}]
     cues = forward_cues(alerts, False, 5.0, gate=gate)
     kinds = [c['kind'] for c in cues]
-    assert kinds.count('forward_nguy_co') == 1 and kinds.count('forward_chu_y') == 1
-    assert [a['spoken'] for a in alerts] == [True, False, True]
-    assert alerts[1]['speech_text'] is None and alerts[0]['speech_text'] == 'Chú ý ô tô'
+    # M13.3: nguy_co is spoken and starts the voice cooldown, so no chu_y cue talks over it in the same sample.
+    assert kinds == ['forward_nguy_co']
+    assert [a['spoken'] for a in alerts] == [False, False, True]
+    assert alerts[0]['speech_text'] is None
+    assert forward_cues([{'level': 'chu_y', 'cls': 'car'}], False, 5.5, gate=VoiceGate(cfg))[0]['text'] == 'Chú ý ô tô'
     # Sign cue spoken in the same sample: chu_y is not spoken and the gate is not consulted.
     alerts2 = [{'level': 'chu_y', 'cls': 'motorcycle'}]
     assert forward_cues(alerts2, True, 30.0, gate=gate) == []
@@ -197,3 +199,28 @@ def test_m13_draw_forward_scales_source_box_to_canvas():
     assert tuple(out[400, 733]) == (0, 140, 255) or tuple(out[400, 732]) == (0, 140, 255)
     # The unscaled position (900..1100 px on the canvas) must not carry the box border.
     assert not np.any(np.all(out[500:700, 900:1100] == (0, 140, 255), axis=-1))
+
+
+def test_m13_one_nguy_co_cue_per_sample_most_urgent_first():
+    """M13.3: two nguy_co alerts in the same sample give one spoken cue (smallest TTC proxy)."""
+    from src.perception.forward_objects import VoiceGate, forward_cues
+    cfg = ForwardWarnConfig(enabled=True)
+    alerts = [{'level': 'nguy_co', 'cls': 'car', 'ttc_proxy_s': 1.9},
+              {'level': 'nguy_co', 'cls': 'person', 'ttc_proxy_s': 0.9},
+              {'level': 'nguy_co', 'cls': 'truck', 'ttc_proxy_s': None}]
+    cues = forward_cues(alerts, False, 63.333, gate=VoiceGate(cfg))
+    assert [c['kind'] for c in cues] == ['forward_nguy_co']
+    assert [a['spoken'] for a in alerts] == [False, True, False]
+    assert cues[0]['text'] == 'Cẩn thận, người đi bộ phía trước'
+    # Without a gate the same rule holds.
+    alerts2 = [{'level': 'nguy_co', 'cls': 'car', 'ttc_proxy_s': 1.0},
+               {'level': 'nguy_co', 'cls': 'car', 'ttc_proxy_s': 1.5}]
+    assert len(forward_cues(alerts2, False, 10.0)) == 1
+
+
+def test_m13_nguy_co_cues_never_overlap_in_time():
+    from src.perception.forward_objects import VoiceGate
+    g = VoiceGate(ForwardWarnConfig(enabled=True))
+    assert g.decide('nguy_co', 'car', 10.0) is True
+    assert g.decide('nguy_co', 'car', 10.33) is False   # next detection sample, within 2 s
+    assert g.decide('nguy_co', 'person', 12.0) is True  # 2.0 s later
