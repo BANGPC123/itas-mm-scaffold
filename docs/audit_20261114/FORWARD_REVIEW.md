@@ -100,3 +100,61 @@ Kiểm tra trên frame giải mã trước khi vẽ khung xanh đánh dấu. M�
 - 111,667 s và 117,667 s, track 330, ô tô giữ làn bên trái. Nguồn dòng 007 và 008.
 
 Nguồn [phiếu holdout](../../output/demo_20261114/M11/v3/demo_video/review_sheet.csv).
+
+## M17 - holdout mới, 2 clip đông xe ban ngày
+
+Hai clip mới dài 90 s mỗi clip. Dùng luật cố định ở đầu báo cáo và cùng script trích ảnh như v3, với ảnh tại sự kiện và trước 0,5 s. Số câu/phút lấy cue cảnh báo đã lên lịch trong render. **AI-reviewed, chưa đo recall.**
+
+| Clip | Mức | n cảnh báo | hop_ly | khong_hop_ly | khong_ro | Tỷ lệ hop_ly | Cue / phút |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | --- |
+| day_hanoi_many_signs | chu_y | 2 | 1 | 0 | 1 | 50,0% |  |
+| day_hanoi_many_signs | nguy_co | 3 | 1 | 2 | 0 | 33,3% |  |
+| day_hanoi_many_signs | Mọi mức | 5 | 2 | 2 | 1 | 40,0% | 2,67 (4 cue / 90 s) |
+| day_west_lake | chu_y | 11 | 6 | 2 | 3 | 54,5% |  |
+| day_west_lake | nguy_co | 0 | 0 | 0 | 0 | Không xác định |  |
+| day_west_lake | Mọi mức | 11 | 6 | 2 | 3 | 54,5% | 2,67 (4 cue / 90 s) |
+| Gộp hai clip M17 | chu_y | 13 | 7 | 2 | 4 | 53,8% |  |
+| Gộp hai clip M17 | nguy_co | 3 | 1 | 2 | 0 | 33,3% |  |
+| Gộp hai clip M17 | Mọi mức | 16 | 8 | 4 | 4 | 50,0% | 2,67 (8 cue / 180 s) |
+| demo_video v3 (holdout) | Mọi mức | 10 | 5 | 5 | 0 | 50,0% | 2,57 (6 cue / 140 s) |
+| **Gộp 3 holdout** | Mọi mức | 26 | 13 | 9 | 4 | 50,0% | 2,625 (14 cue / 320 s) |
+
+Gộp ba holdout gồm demo_video v3 và hai clip M17. Ở mức `nguy_co`, cả 3 mẫu trong nhóm gộp đều đến từ clip Hà Nội, với 1/3 ca hợp lý.
+
+Nguồn [phiếu Hà Nội](../../output/demo_20261114/M11/M17/day_hanoi_many_signs/review_sheet.csv), [phiếu Hồ Tây](../../output/demo_20261114/M11/M17/day_west_lake/review_sheet.csv), [đếm M17](../../output/demo_20261114/M11/M17/counts.json), [đếm v3](../../output/demo_20261114/M11/v3/counts.json). Cue và thời lượng từ `M17/clips/<clip>/render/summary.json` và `M13/clips/demo_video/render/summary.json` dưới `D:/DSP391m/project/itas-mm-scaffold/output/demo_20261114/`.
+
+### Box vẽ trên video
+
+Hà Nội 5/5 và Hồ Tây 11/11 box khớp bbox metadata quy đổi từ nguồn 1920x1080 sang canvas 1280x720. Dùng kiểm tra v3 trên frame giải mã gốc, với dải +/-4 px và ít nhất 60% điểm khớp màu trên từng cạnh, rồi đối chiếu ảnh. [Hà Nội](../../output/demo_20261114/M11/M17/day_hanoi_many_signs/overlay_evidence.json), [Hồ Tây](../../output/demo_20261114/M11/M17/day_west_lake/overlay_evidence.json).
+
+### Nguyên nhân các ca khong_hop_ly theo M13.4
+
+| Nhóm | Hà Nội | Hồ Tây | Tổng / 4 ca | Ca trong phiếu |
+| --- | ---: | ---: | ---: | --- |
+| C2 - Ngoài làn, không thấy cắt vào | 0 | 2 | 2 | Hồ Tây 002, Hồ Tây 011 |
+| C1 - Người lái xe máy bị gán là người đi bộ | 1 | 0 | 1 | Hà Nội 001 |
+| C3 - Sát lề hoặc ở xa | 1 | 0 | 1 | Hà Nội 004 |
+| C4 - Box chỉ bao một phần xe | 0 | 0 | 0 |  |
+| Khác | 0 | 0 | 0 |  |
+
+Nhóm lấy từ `D:/DSP391m/project/itas-mm-scaffold/output/demo_20261114/M13/ERROR_ANALYSIS.md`, dòng 15. Mỗi ca có một nguyên nhân chính.
+
+### Quan sát giao thông đông
+
+Ước lượng trên khung sự kiện. Thấp là 0-3 xe máy nhìn thấy, vừa là 4-7, cao là từ 8 trở lên. Xe chở hai người tính một xe. Xe bị che khuất làm ước lượng kém chắc chắn.
+
+| Clip | Thấp | Vừa | Cao | n khung sự kiện |
+| --- | --- | --- | --- | ---: |
+| Hà Nội | 004 | 001 / 002 / 003 / 005 | 0 ca | 5 |
+| Hồ Tây | 0 ca | 001 / 002 / 006 / 008 / 009 / 010 | 003 / 004 / 005 / 007 / 011 | 11 |
+
+Các ô mật độ liệt kê ID trong phiếu. Rà soát thêm khung mỗi 3 s dọc clip và ảnh lân cận ở các đoạn dưới đây. Đối chiếu timestamp với log cảnh báo vật cản, cả bốn cửa sổ đều có 0 cảnh báo.
+
+| Clip | Khoảng thời gian | Mật độ ước lượng | Tình huống quan sát |
+| --- | --- | --- | --- |
+| Hà Nội | 17,5-18,5 s | vừa | Xe máy áo đen xuất hiện sát bên trái và tiến lên gần hướng xe mình. |
+| Hà Nội | 41,5-42,5 s | vừa | Xe máy tối màu xuất hiện sát mép phải cạnh SUV trắng rồi chạy lên gần hướng xe mình. |
+| Hồ Tây | 62,5-63,5 s | cao | Xe máy mũ vàng dịch từ phải về phía trước xe mình khi một xe giao hàng chạy sát bên phải. |
+| Hồ Tây | 68,5-69,5 s | cao | Nhiều xe máy cắt ngang phía trước từ hai phía tại nút giao. |
+
+Đây là quan sát định tính từ các khung lấy mẫu. Chưa có danh sách đầy đủ các tình huống cần cảnh báo hoặc nhãn người để tính recall. [Ảnh Hà Nội](../../output/demo_20261114/M11/M17/day_hanoi_many_signs/traffic_followup.jpg), [ảnh Hồ Tây](../../output/demo_20261114/M11/M17/day_west_lake/traffic_followup.jpg), [phiếu quan sát](../../output/demo_20261114/M11/M17/traffic_observations.csv).

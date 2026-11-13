@@ -112,7 +112,26 @@ Khi trình bày, giữ bối cảnh prototype streaming của báo cáo cuối v
 | M11 v3 / demo_video (holdout) - mọi mức | 5/10 (50,0%) | 10 cảnh báo | `output/demo_20261114/M11/v3/counts.json::demo_video.all` | khớp nguồn |
 | M11 v2 sang v3 / demo_video (holdout) | Tổng cảnh báo 15 xuống 10, `khong_hop_ly` 8 xuống 5, `hop_ly` 6 xuống 5. V3 không có mẫu `nguy_co`. | 15 ca v2, 10 ca v3 | `output/demo_20261114/M11/v2/counts.json::demo_video.all`; `output/demo_20261114/M11/v3/counts.json::demo_video.all / nguy_co` | khớp nguồn |
 
-Chỉ dùng video demo holdout cho kết luận chính. Clip đêm là dev đã dùng để chỉnh ngưỡng. Kết quả v3 là **AI-reviewed, chưa đo recall**. [Rà soát M11 v3](FORWARD_REVIEW.md#v3---render-m13).
+Kết luận so sánh v2 và v3 dựa trên video demo holdout. Clip đêm là dev đã dùng để chỉnh ngưỡng. Kết quả v3 là **AI-reviewed, chưa đo recall**. [Rà soát M11 v3](FORWARD_REVIEW.md#v3---render-m13).
+
+### M17 - Hai clip ban ngày và tổng ba holdout
+
+**AI-reviewed, chưa đo recall.** Tổng ba holdout gồm demo_video v3 và hai clip M17. Cả 3 ca `nguy_co` trong nhóm này đến từ clip Hà Nội.
+
+| Nội dung | Giá trị | n | File nguồn và dòng hoặc key | Trạng thái |
+| --- | --- | --- | --- | --- |
+| M17 / day_hanoi_many_signs - cue giọng cảnh báo | 2,67 câu/phút | 4 cue / 5 cảnh báo, 90 s | `output/demo_20261114/M17/clips/day_hanoi_many_signs/render/summary.json::forward_warning.spoken_per_minute / spoken_cues / alerts` | khớp nguồn |
+| M17 / day_hanoi_many_signs - chu_y | 1/2 (50,0%) | 2 cảnh báo | `output/demo_20261114/M11/M17/counts.json::day_hanoi_many_signs.chu_y` | khớp nguồn |
+| M17 / day_hanoi_many_signs - nguy_co | 1/3 (33,3%) | 3 cảnh báo | `output/demo_20261114/M11/M17/counts.json::day_hanoi_many_signs.nguy_co` | khớp nguồn |
+| M17 / day_hanoi_many_signs - mọi mức | 2/5 (40,0%) | 5 cảnh báo | `output/demo_20261114/M11/M17/counts.json::day_hanoi_many_signs.all` | khớp nguồn |
+| M17 / day_west_lake - cue giọng cảnh báo | 2,67 câu/phút | 4 cue / 11 cảnh báo, 90 s | `output/demo_20261114/M17/clips/day_west_lake/render/summary.json::forward_warning.spoken_per_minute / spoken_cues / alerts` | khớp nguồn |
+| M17 / day_west_lake - chu_y | 6/11 (54,5%) | 11 cảnh báo | `output/demo_20261114/M11/M17/counts.json::day_west_lake.chu_y` | khớp nguồn |
+| M17 / day_west_lake - nguy_co | 0/0 (Không xác định) | 0 cảnh báo | `output/demo_20261114/M11/M17/counts.json::day_west_lake.nguy_co` | khớp nguồn |
+| M17 / day_west_lake - mọi mức | 6/11 (54,5%) | 11 cảnh báo | `output/demo_20261114/M11/M17/counts.json::day_west_lake.all` | khớp nguồn |
+| M17 / gộp hai clip - mọi mức | 8/16 (50,0%), `khong_hop_ly` 4, `khong_ro` 4 | 16 cảnh báo | `output/demo_20261114/M11/M17/counts.json::m17.all` | khớp nguồn |
+| Gộp ba holdout - mọi mức | 13/26 (50,0%), `khong_hop_ly` 9, `khong_ro` 4 | 26 cảnh báo | `output/demo_20261114/M11/M17/counts.json::three_holdouts.all` | khớp nguồn |
+
+[Rà soát M17](FORWARD_REVIEW.md#m17---holdout-mới-2-clip-đông-xe-ban-ngày).
 
 ## Biển báo trên video demo M15
 
