@@ -5,7 +5,7 @@ Provides exhaustive native-FPS video export and independent decode verification.
 No human lane GT claim, no automatic legal certainty from 59-class YOLO.
 """
 from __future__ import annotations
-import argparse,hashlib,json,math,subprocess,sys,time
+import argparse,hashlib,json,math,os,subprocess,sys,time
 from dataclasses import asdict
 from datetime import datetime,timedelta
 from pathlib import Path
@@ -72,6 +72,8 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
     fw_tracker=CocoTracker(fw_cfg) if fw_cfg.enabled else None
     fw_warner=ForwardObjectWarner(fw_cfg,fps/step) if fw_cfg.enabled else None
     fw_alerts_all=[];fw_speech=[];fw_draw=[];fw_now=[]
+    # M8 timing: wall seconds spent in forward detect and overlay (always counted, written to summary only with ITAS_PROFILE=1).
+    prof={'fw_detect_s':0.,'fw_detect_calls':0,'fw_draw_s':0.,'fw_draw_calls':0}
     pipeline_id='offline_simulation_'+hashlib.sha256(str(out).encode()).hexdigest()[:18]
     ffmpeg=imageio_ffmpeg.get_ffmpeg_exe()
     encoder=subprocess.Popen([ffmpeg,'-y','-loglevel','error','-f','rawvideo','-pix_fmt','bgr24',
@@ -138,7 +140,9 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
                     counters['warnings']+=len(result.warnings)
                     fw_now=[]
                     if fw_warner is not None:
+                        _t=time.perf_counter()
                         fw_dets=fw_tracker.detect(frame)
+                        prof['fw_detect_s']+=time.perf_counter()-_t;prof['fw_detect_calls']+=1
                         fw_now=fw_warner.update(absolute,frame.shape[1],frame.shape[0],fw_dets)
                         fw_alerts_all.extend(fw_now)
                         fw_draw=fw_now
@@ -164,7 +168,9 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
                 rendered=draw_frame(canvas,last_payload,lines,boxes,
                                     absolute,font,out_fps,fps/step,lane_simple=lane_simple)
                 if fw_warner is not None:
+                    _t=time.perf_counter()
                     rendered=draw_forward(rendered,fw_draw,fw_cfg,font)
+                    prof['fw_draw_s']+=time.perf_counter()-_t;prof['fw_draw_calls']+=1
                 if candidate_lines:
                     for poly in candidate_lines:
                         if len(poly)>=2:
@@ -229,6 +235,7 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
         'forward_warning':{'enabled':fw_cfg.enabled,'alerts':fw_alerts_all,'speech':fw_speech,
             'weights':fw_cfg.weights_path,'imgsz':fw_cfg.imgsz,'conf':fw_cfg.conf},
         'elapsed_seconds':time.perf_counter()-started,'failures':failures,
+        **({'profile_s':{k:round(v,3) if isinstance(v,float) else v for k,v in prof.items()}} if os.environ.get('ITAS_PROFILE')=='1' else {}),
         'video_sha256':file_sha256(video),'verified_full_decode':verified,
         'not_a_measured_field_accuracy':True}
     (out/'summary.json').write_text(json.dumps(scan,ensure_ascii=False,indent=2),encoding='utf8')
