@@ -1,0 +1,1138 @@
+{
+  "description": "Sign-definition retrieval cases built on 2026-11-12. Answers are corpus locators agreed by two fixed labeling rules (see scripts/build_sign_retrieval_set_20261112.py). AI-reviewed rule labels, not human ground truth.",
+  "corpus_sha256": "1086c043d97db61dd0c0f253144e2803a060d8746b05486e206ae5945b88c065",
+  "codes_in_catalog": 87,
+  "cases_kept": 67,
+  "codes_dropped": [
+    "P.106b",
+    "P.127c",
+    "P.131b",
+    "P.131c",
+    "R.301a",
+    "R.301c",
+    "R.301d",
+    "R.301e",
+    "R.302a",
+    "R.302b",
+    "R.412",
+    "W.202a",
+    "W.203c",
+    "W.205a",
+    "W.205b",
+    "W.205d",
+    "W.207",
+    "W.207a",
+    "W.207b",
+    "W.245a"
+  ],
+  "agreement_rate_over_catalog": 0.7701149425287356,
+  "split_counts": {
+    "dev": 33,
+    "holdout": 34
+  },
+  "cases": [
+    {
+      "id": "sign-DP.134",
+      "category": "sign",
+      "split": "holdout",
+      "code": "DP.134",
+      "query": "DP.134: Hết tốc độ tối đa cho phép",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 22. Ý nghĩa sử dụng các biển báo cấm"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-DP.135",
+      "category": "sign",
+      "split": "dev",
+      "code": "DP.135",
+      "query": "DP.135: Hết tất cả các lệnh cấm",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 22. Ý nghĩa sử dụng các biển báo cấm"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 26. Vị trí đặt biển báo cấm theo chiều đi và hướng hiệu lực của biển"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-I.402",
+      "category": "sign",
+      "split": "dev",
+      "code": "I.402",
+      "query": "I.402: Hết đoạn đường ưu tiên",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 36. Ý nghĩa sử dụng các biển chỉ dẫn"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-I.407",
+      "category": "sign",
+      "split": "holdout",
+      "code": "I.407",
+      "query": "I.407: Đường một chiều",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 36. Ý nghĩa sử dụng các biển chỉ dẫn"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-I.407a",
+      "category": "sign",
+      "split": "holdout",
+      "code": "I.407a",
+      "query": "I.407a: Đường một chiều",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 74. Cấm riêng từng chiều đi"
+        }
+      ]
+    },
+    {
+      "id": "sign-I.408",
+      "category": "sign",
+      "split": "holdout",
+      "code": "I.408",
+      "query": "I.408: Nơi đỗ xe",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 36. Ý nghĩa sử dụng các biển chỉ dẫn"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-I.409",
+      "category": "sign",
+      "split": "holdout",
+      "code": "I.409",
+      "query": "I.409: Chỗ quay xe",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 36. Ý nghĩa sử dụng các biển chỉ dẫn"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-I.423",
+      "category": "sign",
+      "split": "holdout",
+      "code": "I.423",
+      "query": "I.423: Vị trí người đi bộ sang ngang",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 36. Ý nghĩa sử dụng các biển chỉ dẫn"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-I.425",
+      "category": "sign",
+      "split": "dev",
+      "code": "I.425",
+      "query": "I.425: Bệnh viện",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 36. Ý nghĩa sử dụng các biển chỉ dẫn"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-I.434a",
+      "category": "sign",
+      "split": "holdout",
+      "code": "I.434a",
+      "query": "I.434a: Bến xe buýt",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 36. Ý nghĩa sử dụng các biển chỉ dẫn"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-I.442",
+      "category": "sign",
+      "split": "dev",
+      "code": "I.442",
+      "query": "I.442: Chợ",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 36. Ý nghĩa sử dụng các biển chỉ dẫn"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.102",
+      "category": "sign",
+      "split": "dev",
+      "code": "P.102",
+      "query": "P.102: Cấm đi ngược chiều",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 22. Ý nghĩa sử dụng các biển báo cấm"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 74. Cấm riêng từng chiều đi"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.103a",
+      "category": "sign",
+      "split": "holdout",
+      "code": "P.103a",
+      "query": "P.103a: Cấm xe ô tô",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 22. Ý nghĩa sử dụng các biển báo cấm"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.103b",
+      "category": "sign",
+      "split": "holdout",
+      "code": "P.103b",
+      "query": "P.103b: Cấm xe ô tô rẽ phải",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.103c",
+      "category": "sign",
+      "split": "holdout",
+      "code": "P.103c",
+      "query": "P.103c: Cấm xe ô tô rẽ trái",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.104",
+      "category": "sign",
+      "split": "holdout",
+      "code": "P.104",
+      "query": "P.104: Cấm xe máy",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 22. Ý nghĩa sử dụng các biển báo cấm"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.105",
+      "category": "sign",
+      "split": "holdout",
+      "code": "P.105",
+      "query": "P.105: Cấm xe ô tô và xe máy",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 22. Ý nghĩa sử dụng các biển báo cấm"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.106a",
+      "category": "sign",
+      "split": "holdout",
+      "code": "P.106a",
+      "query": "P.106a: Cấm xe ô tô tải",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.107",
+      "category": "sign",
+      "split": "dev",
+      "code": "P.107",
+      "query": "P.107: Cấm xe ô tô khách và xe ô tô tải",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 22. Ý nghĩa sử dụng các biển báo cấm"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.107a",
+      "category": "sign",
+      "split": "holdout",
+      "code": "P.107a",
+      "query": "P.107a: Cấm xe ô tô khách",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 22. Ý nghĩa sử dụng các biển báo cấm"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.110a",
+      "category": "sign",
+      "split": "dev",
+      "code": "P.110a",
+      "query": "P.110a: Cấm xe đạp",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 22. Ý nghĩa sử dụng các biển báo cấm"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.112",
+      "category": "sign",
+      "split": "holdout",
+      "code": "P.112",
+      "query": "P.112: Cấm người đi bộ",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 22. Ý nghĩa sử dụng các biển báo cấm"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 73. Cấm riêng từng loại phương tiện"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.115",
+      "category": "sign",
+      "split": "holdout",
+      "code": "P.115",
+      "query": "P.115: Hạn chế trọng tải toàn bộ xe",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 22. Ý nghĩa sử dụng các biển báo cấm"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.117",
+      "category": "sign",
+      "split": "dev",
+      "code": "P.117",
+      "query": "P.117: Hạn chế chiều cao",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 22. Ý nghĩa sử dụng các biển báo cấm"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.123a",
+      "category": "sign",
+      "split": "holdout",
+      "code": "P.123a",
+      "query": "P.123a: Cấm rẽ trái",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.123b",
+      "category": "sign",
+      "split": "dev",
+      "code": "P.123b",
+      "query": "P.123b: Cấm rẽ phải",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.124a",
+      "category": "sign",
+      "split": "dev",
+      "code": "P.124a",
+      "query": "P.124a: Cấm quay đầu xe",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.124b",
+      "category": "sign",
+      "split": "holdout",
+      "code": "P.124b",
+      "query": "P.124b: Cấm ô tô quay đầu xe",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.124c",
+      "category": "sign",
+      "split": "dev",
+      "code": "P.124c",
+      "query": "P.124c: Cấm rẽ trái và quay đầu xe",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.124d",
+      "category": "sign",
+      "split": "dev",
+      "code": "P.124d",
+      "query": "P.124d: Cấm rẽ phải và quay đầu xe",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.124e",
+      "category": "sign",
+      "split": "dev",
+      "code": "P.124e",
+      "query": "P.124e: Cấm ô tô rẽ trái và quay đầu xe",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.125",
+      "category": "sign",
+      "split": "dev",
+      "code": "P.125",
+      "query": "P.125: Cấm vượt",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 22. Ý nghĩa sử dụng các biển báo cấm"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.127",
+      "category": "sign",
+      "split": "holdout",
+      "code": "P.127",
+      "query": "P.127: Tốc độ tối đa cho phép",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 22. Ý nghĩa sử dụng các biển báo cấm"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.128",
+      "category": "sign",
+      "split": "dev",
+      "code": "P.128",
+      "query": "P.128: Cấm sử dụng còi",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 22. Ý nghĩa sử dụng các biển báo cấm"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.130",
+      "category": "sign",
+      "split": "holdout",
+      "code": "P.130",
+      "query": "P.130: Cấm dừng xe và đỗ xe",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 22. Ý nghĩa sử dụng các biển báo cấm"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.131a",
+      "category": "sign",
+      "split": "dev",
+      "code": "P.131a",
+      "query": "P.131a: Cấm đỗ xe",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.137",
+      "category": "sign",
+      "split": "dev",
+      "code": "P.137",
+      "query": "P.137: Cấm rẽ trái, rẽ phải",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 22. Ý nghĩa sử dụng các biển báo cấm"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-P.139",
+      "category": "sign",
+      "split": "holdout",
+      "code": "P.139",
+      "query": "P.139: Cấm đi thẳng, rẽ phải",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 22. Ý nghĩa sử dụng các biển báo cấm"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-R.122",
+      "category": "sign",
+      "split": "holdout",
+      "code": "R.122",
+      "query": "R.122: Dừng lại",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 32. Ý nghĩa sử dụng các biển hiệu lệnh"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-R.303",
+      "category": "sign",
+      "split": "dev",
+      "code": "R.303",
+      "query": "R.303: Nơi giao nhau chạy theo vòng xuyến",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 32. Ý nghĩa sử dụng các biển hiệu lệnh"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-R.305",
+      "category": "sign",
+      "split": "dev",
+      "code": "R.305",
+      "query": "R.305: Đường dành cho người đi bộ",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 32. Ý nghĩa sử dụng các biển hiệu lệnh"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-R.411",
+      "category": "sign",
+      "split": "dev",
+      "code": "R.411",
+      "query": "R.411: Hướng đi trên mỗi làn đường phải theo",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "khoản 40. 4 Điều 40 của Quy chuẩn này."
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 32. Ý nghĩa sử dụng các biển hiệu lệnh"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-R.415a",
+      "category": "sign",
+      "split": "holdout",
+      "code": "R.415a",
+      "query": "R.415a: Biển gộp làn đường theo phương tiện",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "khoản 40. 4 Điều 40 của Quy chuẩn này."
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-R.420",
+      "category": "sign",
+      "split": "holdout",
+      "code": "R.420",
+      "query": "R.420: Bắt đầu khu đông dân cư",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 32. Ý nghĩa sử dụng các biển hiệu lệnh"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-R.421",
+      "category": "sign",
+      "split": "dev",
+      "code": "R.421",
+      "query": "R.421: Hết khu đông dân cư",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 32. Ý nghĩa sử dụng các biển hiệu lệnh"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.201a",
+      "category": "sign",
+      "split": "holdout",
+      "code": "W.201a",
+      "query": "W.201a: Chỗ ngoặt nguy hiểm vòng bên trái",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.201b",
+      "category": "sign",
+      "split": "holdout",
+      "code": "W.201b",
+      "query": "W.201b: Chỗ ngoặt nguy hiểm",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.202",
+      "category": "sign",
+      "split": "dev",
+      "code": "W.202",
+      "query": "W.202: Nhiều chỗ ngoặt nguy hiểm liên tiếp",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 28. Ý nghĩa sử dụng các biển báo nguy hiểm và cảnh báo"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.203a",
+      "category": "sign",
+      "split": "dev",
+      "code": "W.203a",
+      "query": "W.203a: Đường bị thu hẹp",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.208",
+      "category": "sign",
+      "split": "dev",
+      "code": "W.208",
+      "query": "W.208: Giao nhau với đường ưu tiên",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 28. Ý nghĩa sử dụng các biển báo nguy hiểm và cảnh báo"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 29. Kích thước, hình dạng và màu sắc của biển báo nguy hiểm"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.209",
+      "category": "sign",
+      "split": "dev",
+      "code": "W.209",
+      "query": "W.209: Giao nhau có tín hiệu đèn",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 28. Ý nghĩa sử dụng các biển báo nguy hiểm và cảnh báo"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.210",
+      "category": "sign",
+      "split": "dev",
+      "code": "W.210",
+      "query": "W.210: Giao nhau với đường sắt có rào chắn",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 28. Ý nghĩa sử dụng các biển báo nguy hiểm và cảnh báo"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.212",
+      "category": "sign",
+      "split": "dev",
+      "code": "W.212",
+      "query": "W.212: Cầu hẹp",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "khoản 40. 4 Điều 40 của Quy chuẩn này."
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 28. Ý nghĩa sử dụng các biển báo nguy hiểm và cảnh báo"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.219",
+      "category": "sign",
+      "split": "dev",
+      "code": "W.219",
+      "query": "W.219: Dốc xuống nguy hiểm",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 28. Ý nghĩa sử dụng các biển báo nguy hiểm và cảnh báo"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.220",
+      "category": "sign",
+      "split": "dev",
+      "code": "W.220",
+      "query": "W.220: Dốc lên nguy hiểm",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 28. Ý nghĩa sử dụng các biển báo nguy hiểm và cảnh báo"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.221a",
+      "category": "sign",
+      "split": "dev",
+      "code": "W.221a",
+      "query": "W.221a: Đường lồi lõm",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 28. Ý nghĩa sử dụng các biển báo nguy hiểm và cảnh báo"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.221b",
+      "category": "sign",
+      "split": "holdout",
+      "code": "W.221b",
+      "query": "W.221b: Đường có gồ giảm tốc",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 28. Ý nghĩa sử dụng các biển báo nguy hiểm và cảnh báo"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.222a",
+      "category": "sign",
+      "split": "holdout",
+      "code": "W.222a",
+      "query": "W.222a: Đường trơn",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 28. Ý nghĩa sử dụng các biển báo nguy hiểm và cảnh báo"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 30. Vị trí đặt biển báo nguy hiểm và cảnh báo theo chiều đi và hiệu lực"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.224",
+      "category": "sign",
+      "split": "holdout",
+      "code": "W.224",
+      "query": "W.224: Đường người đi bộ cắt ngang",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 28. Ý nghĩa sử dụng các biển báo nguy hiểm và cảnh báo"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.225",
+      "category": "sign",
+      "split": "dev",
+      "code": "W.225",
+      "query": "W.225: Trẻ em",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 28. Ý nghĩa sử dụng các biển báo nguy hiểm và cảnh báo"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.227",
+      "category": "sign",
+      "split": "holdout",
+      "code": "W.227",
+      "query": "W.227: Công trường",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 28. Ý nghĩa sử dụng các biển báo nguy hiểm và cảnh báo"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 77. Báo hiệu cấm từng phần mặt đường, lề đường, vỉa hè"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.233",
+      "category": "sign",
+      "split": "dev",
+      "code": "W.233",
+      "query": "W.233: Nguy hiểm khác",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 28. Ý nghĩa sử dụng các biển báo nguy hiểm và cảnh báo"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.235",
+      "category": "sign",
+      "split": "holdout",
+      "code": "W.235",
+      "query": "W.235: Đường đôi",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 28. Ý nghĩa sử dụng các biển báo nguy hiểm và cảnh báo"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.239a",
+      "category": "sign",
+      "split": "holdout",
+      "code": "W.239a",
+      "query": "W.239a: Đường cáp điện ở phía trên",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 28. Ý nghĩa sử dụng các biển báo nguy hiểm và cảnh báo"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.239b",
+      "category": "sign",
+      "split": "holdout",
+      "code": "W.239b",
+      "query": "W.239b: Chiều cao tĩnh không thực tế",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 28. Ý nghĩa sử dụng các biển báo nguy hiểm và cảnh báo"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.244",
+      "category": "sign",
+      "split": "dev",
+      "code": "W.244",
+      "query": "W.244: Đoạn đường hay xảy ra tai nạn",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 28. Ý nghĩa sử dụng các biển báo nguy hiểm và cảnh báo"
+        },
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    },
+    {
+      "id": "sign-W.246a",
+      "category": "sign",
+      "split": "holdout",
+      "code": "W.246a",
+      "query": "W.246a: Chú ý chướng ngại vật",
+      "expected": [
+        {
+          "document_id": "qcvn-41-2024-bgtvt",
+          "locator": "Điều 84. Tổ chức thực hiện"
+        }
+      ]
+    }
+  ]
+}
