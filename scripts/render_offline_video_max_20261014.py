@@ -66,6 +66,12 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
     out.mkdir(parents=True)
     cap.set(cv2.CAP_PROP_POS_FRAMES,skip)
     pipe=pipeline if pipeline is not None else Pipeline()
+    # M2 forward-object warning (flag forward_warning.enabled; default off).
+    from src.perception.forward_objects import ForwardObjectWarner,ForwardWarnConfig,CocoTracker,forward_cues,merge_cues,draw_forward
+    fw_cfg=ForwardWarnConfig.from_dict(load_config('perception').get('forward_warning',{}))
+    fw_tracker=CocoTracker(fw_cfg) if fw_cfg.enabled else None
+    fw_warner=ForwardObjectWarner(fw_cfg,fps/step) if fw_cfg.enabled else None
+    fw_alerts_all=[];fw_speech=[];fw_draw=[];fw_now=[]
     pipeline_id='offline_simulation_'+hashlib.sha256(str(out).encode()).hexdigest()[:18]
     ffmpeg=imageio_ffmpeg.get_ffmpeg_exe()
     encoder=subprocess.Popen([ffmpeg,'-y','-loglevel','error','-f','rawvideo','-pix_fmt','bgr24',
@@ -130,6 +136,12 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
                     counters['temporal_ufld_candidate_lines']+=len(candidate_lines)
                     counters['legal_speech_samples']+=int(bool(result.reasoning.speech_text))
                     counters['warnings']+=len(result.warnings)
+                    fw_now=[]
+                    if fw_warner is not None:
+                        fw_dets=fw_tracker.detect(frame)
+                        fw_now=fw_warner.update(absolute,frame.shape[1],frame.shape[0],fw_dets)
+                        fw_alerts_all.extend(fw_now)
+                        fw_draw=fw_now
                     jsonl.write(json.dumps({
                         'timestamp':absolute,'source_frame':skip+index,
                         'signs':last_payload['signs'],'lane':last_payload['lane'],
@@ -138,15 +150,21 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
                         'context':result.reasoning.car_summary,
                         'speech':result.reasoning.speech_text,
                         'latency_ms':result.timings_ms,
+                        'forward_alerts':fw_now,
                     },ensure_ascii=False)+'\n')
                     # Output timeline starts at 0, so the cue time is the output frame index.
-                    speech_events.extend(video_speech_events(signs,index/fps,announced))
+                    sign_events_now=video_speech_events(signs,index/fps,announced)
+                    speech_events.extend(sign_events_now)
+                    if fw_now:
+                        fw_speech.extend(forward_cues(fw_now,bool(sign_events_now),index/fps))
                 else:
                     lines,boxes=motion.advance(canvas)
                     _,aux_boxes=aux_motion.advance(canvas)
                     candidate_lines,_=candidate_motion.advance(canvas)
                 rendered=draw_frame(canvas,last_payload,lines,boxes,
                                     absolute,font,out_fps,fps/step,lane_simple=lane_simple)
+                if fw_warner is not None:
+                    rendered=draw_forward(rendered,fw_draw,fw_cfg,font)
                 if candidate_lines:
                     for poly in candidate_lines:
                         if len(poly)>=2:
@@ -207,7 +225,9 @@ def render(source:Path,out:Path,*,analysis_hz=6.,start_second=0.,
         'sign_mode':('960+640+1280' if highres_rescue else '960+640')+', three-frame confirmation',
         'models_finetuned_during_run':False,'highres_1280_enabled':bool(highres_rescue),'input_recording_datetime_known':recorded_at is not None,
         'auxiliary_research_enabled':include_auxiliary,'counts':counters,
-        'speech_events':group_speech_events(speech_events),
+        'speech_events':merge_cues(group_speech_events(speech_events),fw_speech),
+        'forward_warning':{'enabled':fw_cfg.enabled,'alerts':fw_alerts_all,'speech':fw_speech,
+            'weights':fw_cfg.weights_path,'imgsz':fw_cfg.imgsz,'conf':fw_cfg.conf},
         'elapsed_seconds':time.perf_counter()-started,'failures':failures,
         'video_sha256':file_sha256(video),'verified_full_decode':verified,
         'not_a_measured_field_accuracy':True}
