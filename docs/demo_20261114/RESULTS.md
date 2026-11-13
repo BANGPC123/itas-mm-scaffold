@@ -46,12 +46,27 @@ Clip đêm (nguồn 1920x1080): viền box trong video trùng bbox đã scale �
 
 ### 0.6 Clip live 30 s (M12)
 
-- File: `output/demo_20261114/M12/live_30s/render/test_video_offline_max.mp4`, `start_sec = 30`, dài 30 s, xử lý 24.9 s. Kết quả đã kiểm tra `verified_full_decode = true`.
+- File: `output/demo_20261114/M12/live_30s_v2/render/test_video_offline_max.mp4` (bản v2 sau sửa tiêu đề; bản v1 `M12/live_30s/` cùng cảnh báo), `start_sec = 30`, dài 30 s, xử lý 23.4 s. `verified_full_decode = true`. Cảnh báo giống hệt v1 (thời điểm, lớp, mức, có đọc, bbox).
 - Hai cảnh báo, một câu được đọc (2.0 câu/phút trong 30 s). Đối chiếu từng cảnh báo với review độc lập `M11/v3/demo_video/review_sheet.csv` (commit 665310f, nhánh audit) theo thời điểm và bbox:
   - 42.667 s (clip 12.7 s), xe máy trong làn xe mình phía trước, **được đọc** ("Chú ý xe máy"): v3 = hop_ly, bbox khớp.
   - 45.667 s (clip 15.7 s), xe máy cùng làn, không đọc: v3 = hop_ly, bbox khớp.
 - Track ID trong clip khác video gốc (tracker khởi động lại ở đầu clip); bbox và thời điểm khớp chính xác.
 - Clip 118 s (`M12/live_118s/`) bị loại: cảnh báo 118.667 s là cùng chiếc ô tô làn trái của track 330 ở 117.667 s, v3 chấm khong_hop_ly. Clip 110 s (`M12/live_110s/`) cũng bị loại vì câu ở 0.67 s là ô tô làn trái.
+
+### 0.8 Sửa tiêu đề làn và E2E cuối (14/11)
+
+- Khi tắt lane (`offline_video_lane.enabled: false`), không còn dòng "Làn: ..." hay "Vạch sơn ...". Header band thu còn 30 px, không có dòng trống. Lane bật giữ nguyên. Commit `dd041ef`. Unit test: `tests/unit/test_lane_status_off_20261114.py` (render, VideoTextOverlay, SafeVideoTextOverlay; cả hai trạng thái).
+- Render lại demo với header mới: `M12/header_fix/demo_video/`. Gate: biển 840/840 mẫu và forward alerts 840/840 mẫu trùng `M13/clips/demo_video`; summary cảnh báo bằng nhau; 4200 khung, full decode OK. Ảnh so sánh: `M12/header_fix/check/before_M13_10s.jpg` và `after_header_fix_10s.jpg`.
+- E2E trên app khởi động bằng `start.ps1` (cổng 8000), headless Chrome cổng 9333, script `M12/e2e_final/e2e_final.mjs`:
+  - Tab Video, upload đoạn 30 s, phân tích: 25.0 s (`elapsed`). Danh sách "Cảnh báo phía trước": 2 cảnh báo, 00:12 "Chú ý xe máy — Có đọc", 00:15 "Chú ý xe máy — Chỉ hiển thị". Khớp `live_30s_v2`.
+  - Phát video: UI gửi 2 yêu cầu `/pipeline/speech` cho "Chú ý xe máy"; cả hai trả 200, audio `audio/mpeg` 11276 byte (`M12/e2e_final/network_log.json`).
+  - Yêu cầu giọng đọc kiểm tra trực tiếp: 200, audio 200, 11276 byte.
+  - Console: không có lỗi JavaScript. Chỉ có 404 của `favicon.ico` (2 lần). Hai yêu cầu video bị hủy (`ERR_ABORTED`) do trình phát tua, không phải lỗi app.
+  - Tra cứu luật (tab Video, biển P.102): hiển thị nguồn QCVN 41:2024/BGTVT Điều 74 (`M12/e2e_final/e2e_legal_video_report.json`, `shots/10_video_sign_legal_lookup.png`).
+  - Tab Ảnh (`photo_61s.jpg`): hiện các khung vật cản (ô tô, người đi bộ). **Chỉ 1 biển phát hiện và không nhận dạng được** ("Chưa nhận dạng", 38%). Bước tra cứu trên tab Ảnh không chạy được. Khác với M10 (11 biển trên cùng ảnh). Nguyên nhân chưa xác nhận; giả thuyết: `start.ps1` không đặt `ITAS_WARMUP=1` (M10 có đặt). Chưa thử lại.
+- **Chưa xác nhận loa.** Headless không có thiết bị âm thanh; chỉ xác nhận yêu cầu và nội dung audio.
+- Ảnh chụp: `output/demo_20261114/M12/e2e_final/shots/` (01 đến 10). Kết quả UI: `ui_result.mp4` và `shots/ui_result_5s_header.jpg` (header không có dòng làn).
+- Backend đã dừng; cổng 8000 và 9333 đã trống.
 
 ### 0.7 Chưa làm / chưa đo
 
@@ -59,6 +74,8 @@ Clip đêm (nguồn 1920x1080): viền box trong video trùng bbox đã scale �
 - Không có nhãn người nên chưa đo độ chính xác hay recall của cảnh báo.
 - Bộ lọc chỉnh trên clip đêm (in-sample). Độ nhạy lateral: xem `M13/THRESHOLDS.md`.
 - Không có số so sánh latency với M10 (144 s) trong mục này. Số M10 chỉ có ở phần cũ bên dưới.
+- Tab Ảnh trong E2E không nhận dạng biển (xem 0.8). Cần kiểm tra lại có `ITAS_WARMUP=1` hay không.
+- Chưa xác nhận loa phát ra âm thanh.
 
 ---
 

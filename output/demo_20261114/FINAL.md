@@ -167,3 +167,17 @@ Nhánh: `work/demo-20261114`. Chưa push, chưa merge main. Commit cục bộ, m
 - Không có nhãn người nên chưa đo độ chính xác hay recall.
 - Bộ lọc chỉnh trên clip đêm; độ nhạy lateral đã ghi trong `M13/THRESHOLDS.md`.
 - Clip live 30 s chỉ có 1 câu được đọc trong 30 s (2.0 câu/phút). Clip này không đại diện cho cả video.
+
+### Vòng 3b (sửa tiêu đề làn, render lại, E2E cuối) - 14/11
+
+| Mã | Hash | Nội dung |
+|---|---|---|
+| Tiêu đề làn | dd041ef | Không có dòng làn khi lane tắt; header 30 px; test cả hai trạng thái |
+| Render, E2E, docs | (xem git log sau commit) | `M12/header_fix/demo_video`, `M12/live_30s_v2`, `M12/e2e_final`; RESULTS mục 0.8; DEMO_SCRIPT |
+
+- Gate header: biển 840/840 và forward alerts 840/840 trùng `M13/clips/demo_video`. Ảnh: `M12/header_fix/check/`.
+- `live_30s_v2`: cảnh báo giống `live_30s` (00:12 đọc, 00:15 không đọc, cùng bbox).
+- E2E trên app khởi động bằng `start.ps1`: danh sách cảnh báo hiện; yêu cầu giọng "Chú ý xe máy" 200, audio 11276 byte; console không có lỗi JS (chỉ favicon 404); tra cứu P.102 hiện nguồn QCVN 41:2024/BGTVT Điều 74. Ảnh chụp trong `M12/e2e_final/shots/`.
+- Chưa xác nhận loa phát ra âm thanh.
+- Tab Ảnh: ảnh thử không nhận dạng biển nào (khác M10). Chưa xác định nguyên nhân (giả thuyết chưa kiểm: `ITAS_WARMUP` không được đặt khi chạy `start.ps1`).
+- Đã tắt backend (cổng 8000); không có Chrome headless cổng 9333 nào còn chạy.

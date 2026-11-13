@@ -1,0 +1,18 @@
+{
+ "sign_rows": [
+  "00:12 Chú ý xe máy Có đọc",
+  "00:15 Chú ý xe máy Chỉ hiển thị",
+  "00:07 P.102 Cấm đi ngược chiều Quy định",
+  "00:07 R.302a Hướng phải đi vòng chướng ngại vật Quy định",
+  "00:10 I.423 Vị trí người đi bộ sang ngang Quy định",
+  "00:19 I.423 Vị trí người đi bộ sang ngang Quy định"
+ ],
+ "chips": 4,
+ "clicked_chip": "Quy định",
+ "lookup_result_visible": true,
+ "lookup_text": [
+  "00:12 Chú ý xe máy Có đọc",
+  "00:15 Chú ý xe máy Chỉ hiển thị",
+  "00:07 P.102 Cấm đi ngược chiều Ẩn quy định QCVN 41:2024/BGTVT Điều 74. Cấm riêng từng chiều đi Điều 74. Cấm riêng từng chiều đi 74.1. Nếu cấm phương tiện đi lại trên một chiều, đặt biển báo cấm số P.102 \"Cấm đi ngược chiều\" theo quy định ở Mục B.2 Phụ lục B, chiều đi ngược lại đặt biển chỉ dẫn số I.407a \"Đường một chiều\" quy định ở Mục E.7 Phụ lục E của Quy chuẩn n ày hoặc đặt biển R.302a, hay R.302b tại các đầu dải phân cách. 74.2. Vị trí đặt biển b… Mở văn bản nguồn Xem thêm 1 đoạn Chưa kiểm tra hiệu lực pháp lý."
+ ]
+}

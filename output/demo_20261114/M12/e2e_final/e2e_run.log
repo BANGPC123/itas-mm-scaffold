@@ -1,0 +1,16 @@
+screenshot {"name":"01_home_video_tab.png"}
+nav {"href":"http://127.0.0.1:8000/"}
+screenshot {"name":"02_video_selected.png"}
+analyze clicked {}
+screenshot {"name":"03_video_progress.png"}
+screenshot {"name":"04_video_result.png"}
+result shown {"done":true}
+forward list {"heading":true,"count":"2 cảnh báo","rows":["00:12\nChú ý\nxe máy\nCó đọc","00:15\nChú ý\nxe máy\nChỉ hiển thị"]}
+screenshot {"name":"05_forward_list.png"}
+screenshot {"name":"06_video_playing_12s.png"}
+screenshot {"name":"07_video_playing_32s.png"}
+video state {"t":30,"paused":true,"ended":true}
+speech check {"speech_status":200,"audio_url":"/pipeline/audio/897274ac4626fae33a48d0cd7ef0c5a4781ea9c11949f5870f3f5c1509165951.mp3","audio_status":200,"audio_bytes":11276,"content_type":"audio/mpeg"}
+screenshot {"name":"08_image_result.png"}
+screenshot {"name":"09_legal_lookup.png"}
+done {"ui_speech_requests":2,"console_entries":2}
