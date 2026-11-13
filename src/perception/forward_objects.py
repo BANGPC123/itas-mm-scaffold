@@ -315,9 +315,22 @@ def _zone_geometry(h: int, w: int, cfg: ForwardWarnConfig):
     return geom
 
 
-def draw_forward(img, alerts: list[dict], cfg: ForwardWarnConfig, font):
+def canvas_box(bbox_xyxy, src_wh, dst_wh) -> list[float]:
+    """M13.1: map a box from source-frame pixels to output-canvas pixels.
+
+    Alerts keep bbox_xyxy in source-frame pixels (metadata). The canvas is resized to dst_wh without
+    keeping the source size, so x and y are scaled separately."""
+    sx = dst_wh[0] / src_wh[0]
+    sy = dst_wh[1] / src_wh[1]
+    x1, y1, x2, y2 = bbox_xyxy
+    return [x1 * sx, y1 * sy, x2 * sx, y2 * sy]
+
+
+def draw_forward(img, alerts: list[dict], cfg: ForwardWarnConfig, font, src_wh=None):
     """Overlay: zone trapezoid (faint), object boxes orange (chu_y) / red (nguy_co) with Vietnamese labels.
 
+    src_wh: (width, height) of the source frame the alert boxes were measured on. When given, boxes are
+    scaled to the canvas size (M13.1). None keeps the old behaviour (boxes already in canvas pixels).
     The tint is blended only inside the zone's bounding rectangle (M8.1); pixels outside it were never
     tinted, so the result inside the rectangle is the same as the former full-frame blend."""
     import cv2
@@ -334,7 +347,8 @@ def draw_forward(img, alerts: list[dict], cfg: ForwardWarnConfig, font):
     pil = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     painter = ImageDraw.Draw(pil)
     for a in alerts:
-        x1, y1, x2, y2 = [round(v) for v in a['bbox_xyxy']]
+        box = a['bbox_xyxy'] if src_wh is None else canvas_box(a['bbox_xyxy'], src_wh, (w, h))
+        x1, y1, x2, y2 = [round(v) for v in box]
         color = (255, 0, 0) if a['level'] == 'nguy_co' else (255, 140, 0)
         painter.rectangle((x1, y1, x2, y2), outline=color, width=3)
         label = ('NGUY CƠ: ' if a['level'] == 'nguy_co' else 'CHÚ Ý: ') + a['label_vi']

@@ -163,3 +163,25 @@ def test_m9_forward_cues_one_chu_y_per_sample_and_flags():
     alerts2 = [{'level': 'chu_y', 'cls': 'motorcycle'}]
     assert forward_cues(alerts2, True, 30.0, gate=gate) == []
     assert alerts2[0]['spoken'] is False
+
+
+def test_m13_canvas_box_maps_1920x1080_to_1280x720():
+    from src.perception.forward_objects import canvas_box
+    assert canvas_box([960, 540, 1920, 1080], (1920, 1080), (1280, 720)) == [640, 360, 1280, 720]
+    got = canvas_box([0, 0, 100, 50], (1920, 1080), (1280, 720))
+    assert [round(v, 3) for v in got] == [0.0, 0.0, 66.667, 33.333]
+
+
+def test_m13_draw_forward_scales_source_box_to_canvas():
+    """M13.1: a box measured on a 1920x1080 frame is drawn where it sits on the 1280x720 canvas."""
+    import numpy as np
+    from src.perception.forward_objects import ForwardWarnConfig, draw_forward
+    cfg = ForwardWarnConfig(enabled=True)
+    canvas = np.zeros((720, 1280, 3), dtype=np.uint8)
+    alert = {'level': 'chu_y', 'label_vi': 'xe máy', 'bbox_xyxy': [900.0, 500.0, 1100.0, 700.0]}
+    out = draw_forward(canvas.copy(), [alert], cfg, None, src_wh=(1920, 1080))
+    # Scaled box: x 600..733, y 333..467. BGR of chu_y colour (255,140,0) is (0,140,255).
+    assert tuple(out[333, 600]) == (0, 140, 255) or tuple(out[334, 601]) == (0, 140, 255)
+    assert tuple(out[400, 733]) == (0, 140, 255) or tuple(out[400, 732]) == (0, 140, 255)
+    # The unscaled position (900..1100 px on the canvas) must not carry the box border.
+    assert not np.any(np.all(out[500:700, 900:1100] == (0, 140, 255), axis=-1))
