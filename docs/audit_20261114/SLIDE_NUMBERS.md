@@ -48,18 +48,23 @@ Số ảnh lấy từ `output/bench_20261112/eval_candidates/records_<model>_<sp
 | --- | --- | --- | --- | --- | --- | --- |
 | night_90s - elapsed 02/11 | 153,3 s |  |  | 1 lượt; 540 mẫu phân tích | `output/speed_simple_20261103/night_90s/summary.json::elapsed_seconds` | khớp nguồn |
 | night_90s - elapsed M10 |  | 106,69 s |  | 1 lượt; 540 mẫu phân tích | `output/demo_20261114/M10/clips/night_90s/render/summary.json::elapsed_seconds` | khớp nguồn |
+| night_90s - elapsed trung vị |  |  | 97,48 s | 3 lượt; 540 mẫu/lượt | `output/demo_20261114/M13/clips/night_90s/render/summary.json::elapsed_seconds`; `output/demo_20261114/M12/latency/night_90s_run2/render/summary.json::elapsed_seconds`; `output/demo_20261114/M12/latency/night_90s_run3/render/summary.json::elapsed_seconds` | khớp nguồn |
 | night_90s - wall 02/11 | 157,4 s |  |  | 1 lượt; 540 mẫu phân tích | [SPEED.md:21](../../docs/final_report/evidence/SPEED.md#L21) | khớp nguồn |
 | night_90s - wall M10 |  | 110,77 s |  | 1 lượt; 540 mẫu phân tích | `output/demo_20261114/M10/clips/night_90s/baseline_meta.json::wall_seconds` | khớp nguồn |
+| night_90s - wall trung vị |  |  | 101,53 s | 3 lượt; 540 mẫu/lượt | `output/demo_20261114/M13/clips/night_90s/baseline_meta.json::wall_seconds`; `output/demo_20261114/M12/latency/night_90s_run2/baseline_meta.json::wall_seconds`; `output/demo_20261114/M12/latency/night_90s_run3/baseline_meta.json::wall_seconds` | khớp nguồn |
 | demo_video - elapsed 02/11 | chưa đo |  |  | chưa đo | [SPEED.md:15](../../docs/final_report/evidence/SPEED.md#L15) | chưa đo |
 | demo_video - elapsed M10 |  | 144,01 s |  | 1 lượt; 840 mẫu phân tích | `output/demo_20261114/M10/clips/demo_video/render/summary.json::elapsed_seconds` | khớp nguồn |
+| demo_video - elapsed trung vị |  |  | 119,29 s | 3 lượt; 840 mẫu/lượt | `output/demo_20261114/M13/clips/demo_video/render/summary.json::elapsed_seconds`; `output/demo_20261114/M12/latency/demo_video_run2/render/summary.json::elapsed_seconds`; `output/demo_20261114/M12/latency/demo_video_run3/render/summary.json::elapsed_seconds` | khớp nguồn |
 | demo_video - wall 02/11 | chưa đo |  |  | chưa đo | [SPEED.md:15](../../docs/final_report/evidence/SPEED.md#L15) | chưa đo |
 | demo_video - wall M10 |  | 147,95 s |  | 1 lượt; 840 mẫu phân tích | `output/demo_20261114/M10/clips/demo_video/baseline_meta.json::wall_seconds` | khớp nguồn |
+| demo_video - wall trung vị |  |  | 122,67 s | 3 lượt; 840 mẫu/lượt | `output/demo_20261114/M13/clips/demo_video/baseline_meta.json::wall_seconds`; `output/demo_20261114/M12/latency/demo_video_run2/baseline_meta.json::wall_seconds`; `output/demo_20261114/M12/latency/demo_video_run3/baseline_meta.json::wall_seconds` | khớp nguồn |
 | demo_short_30s - elapsed 02/11 | chưa đo |  |  | chưa đo | [SPEED.md:15](../../docs/final_report/evidence/SPEED.md#L15) | chưa đo |
 | demo_short_30s - elapsed M10 |  | 34,18 s |  | 1 lượt; 180 mẫu phân tích | `output/demo_20261114/M10/clips/demo_short_30s/render/summary.json::elapsed_seconds` | khớp nguồn |
 | demo_short_30s - wall 02/11 | chưa đo |  |  | chưa đo | [SPEED.md:15](../../docs/final_report/evidence/SPEED.md#L15) | chưa đo |
 | demo_short_30s - wall M10 |  | 38,29 s |  | 1 lượt; 180 mẫu phân tích | `output/demo_20261114/M10/clips/demo_short_30s/baseline_meta.json::wall_seconds` | khớp nguồn |
+| demo_short_30s - trung vị elapsed / wall |  |  | chưa đo | 0 lượt trong nhóm đo lặp | `output/demo_20261114/M13/clips/` và `output/demo_20261114/M12/latency/` | chưa đo |
 
-**Chờ M12** cho cột trung vị. Số 02/11 và M10 là từng lượt render. Hai lượt clip đêm cùng SHA256 nguồn, đối chiếu key `source_sha256` trong hai summary. `elapsed_seconds` là thời gian render ghi trong summary. `wall_seconds` là thời gian toàn lệnh bọc render trong `baseline_meta.json`. Latency end-to-end qua trình duyệt chưa đo.
+Trung vị dùng lượt M13 và hai lượt M12 (run2, run3) của từng clip. Số 02/11 và M10 là từng lượt render. Điều kiện máy khác nhau giữa lượt đơn M10 và nhóm đo M13/M12, nên chênh lệch thời gian chỉ mang tính mô tả. Hai lượt clip đêm cùng SHA256 nguồn, đối chiếu key `source_sha256` trong hai summary. `elapsed_seconds` là thời gian render ghi trong summary. `wall_seconds` là thời gian toàn lệnh bọc render trong `baseline_meta.json`. Latency end-to-end qua trình duyệt chưa đo.
 
 ## Lane trong prototype streaming
 
@@ -105,6 +110,7 @@ Khi trình bày, giữ bối cảnh prototype streaming của báo cáo cuối v
 | M11 v3 / demo_video (holdout) - chu_y | 5/10 (50,0%) | 10 cảnh báo | `output/demo_20261114/M11/v3/counts.json::demo_video.chu_y` | khớp nguồn |
 | M11 v3 / demo_video (holdout) - nguy_co | 0/0 (không xác định) | 0 cảnh báo | `output/demo_20261114/M11/v3/counts.json::demo_video.nguy_co` | khớp nguồn |
 | M11 v3 / demo_video (holdout) - mọi mức | 5/10 (50,0%) | 10 cảnh báo | `output/demo_20261114/M11/v3/counts.json::demo_video.all` | khớp nguồn |
+| M11 v2 sang v3 / demo_video (holdout) | Tổng cảnh báo 15 xuống 10, `khong_hop_ly` 8 xuống 5, `hop_ly` 6 xuống 5. V3 không có mẫu `nguy_co`. | 15 ca v2, 10 ca v3 | `output/demo_20261114/M11/v2/counts.json::demo_video.all`; `output/demo_20261114/M11/v3/counts.json::demo_video.all / nguy_co` | khớp nguồn |
 
 Chỉ dùng video demo holdout cho kết luận chính. Clip đêm là dev đã dùng để chỉnh ngưỡng. Kết quả v3 là **AI-reviewed, chưa đo recall**. [Rà soát M11 v3](FORWARD_REVIEW.md#v3---render-m13).
 
