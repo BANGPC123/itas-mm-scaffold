@@ -108,7 +108,7 @@ supplementary_ocr:
 # TTC here is a relative approach indicator (box growth), not a real time-to-collision.
 # Default false until the M2 gate passes. Rollback = keep false.
 forward_warning:
-  enabled: false
+  enabled: true
   weights_path: models/lane/candidates/coco_yolo11n_20261011.pt
   imgsz: 640
   conf: 0.35
@@ -116,8 +116,8 @@ forward_warning:
     bottom_width_ratio: 0.50
     top_width_ratio: 0.16
     top_y_ratio: 0.55
-  chu_y_bottom_ratio: 0.75
-  chu_y_persist: 3
+  chu_y_bottom_ratio: 0.80
+  chu_y_persist: 6
   nguy_co_ttc_s: 2.0
   nguy_co_persist: 2
   ttc_k: 3

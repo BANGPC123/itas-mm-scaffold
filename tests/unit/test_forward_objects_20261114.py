@@ -87,3 +87,14 @@ def test_speech_wording_never_claims_collision():
         for cls in ('car', 'person', 'motorcycle', 'truck'):
             text = speech_text(level, cls).lower()
             assert 'va chạm' not in text and 'đâm' not in text
+
+
+def test_merge_pushes_overlapping_sign_cues_apart_without_shared_start():
+    from src.perception.forward_objects import merge_cues
+    signs = [{'t_seconds': 10.0, 'text': 'a', 'codes': ['P.1']}, {'t_seconds': 10.5, 'text': 'b', 'codes': ['P.2']}]
+    fw = [{'t_seconds': 9.5, 'text': 'x', 'codes': [], 'kind': 'forward_nguy_co'}]
+    out = merge_cues(signs, fw, busy_s=2.0)
+    starts = [c['t_seconds'] for c in out if 'kind' not in c]
+    assert len(set(starts)) == len(starts)
+    assert min(starts) >= 11.5
+    assert [c['text'] for c in out if 'kind' not in c] == ['a', 'b']

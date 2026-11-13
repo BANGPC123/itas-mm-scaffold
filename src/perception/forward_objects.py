@@ -209,10 +209,14 @@ def merge_cues(sign_cues: list[dict], forward: list[dict], busy_s: float = 2.0) 
     """Order cues on one timeline. Forward nguy_co goes first; sign cues that would overlap it are
     moved to after it (not dropped), so cues never talk over each other."""
     out = [dict(c) for c in sign_cues]
-    for f in sorted((c for c in forward if c.get('kind') == 'forward_nguy_co'), key=lambda c: c['t_seconds']):
-        for c in out:
-            if f['t_seconds'] <= c['t_seconds'] < f['t_seconds'] + busy_s:
-                c['t_seconds'] = round(f['t_seconds'] + busy_s, 3)
+    nguy = sorted((c for c in forward if c.get('kind') == 'forward_nguy_co'), key=lambda c: c['t_seconds'])
+    for f in nguy:
+        # Pushed sign cues keep their order and never share a start time.
+        cursor = f['t_seconds'] + busy_s
+        for c in sorted(out, key=lambda c: c['t_seconds']):
+            if f['t_seconds'] <= c['t_seconds'] < cursor:
+                c['t_seconds'] = round(cursor, 3)
+                cursor = c['t_seconds'] + 0.5
     out += [dict(c) for c in forward]
     return sorted(out, key=lambda c: c['t_seconds'])
 
