@@ -1,0 +1,15 @@
+M13 - sẵn sàng để xem xét (work/demo-20261114)
+
+Commit:
+  M13.1  062ab3f  scale forward boxes to output canvas
+  M13.2  bf0aa8e  nguy_co speech names the class
+  M13.3  fab8fc6  one nguy_co cue per sample, 2 s gap
+  M13.4  e6c0c87  ERROR_ANALYSIS.md (before filter logic)
+  M13.5  868e3e4  filters behind flags, tuned on night only (THRESHOLDS.md)
+  M13.6  <xem git log>  render, review v3, nguy_co decision
+
+Quyết định: nguy_co_enabled = true (NGUY_CO_DECISION.md).
+Gate (a) biển: 100% (night 540/540, demo 840/840).
+Box trên clip đêm: khớp bbox đã scale 5/5.
+Holdout (video demo, review v3): 10 cảnh báo chu_y, 5 hop_ly, 5 khong_hop_ly, 0 nguy_co.
+Không chỉnh ngưỡng sau khi xem video demo.
