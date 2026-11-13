@@ -127,13 +127,25 @@ def test_draw_forward_rect_blend_matches_full_frame_reference():
 
 
 def test_m9_speech_texts_are_short_and_fixed():
-    from src.perception.forward_objects import NGUY_CO_TEXT, prewarm_texts, speech_text
+    from src.perception.forward_objects import prewarm_texts, speech_text
     assert speech_text('chu_y', 'motorcycle') == 'Chú ý xe máy'
     assert speech_text('chu_y', 'person') == 'Chú ý người đi bộ'
-    assert speech_text('nguy_co', 'car') == NGUY_CO_TEXT == 'Cẩn thận, xe phía trước tiến gần'
     texts = prewarm_texts()
-    assert NGUY_CO_TEXT in texts and 'Chú ý xe máy' in texts
+    assert 'Chú ý xe máy' in texts
     assert all(len(t.split()) <= 9 for t in texts)
+
+
+def test_m13_nguy_co_wording_follows_class_label():
+    """M13.2: riders (person, bicycle, motorcycle) are never announced as a car in front."""
+    from src.perception.forward_objects import prewarm_texts, speech_text
+    assert speech_text('nguy_co', 'person') == 'Cẩn thận, người đi bộ phía trước'
+    assert speech_text('nguy_co', 'motorcycle') == 'Cẩn thận, xe máy phía trước'
+    assert speech_text('nguy_co', 'bicycle') == 'Cẩn thận, xe đạp phía trước'
+    assert speech_text('nguy_co', 'car') == 'Cẩn thận, ô tô phía trước'
+    texts = prewarm_texts()
+    assert speech_text('nguy_co', 'motorcycle') in texts and speech_text('chu_y', 'bicycle') in texts
+    assert not any('xe phía trước' in t for t in texts)
+    assert not any(w in t for t in texts for w in ('va chạm', 'sắp đâm'))
 
 
 def test_m9_voice_gate_cooldowns():

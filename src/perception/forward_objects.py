@@ -144,21 +144,21 @@ class ForwardObjectWarner:
         return alerts
 
 
-NGUY_CO_TEXT = 'Cẩn thận, xe phía trước tiến gần'
-
-
 def speech_text(level: str, cls_name: str) -> str:
-    """Short fixed cue sentences (under 2 s). Never use collision words.
+    """Short cue sentences (under 2 s). Never use collision words.
 
-    M9: nguy_co uses one fixed sentence; chu_y names the class ("Chú ý xe máy")."""
+    M13.2: the class name comes from label_vi for both levels, so a rider (person/bicycle/motorcycle)
+    is never announced as "xe phía trước". chu_y: "Chú ý xe máy". nguy_co: "Cẩn thận, xe máy phía trước"."""
+    label = COCO_VI.get(cls_name, 'phương tiện')
     if level == 'nguy_co':
-        return NGUY_CO_TEXT
-    return f"Chú ý {COCO_VI.get(cls_name, 'phương tiện')}"
+        return f'Cẩn thận, {label} phía trước'
+    return f'Chú ý {label}'
 
 
 def prewarm_texts() -> list[str]:
-    """Every sentence the warner can speak; synthesized once at server start (M9)."""
-    return [NGUY_CO_TEXT] + [f'Chú ý {vi}' for vi in COCO_VI.values()]
+    """Every sentence the warner can speak; synthesized once at server start (M9, M13.2)."""
+    labels = list(COCO_VI.values()) + ['phương tiện']
+    return [f'Cẩn thận, {vi} phía trước' for vi in labels] + [f'Chú ý {vi}' for vi in labels]
 
 
 class VoiceGate:
