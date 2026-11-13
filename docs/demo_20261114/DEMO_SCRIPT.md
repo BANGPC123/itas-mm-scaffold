@@ -22,3 +22,19 @@ Phương án khi lỗi:
 - Chậm: không xử lý video dài trên máy; dùng clip 30 s.
 - Không nghe thấy giọng: kiểm tra loa và âm lượng. E2E trên trình duyệt headless không xác nhận được âm thanh phát ra loa (xem RESULTS.md mục 0.8).
 - Không được nói "va chạm" hoặc "sắp đâm".
+
+## Tạo lại file demo nếu thiếu
+
+Clip live 30 s (`output/demo_20261114/M12/e2e_final/live_30s_source.mp4`) được cắt từ `docs/demo/itas-mm_demo_video.mp4` (bắt đầu giây 30, dài 30 s). File này không nằm trong git (`output/` bị gitignore), nên clone mới sẽ thiếu. Lệnh tái tạo (CPU, không dùng GPU). Lệnh này dựng lại theo thuộc tính của file hiện có (H.264 High, yuv420p, 30 fps, 1280x720, không âm thanh, khoảng 5.8 Mb/s); lệnh gốc không được ghi lại:
+
+```bash
+ffmpeg -hide_banner -ss 30 -i docs/demo/itas-mm_demo_video.mp4 -t 30 -an -c:v libx264 -preset medium -b:v 5800k -pix_fmt yuv420p -r 30 output/demo_20261114/M12/e2e_final/live_30s_source_recut.mp4
+```
+
+Tên đầu ra có `_recut` để không ghi đè file hiện có. Kiểm tra đã chạy (M16, `output/demo_20261114/M16/RECUT_CHECK.md`):
+
+- File hiện có: 900 khung, 30.00 s, 1280x720, 21.7 MB.
+- File tạo lại: 900 khung, 30.00 s, 1280x720, 22.9 MB.
+- Sai khác điểm ảnh trung bình ở khung đầu, giữa và cuối: 2.45, 1.97, 2.52 (thang 0–255, do mã hóa lại).
+
+Nếu không có `ffmpeg` trên PATH, dùng binary đi kèm môi trường `itas-mm`: `D:\miniconda\envs\itas-mm\Lib\site-packages\imageio_ffmpeg\binaries\ffmpeg-win-x86_64-v7.1.exe`.
