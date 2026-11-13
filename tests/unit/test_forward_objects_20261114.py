@@ -224,3 +224,97 @@ def test_m13_nguy_co_cues_never_overlap_in_time():
     assert g.decide('nguy_co', 'car', 10.0) is True
     assert g.decide('nguy_co', 'car', 10.33) is False   # next detection sample, within 2 s
     assert g.decide('nguy_co', 'person', 12.0) is True  # 2.0 s later
+
+
+def _box(tid, cls, x1, y1, x2, y2):
+    return {'track_id': tid, 'cls': cls, 'bbox_xyxy': [float(x1), float(y1), float(x2), float(y2)], 'conf': 0.9}
+
+
+def test_m13_5_rider_merge_drops_person_on_motorcycle_only():
+    from src.perception.forward_objects import merge_riders
+    moto = _box(1, 3, 600, 500, 760, 760)
+    rider = _box(2, 0, 640, 430, 720, 640)      # bottom-centre (680, 640) inside the motorcycle box
+    walker = _box(3, 0, 100, 400, 180, 700)     # far from the motorcycle
+    out = merge_riders([moto, rider, walker])
+    assert [d['track_id'] for d in out] == [1, 3]
+    assert merge_riders([rider, walker]) == [rider, walker]   # no motorcycle: nothing merged
+
+
+def test_m13_5_nguy_zone_needs_narrow_zone_and_no_edge_contact():
+    """Flag on: a box inside the wide zone but outside the narrow zone gives chu_y at most."""
+    W, H = 1280, 720
+    cfg = _cfg(nguy_zone_enabled=True, nguy_persist=1, nguy_co_persist=1, ttc_k=1, cooldown_track_s=0,
+               cooldown_global_s=0, chu_y_persist=99)
+    def run(x1, x2, y2, grow=True):
+        w = ForwardObjectWarner(cfg, 3.0)
+        h0 = 80.0
+        out = []
+        for k in range(3):
+            hh = h0 * (1.25 ** k) if grow else h0
+            out += w.update(k / 3.0, W, H, [_box(7, 2, x1, y2 - hh, x2, y2)])
+        return out
+    # Bottom centre x=640 (middle), lower edge at y=600: inside both zones -> nguy_co
+    assert any(a['level'] == 'nguy_co' for a in run(600, 680, 600))
+    # Bottom centre x=840: inside the wide zone (half width ~239 px at y=600), outside the narrow one (~173 px)
+    assert not any(a['level'] == 'nguy_co' for a in run(800, 880, 600))
+    # Box touching the right frame edge -> no nguy_co
+    assert not any(a['level'] == 'nguy_co' for a in run(1200, 1279, 600))
+    off = _cfg(nguy_zone_enabled=False, nguy_persist=1, nguy_co_persist=1, ttc_k=1, cooldown_track_s=0,
+               cooldown_global_s=0, chu_y_persist=99)
+    w = ForwardObjectWarner(off, 3.0)
+    res = []
+    for k in range(3):
+        res += w.update(k / 3.0, W, H, [_box(7, 2, 800, 600 - 80 * 1.25 ** k, 880, 600)])
+    assert any(a['level'] == 'nguy_co' for a in res)   # without the flag the wide zone is enough
+
+
+def test_m13_5_lateral_slide_blocks_alert():
+    """A growing box that also slides sideways is not an approaching object: no nguy_co."""
+    W, H = 1280, 720
+    cfg = _cfg(lateral_filter_enabled=True, lateral_max_per_h=0.25, ttc_k=1, nguy_co_persist=1,
+               nguy_co_ttc_s=5.0, chu_y_persist=99, cooldown_track_s=0, cooldown_global_s=0)
+    def run(slide):
+        w = ForwardObjectWarner(cfg, 3.0)
+        out = []
+        for k in range(3):
+            hh = 80.0 * 1.3 ** k
+            x0 = 600 + slide * k
+            out += w.update(k / 3.0, W, H, [_box(5, 2, x0, 600 - hh, x0 + 100, 600)])
+        return [a['level'] for a in out]
+    assert 'nguy_co' not in run(slide=60)     # centre moves ~0.5 box heights per sample
+    assert 'nguy_co' in run(slide=0)          # same growth, no sideways motion: alert
+
+
+def test_m13_5_min_age_and_class_reset_flags():
+    W, H = 1280, 720
+    base = dict(chu_y_persist=1, cooldown_track_s=0, cooldown_global_s=0)
+    cfg_age = _cfg(track_min_age_samples=3, **base)
+    w = ForwardObjectWarner(cfg_age, 3.0)
+    got = []
+    for k in range(4):
+        got.append(len(w.update(k / 3.0, W, H, [_box(9, 2, 600, 560, 700, 640)])))
+    assert got[:2] == [0, 0] and got[2] > 0      # third sample on the same track is the first alert
+    cfg_cls = _cfg(track_class_reset_enabled=True, track_min_age_samples=3, **base)
+    w2 = ForwardObjectWarner(cfg_cls, 3.0)
+    for k in range(3):
+        w2.update(k / 3.0, W, H, [_box(4, 0, 600, 560, 700, 640)])   # person, age 3
+    assert w2.tracks[4].age == 3
+    w2.update(1.0, W, H, [_box(4, 2, 600, 560, 700, 640)])          # class changes: history restarts
+    assert w2.tracks[4].age == 1
+    cfg_nocls = _cfg(track_class_reset_enabled=False, **base)
+    w3 = ForwardObjectWarner(cfg_nocls, 3.0)
+    for k, c in enumerate([0, 0, 0, 2]):
+        w3.update(k / 3.0, W, H, [_box(4, c, 600, 560, 700, 640)])
+    assert w3.tracks[4].age == 4
+
+
+def test_m13_5_nguy_co_switch_turns_off_only_nguy():
+    W, H = 1280, 720
+    cfg = _cfg(nguy_co_enabled=False, nguy_persist=1, nguy_co_persist=1, ttc_k=1, cooldown_track_s=0,
+               cooldown_global_s=0, chu_y_persist=2)
+    w = ForwardObjectWarner(cfg, 3.0)
+    levels = []
+    for k in range(4):
+        hh = 80.0 * 1.3 ** k
+        levels += [a['level'] for a in w.update(k / 3.0, W, H, [_box(3, 2, 600, 600 - hh, 700, 600)])]
+    assert 'nguy_co' not in levels and 'chu_y' in levels

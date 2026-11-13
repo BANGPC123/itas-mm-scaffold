@@ -129,6 +129,21 @@ forward_warning:
   # M9: chu_y speech cooldowns (nguy_co is always spoken). Boxes and banner show every alert.
   voice_cooldown_s: 8.0
   voice_class_cooldown_s: 15.0
+  # M13.3: nguy_co cues are at least this far apart (seconds). One nguy_co cue per sample at most.
+  voice_nguy_gap_s: 2.0
+  # M13.5 filters. Each one has its own flag; set a flag to false to return to the M10 rule for that filter.
+  # Thresholds were chosen on the night clip (M11 v2 review). The demo video was not used for tuning.
+  # Replay numbers: output/demo_20261114/M13/THRESHOLDS.md.
+  rider_merge_enabled: true            # person whose bottom-centre lies inside a motorcycle box is dropped
+  nguy_zone_enabled: true              # nguy_co only inside the narrow zone and not touching the frame edge
+  nguy_zone_bottom_width_ratio: 0.36
+  nguy_zone_top_width_ratio: 0.12
+  nguy_edge_margin_ratio: 0.02
+  lateral_filter_enabled: true         # no alert while the box centre slides sideways fast
+  lateral_max_per_h: 0.25
+  track_class_reset_enabled: false     # tested on night: removes one hop_ly truck alert, so off
+  track_min_age_samples: 0             # tested on night: no effect, so off
+  nguy_co_enabled: true                # M13.6 switch (set false only if the demo review fails)
   ttc_min_scale: 1.03
   cooldown_track_s: 6.0
   cooldown_global_s: 3.0

@@ -36,6 +36,17 @@ class ForwardWarnConfig:
     voice_cooldown_s: float = 8.0      # M9: minimum gap between any two chu_y spoken cues
     voice_class_cooldown_s: float = 15.0  # M9: minimum gap between chu_y cues for the same vehicle class
     voice_nguy_gap_s: float = 2.0      # M13.3: minimum gap between two nguy_co cues (one cue lasts < 2 s)
+    # M13.5 filters. Each has its own flag; all false = the M10 behaviour (replay gate in M13).
+    rider_merge_enabled: bool = False          # person whose bottom-centre lies in a motorcycle box is dropped (rider)
+    nguy_zone_enabled: bool = False            # nguy_co needs the narrow zone and a box not touching the frame edge
+    nguy_zone_bottom_width_ratio: float = 0.36
+    nguy_zone_top_width_ratio: float = 0.12
+    nguy_edge_margin_ratio: float = 0.02
+    lateral_filter_enabled: bool = False       # no alert while the box centre slides sideways fast
+    lateral_max_per_h: float = 0.25            # |change of box centre x| over ttc_k samples / box height
+    track_class_reset_enabled: bool = False    # a class change inside one track id restarts that track
+    track_min_age_samples: int = 0             # an alert needs this many detection samples on the same track
+    nguy_co_enabled: bool = True               # M13.6 switch: false turns nguy_co off, chu_y stays
 
     @classmethod
     def from_dict(cls, d: dict | None) -> 'ForwardWarnConfig':
@@ -60,6 +71,34 @@ def in_zone(point_xy, width, height, cfg: ForwardWarnConfig) -> bool:
     return abs(x - width / 2) <= half
 
 
+MOTORCYCLE_COCO = 3
+PERSON_COCO = 0
+
+
+def merge_riders(dets: list[dict]) -> list[dict]:
+    """M13.5: a person whose bottom-centre lies inside a motorcycle box is the rider of that motorcycle.
+    The person detection is dropped; the motorcycle detection carries the alert."""
+    motos = [d['bbox_xyxy'] for d in dets if d.get('cls') == MOTORCYCLE_COCO]
+    if not motos:
+        return dets
+    out = []
+    for d in dets:
+        if d.get('cls') == PERSON_COCO:
+            x1, _, x2, y2 = d['bbox_xyxy']
+            cx = (x1 + x2) / 2.0
+            if any(m[0] <= cx <= m[2] and m[1] <= y2 <= m[3] for m in motos):
+                continue
+        out.append(d)
+    return out
+
+
+def _nguy_zone_cfg(cfg: 'ForwardWarnConfig') -> 'ForwardWarnConfig':
+    """Narrow zone used for nguy_co when nguy_zone_enabled (same top edge as the normal zone)."""
+    narrow = ForwardWarnConfig(bottom_width_ratio=cfg.nguy_zone_bottom_width_ratio,
+                               top_width_ratio=cfg.nguy_zone_top_width_ratio, top_y_ratio=cfg.top_y_ratio)
+    return narrow
+
+
 def ttc_proxy(heights: list[float], k: int, dt_s: float, min_scale: float) -> float | None:
     """Relative approach indicator from box-height growth: s = h_t / h_{t-k}; TTC ~ k*dt / (s-1)."""
     if len(heights) <= k or heights[-1 - k] <= 0:
@@ -73,11 +112,23 @@ def ttc_proxy(heights: list[float], k: int, dt_s: float, min_scale: float) -> fl
 @dataclass
 class _Track:
     heights: deque = field(default_factory=lambda: deque(maxlen=16))
+    centres: deque = field(default_factory=lambda: deque(maxlen=16))
     ema: float | None = None
+    cls: int | None = None
+    age: int = 0
     chu_y_run: int = 0
     nguy_run: int = 0
     last_alert_t: float = -1e9
     last_level: str | None = None
+
+    def reset_history(self):
+        self.heights.clear()
+        self.centres.clear()
+        self.ema = None
+        self.age = 0
+        self.chu_y_run = 0
+        self.nguy_run = 0
+        self.last_level = None
 
 
 class ForwardObjectWarner:
@@ -97,9 +148,13 @@ class ForwardObjectWarner:
         """detections: iterable of dicts {track_id, cls, bbox_xyxy, conf}. Returns alerts for this sample."""
         if not self.cfg.enabled:
             return []
+        cfg = self.cfg
+        dets = list(detections)
+        if cfg.rider_merge_enabled:
+            dets = merge_riders(dets)
         alerts = []
         seen = set()
-        for det in detections:
+        for det in dets:
             tid = det.get('track_id')
             if tid is None:
                 continue
@@ -107,14 +162,31 @@ class ForwardObjectWarner:
             x1, y1, x2, y2 = det['bbox_xyxy']
             h = max(0.0, float(y2 - y1))
             tr = self.tracks.setdefault(tid, _Track())
+            if cfg.track_class_reset_enabled and tr.cls is not None and tr.cls != det.get('cls'):
+                tr.reset_history()   # the same id now describes another class: old samples do not count
+            tr.cls = det.get('cls')
+            tr.age += 1
             tr.ema = h if tr.ema is None else 0.5 * tr.ema + 0.5 * h   # height smoothing
             tr.heights.append(tr.ema)
+            tr.centres.append((x1 + x2) / 2.0)
             bottom_mid = ((x1 + x2) / 2.0, float(y2))
-            inside = in_zone(bottom_mid, width, height, self.cfg)
-            near = (y2 / height) >= self.cfg.chu_y_bottom_ratio
-            ttc = ttc_proxy(list(tr.heights), self.cfg.ttc_k, self.dt, self.cfg.ttc_min_scale)
-            tr.chu_y_run = tr.chu_y_run + 1 if (inside and near) else 0
-            tr.nguy_run = tr.nguy_run + 1 if (inside and ttc is not None and ttc < self.cfg.nguy_co_ttc_s) else 0
+            inside = in_zone(bottom_mid, width, height, cfg)
+            near = (y2 / height) >= cfg.chu_y_bottom_ratio
+            ttc = ttc_proxy(list(tr.heights), cfg.ttc_k, self.dt, cfg.ttc_min_scale)
+            lateral_block = False
+            if cfg.lateral_filter_enabled and len(tr.centres) > cfg.ttc_k and h > 0:
+                shift = abs(tr.centres[-1] - tr.centres[-1 - cfg.ttc_k]) / h
+                lateral_block = shift > cfg.lateral_max_per_h
+            valid = tr.age >= cfg.track_min_age_samples and not lateral_block
+            nguy_inside = inside
+            nguy_edge_ok = True
+            if cfg.nguy_zone_enabled:
+                nguy_inside = in_zone(bottom_mid, width, height, _nguy_zone_cfg(cfg))
+                m = cfg.nguy_edge_margin_ratio
+                nguy_edge_ok = x1 > m * width and x2 < (1 - m) * width and y2 < (1 - m) * height
+            tr.chu_y_run = tr.chu_y_run + 1 if (valid and inside and near) else 0
+            tr.nguy_run = tr.nguy_run + 1 if (valid and nguy_inside and nguy_edge_ok and cfg.nguy_co_enabled
+                                              and ttc is not None and ttc < cfg.nguy_co_ttc_s) else 0
             level = None
             if tr.nguy_run >= self.cfg.nguy_co_persist:
                 level = 'nguy_co'
