@@ -1,0 +1,52 @@
+{
+  "night_90s": {
+    "chu_y": {
+      "hop_ly": 2,
+      "khong_ro": 1,
+      "khong_hop_ly": 1
+    },
+    "nguy_co": {
+      "khong_hop_ly": 5
+    },
+    "all": {
+      "khong_hop_ly": 6,
+      "hop_ly": 2,
+      "khong_ro": 1
+    }
+  },
+  "demo_video": {
+    "chu_y": {
+      "hop_ly": 6,
+      "khong_hop_ly": 7,
+      "khong_ro": 1
+    },
+    "nguy_co": {
+      "khong_hop_ly": 1
+    },
+    "all": {
+      "hop_ly": 6,
+      "khong_hop_ly": 8,
+      "khong_ro": 1
+    }
+  },
+  "demo_short_30s": {
+    "chu_y": {},
+    "nguy_co": {},
+    "all": {}
+  },
+  "all": {
+    "chu_y": {
+      "hop_ly": 8,
+      "khong_ro": 2,
+      "khong_hop_ly": 8
+    },
+    "nguy_co": {
+      "khong_hop_ly": 6
+    },
+    "all": {
+      "khong_hop_ly": 14,
+      "hop_ly": 8,
+      "khong_ro": 2
+    }
+  }
+}
