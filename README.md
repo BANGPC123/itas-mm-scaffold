@@ -16,7 +16,8 @@ Cài đặt và chạy:
 python -m pip install -r requirements.txt
 npm --prefix frontend install
 npm --prefix frontend run build
-python scripts/setup_offline_speech.py   # một lần: cài giọng đọc offline (cần mạng)
+$env:HF_HOME = "$PWD\models\tts_hf_home"   # model giọng đọc lưu cùng chỗ start.ps1 đọc
+python scripts/setup_offline_speech.py   # một lần: tải giọng đọc VieNeu (~300 MB, cần mạng); model này không nằm trong Git
 .\start.ps1
 ```
 
@@ -26,6 +27,8 @@ Mở http://127.0.0.1:8000.
 - Tab **Ảnh**: tải ảnh JPG/PNG chụp từ phía trước xe, xem ảnh có khung biển, danh sách biển và quy định liên quan.
 
 Video demo: [docs/demo/itas-mm_demo_video.mp4](docs/demo/itas-mm_demo_video.mp4), đoạn video lái xe 2 phút 20 giây dùng làm đầu vào khi demo tab **Video** (nén 1280x720, 30 fps, khoảng 44 MB).
+
+Video kết quả (Git LFS, `docs/demo/media/`): `demo_30s_source.mp4` (đầu vào demo trực tiếp, cắt từ giây 30 của video demo), `demo_30s_result.mp4` và `demo_140s_result.mp4` (kết quả có cảnh báo vật cản), `holdout_day_hanoi_90s_result.mp4`, `holdout_day_west_lake_90s_result.mp4` (hai clip ban ngày dùng kiểm tra cảnh báo), `dev_night_90s_result.mp4` (clip đêm dùng chỉnh ngưỡng). Video kết quả giữ âm thanh gốc của nguồn; câu cảnh báo bằng giọng nói chỉ phát trong ứng dụng web.
 
 Báo cáo cuối: [docs/final_report/ITAS-MM_Final_Report.docx](docs/final_report/ITAS-MM_Final_Report.docx) (bản Markdown: [ITAS-MM_Final_Report.md](docs/final_report/ITAS-MM_Final_Report.md)). Số liệu và nguồn của từng số: [docs/final_report/evidence/NUMBERS.md](docs/final_report/evidence/NUMBERS.md). Thư mục `evidence/` là bản sao các file bằng chứng chính từ `output/final_20261102/`; các đường dẫn `output/...` khác (log, video kết quả) chỉ có trên máy chạy, vì `output/` không đưa lên Git.
 

@@ -16,3 +16,4 @@ data/manifests/** -text
 *.safetensors filter=lfs diff=lfs merge=lfs -text
 *.ckpt filter=lfs diff=lfs merge=lfs -text
 output/demo_20261114/**/*.mp4 filter=lfs diff=lfs merge=lfs -text
+docs/demo/media/*.mp4 filter=lfs diff=lfs merge=lfs -text
